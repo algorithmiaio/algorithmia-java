@@ -1,0 +1,9 @@
+{
+    "error": {
+        "message":"java.lang.NumberFormatException: For input string: \"a\"",
+        "stacktrace":"java.lang.NumberFormatException.forInputString(NumberFormatException.java:65)\njava.lang.Integer.parseInt(Integer.java:580)\njava.math.BigInteger.<init>(BigInteger.java:461)\njava.math.BigInteger.<init>(BigInteger.java:597)\nalgorithmia.kenny.Factor.Factor.apply(Factor.java:11)"
+    },
+    "metadata":{
+        "duration":0.001010475
+    }
+}

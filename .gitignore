@@ -1,0 +1,51 @@
+##
+##  Algorithmia .gitignore
+##
+
+
+## Ignore all dotfiles
+.*
+## except for .gitignore
+!.gitignore
+
+# .classpath
+# .target
+# .cache
+# .DS_Store
+
+## Play Framework
+lib/newrelic
+bin
+/data
+dist
+logs
+modules
+precompiled
+project/project
+project/target
+target
+tmp
+test-result
+
+## Python
+/resources/algorithmia/common-python/build
+*.egg-info
+*.pyc
+
+## Junk
+hs_err_*.log
+replay_pid*.log
+RUNNING_PID
+*~
+\#*\#
+
+## Binaries
+*.class
+*.prefs
+
+## Algorithmia
+public/git
+snapshots
+/.project
+resources/algorithmia/common-java/doc
+resources/documentation/build

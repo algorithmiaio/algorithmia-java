@@ -1,7 +1,8 @@
-package algorithmia.util;
+package algorithmia.client;
 
 import algorithmia.algo.AlgoResponse;
 import algorithmia.APIException;
+import algorithmia.util.JsonHelpers;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import java.io.IOException;
@@ -25,11 +26,11 @@ public class HttpClientAsyncHelpers {
     /**
      * Helper class to handle an async HTTP response, and notify a future
      */
-    public static class AsyncHttpCallbackJson implements FutureCallback<HttpResponse> {
+    public static class AlgoAsyncCallback implements FutureCallback<HttpResponse> {
         private final String url;
         private final CompletableFuture<AlgoResponse> promise;
 
-        public AsyncHttpCallbackJson(String url, CompletableFuture<AlgoResponse> promise) {
+        public AlgoAsyncCallback(String url, CompletableFuture<AlgoResponse> promise) {
             this.url = url;
             this.promise = promise;
         }

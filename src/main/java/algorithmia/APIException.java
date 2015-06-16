@@ -2,6 +2,12 @@ package algorithmia;
 
 import java.io.IOException;
 
+import java.io.InputStream;
+import org.apache.commons.io.Charsets;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+
 /**
  * APIException indicates a problem communicating with Algorithmia
  */
@@ -23,6 +29,33 @@ public class APIException extends IOException {
      */
     public APIException(String message, Throwable cause) {
         super(message, cause);
+    }
+
+    // TODO: subclass APIException so clients can handle 404 vs 401 differently
+    public static APIException fromHttpResponse(HttpResponse response, String url) {
+        final int status = response.getStatusLine().getStatusCode();
+        final HttpEntity entity = response.getEntity();
+
+        String errorMessage = "";
+        if(entity != null) {
+            try {
+                final InputStream is = entity.getContent();
+                errorMessage = ": " + IOUtils.toString(is, Charsets.UTF_8);
+            } catch(IOException e) {
+                // TODO something???
+            }
+        }
+        if(status == 401) {
+            return new APIException("401 not authorized" + errorMessage);
+        } else if(status == 404) {
+            return new APIException("404 not found: " + url + errorMessage);
+        } else if(status == 415) {
+            return new APIException("415 unsupported content type" + errorMessage);
+        } else if(status == 504) {
+            return new APIException("504 server timeout" + errorMessage);
+        } else {
+            return new APIException("Unexpected API response, status " + status + ", url " + url + errorMessage);
+        }
     }
 
 }

@@ -10,7 +10,6 @@ import java.util.Arrays;
 public class AlgorithmTest {
 
     @Test
-    @SuppressWarnings("unchecked")
     public void algorithmPipe() throws Exception {
         final String key = System.getenv("ALGORITHMIA_API_KEY");
         Assume.assumeTrue(key != null);

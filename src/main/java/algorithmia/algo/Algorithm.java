@@ -1,23 +1,17 @@
 package algorithmia.algo;
 
 import algorithmia.APIException;
-import algorithmia.client.HttpClientAsync;
-
+import algorithmia.client.HttpClient;
+import algorithmia.client.HttpClientHelpers.AlgoAsyncCallback;
 import algorithmia.util.JsonHelpers;
-import algorithmia.client.HttpClientAsync;
-import algorithmia.client.HttpClientAsyncHelpers.AlgoAsyncCallback;
 
 import java.io.IOException;
 import java.net.ConnectException;
 import java.util.concurrent.Future;
 import java.util.concurrent.CompletableFuture;
 
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
-import org.apache.http.impl.nio.client.HttpAsyncClients;
-import org.apache.http.concurrent.FutureCallback;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -27,18 +21,18 @@ import com.google.gson.JsonElement;
  */
 public class Algorithm {
     private AlgorithmRef algoRef;
-    private HttpClientAsync client;
+    private HttpClient client;
 
-    public Algorithm(HttpClientAsync client, String algoUri) {
+    public Algorithm(HttpClient client, String algoUri) {
         this.client = client;
         this.algoRef = new AlgorithmRef(algoUri);
     }
 
-    public Algorithm(HttpClientAsync client, String username, String algoname) {
+    public Algorithm(HttpClient client, String username, String algoname) {
         this(client, username, algoname, Version.Latest());
     }
 
-    public Algorithm(HttpClientAsync client, String username, String algoname, Version version) {
+    public Algorithm(HttpClient client, String username, String algoname, Version version) {
         this.client = client;
         this.algoRef = new AlgorithmRef(username, algoname, version);
     }
@@ -85,8 +79,7 @@ public class Algorithm {
         try {
             return pipeJsonAsync(inputJson).get();
         } catch(java.util.concurrent.ExecutionException e) {
-            Throwable cause = e.getCause();
-            throw new APIException(cause.getMessage());
+            throw new APIException(e.getCause().getMessage());
         } catch(java.util.concurrent.CancellationException e) {
             throw new APIException("API connection cancelled: " + this.algoRef.url() + " (" + e.getMessage() + ")", e);
         } catch(java.lang.InterruptedException e) {

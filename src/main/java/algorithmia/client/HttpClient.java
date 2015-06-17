@@ -21,7 +21,6 @@ import java.net.URISyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.concurrent.Future;
-import java.util.concurrent.CompletableFuture;
 
 public class HttpClient {
     private Auth auth;

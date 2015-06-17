@@ -8,7 +8,6 @@ import algorithmia.util.JsonHelpers;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.util.concurrent.Future;
-import java.util.concurrent.CompletableFuture;
 
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;

@@ -25,7 +25,6 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.HttpResponse;
 import java.util.concurrent.Future;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * A data stream

@@ -20,7 +20,7 @@ import java.io.IOException;
 
 import com.google.gson.JsonElement;
 
-import algorithmia.client.HttpClientHelpers.JsonAsyncCallback;
+import algorithmia.client.HttpClientHelpers;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.HttpResponse;
@@ -105,18 +105,24 @@ public class DataDirectory extends DataObject {
         }
     }
 
+    public class DirectoryMetadata {
+        public String name;
+        DirectoryMetadata(String name) {
+            this.name = name;
+        }
+    }
+
     public class DirectoryListResponse {
         public List<FileMetadata> files;
-
-        DirectoryListResponse(List<FileMetadata> files) { this.files = files; }
+        public List<DirectoryMetadata> folders;
+        DirectoryListResponse(List<FileMetadata> files, List<DirectoryMetadata> folders) {
+            this.files = files;
+            this.folders = folders;
+        }
     }
 
     protected DirectoryListResponse getPage(String marker) throws APIException {
         String url = (marker == null) ? url() : url() + "?marker=" + marker;
-        HttpResponse response = client.get(url);
-        JsonElement json = HttpClientHelpers.parseResponseJson(response);
-
-        Gson gson = new Gson();
-        return gson.fromJson(json, new TypeToken<DirectoryListResponse>(){}.getType());
+        return client.get(url, new TypeToken<DirectoryListResponse>(){});
     }
 }

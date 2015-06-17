@@ -2,7 +2,7 @@ package algorithmia.algo;
 
 import algorithmia.APIException;
 import algorithmia.client.HttpClient;
-import algorithmia.client.HttpClientHelpers.AlgoAsyncCallback;
+import algorithmia.client.HttpClientHelpers.AlgoResponseHandler;
 import algorithmia.util.JsonHelpers;
 
 import java.io.IOException;
@@ -94,15 +94,11 @@ public class Algorithm {
      * @return success or failure
      */
     private Future<AlgoResponse> pipeJsonAsync(JsonElement inputJson) {
-        final CompletableFuture<AlgoResponse> promise = new CompletableFuture<AlgoResponse>();
-
-        this.client.post(
+        return this.client.post(
             this.algoRef.url(),
             new StringEntity(inputJson.toString(), ContentType.APPLICATION_JSON),
-            new AlgoAsyncCallback(this.algoRef.url(), promise)
+            new AlgoResponseHandler()
         );
-
-        return promise;
     }
 
 

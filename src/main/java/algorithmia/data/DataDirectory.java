@@ -28,7 +28,7 @@ public class DataDirectory extends DataObject {
         HttpResponse response = this.client.get(url());
         int status = response.getStatusLine().getStatusCode();
         if(status != 200 && status != 404) {
-            throw APIException.fromHttpResponse(response, null);
+            throw APIException.fromHttpResponse(response);
         }
         return (200 == status);
     }

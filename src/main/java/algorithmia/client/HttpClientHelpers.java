@@ -87,6 +87,7 @@ public class HttpClientHelpers {
         @Override
         protected T buildResult(HttpContext context) throws APIException {
             JsonElement json = parseResponseJson(response);
+            assertNonError(json);
             Gson gson = new Gson();
             return gson.fromJson(json, typeToken.getType());
         }
@@ -121,21 +122,20 @@ public class HttpClientHelpers {
     public static void assertStatusSuccess(HttpResponse response) throws APIException {
         final int status = response.getStatusLine().getStatusCode();
         if(200 > status || status > 300) {
-            throw APIException.fromHttpResponse(response, null);  //TODO: stop sending null URL
+            throw APIException.fromHttpResponse(response);
         }
     }
 
-    // public static void assertNonError(JsonElement json) throws APIException {
-    //     if(json != null && json.isJsonObject()) {
-    //         final JsonObject obj = json.getAsJsonObject();
-    //         if(obj.has("error")) {
-    //             final JsonObject error = obj.getAsJsonObject("error");
-    //             final String msg = error.get("message").getAsString();
-    //             final String stacktrace = error.get("stacktrace").getAsString();
-    //             throw new APIException(msg);
-    //         }
-    //     }
-    // }
+    public static void assertNonError(JsonElement json) throws APIException {
+        if(json != null && json.isJsonObject()) {
+            final JsonObject obj = json.getAsJsonObject();
+            if(obj.has("error")) {
+                final JsonObject error = obj.getAsJsonObject("error");
+                final String msg = error.get("message").getAsString();
+                throw new APIException(msg);
+            }
+        }
+    }
 
     public static JsonElement parseResponseJson(HttpResponse response) throws APIException {
         assertStatusSuccess(response);
@@ -145,7 +145,6 @@ public class HttpClientHelpers {
             final InputStream is = entity.getContent();
             final JsonParser parser = new JsonParser();
             JsonElement json = parser.parse(new InputStreamReader(is));
-            // assertNonError(json);
             return json;
 
         } catch(IOException ex) {

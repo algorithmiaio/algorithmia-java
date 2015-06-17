@@ -31,8 +31,7 @@ public class APIException extends IOException {
         super(message, cause);
     }
 
-    // TODO: subclass APIException so clients can handle 404 vs 401 differently
-    public static APIException fromHttpResponse(HttpResponse response, String url) {
+    public static APIException fromHttpResponse(HttpResponse response) {
         final int status = response.getStatusLine().getStatusCode();
         final HttpEntity entity = response.getEntity();
 
@@ -42,19 +41,19 @@ public class APIException extends IOException {
                 final InputStream is = entity.getContent();
                 errorMessage = ": " + IOUtils.toString(is, Charsets.UTF_8);
             } catch(IOException e) {
-                // TODO something???
+                errorMessage = ": IOException reading response: " + e.getMessage();
             }
         }
         if(status == 401) {
             return new APIException("401 not authorized" + errorMessage);
         } else if(status == 404) {
-            return new APIException("404 not found: " + url + errorMessage);
+            return new APIException("404 not found: " + errorMessage);
         } else if(status == 415) {
             return new APIException("415 unsupported content type" + errorMessage);
         } else if(status == 504) {
             return new APIException("504 server timeout" + errorMessage);
         } else {
-            return new APIException("Unexpected API response, status " + status + ", url " + url + errorMessage);
+            return new APIException(status + " unexpected API response, status" + errorMessage);
         }
     }
 

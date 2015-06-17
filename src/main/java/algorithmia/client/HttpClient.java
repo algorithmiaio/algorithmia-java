@@ -18,6 +18,10 @@ import org.apache.http.message.BasicHttpRequest;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.CancellationException;
+import java.lang.InterruptedException;
+
 import com.google.gson.reflect.TypeToken;
 
 import java.util.concurrent.Future;
@@ -29,106 +33,108 @@ public class HttpClient {
         this.auth = auth;
     }
 
+    /*
+    * GET requests
+    */
+
     public HttpResponse get(String url) throws APIException {
-        try {
-            return this.get(url, new BasicAsyncResponseConsumer()).get();
-        } catch(java.util.concurrent.ExecutionException e) {
-            throw new APIException(e.getCause().getMessage());
-        } catch(java.util.concurrent.CancellationException e) {
-            throw new APIException("API connection cancelled: " + url + " (" + e.getMessage() + ")", e);
-        } catch(java.lang.InterruptedException e) {
-            throw new APIException("API connection interrupted: " + url + " (" + e.getMessage() + ")", e);
-        }
+        final HttpGet request = new HttpGet(url);
+        return this.execute(request);
     }
 
     public <T> T get(String url, TypeToken<T> typeToken) throws APIException {
-        try {
-            return this.get(url, new HttpClientHelpers.JsonDeserializeResponseHandler<T>(typeToken)).get();
-        } catch(java.util.concurrent.ExecutionException e) {
-            throw new APIException(e.getCause().getMessage());
-        } catch(java.util.concurrent.CancellationException e) {
-            throw new APIException("API connection cancelled: " + url + " (" + e.getMessage() + ")", e);
-        } catch(java.lang.InterruptedException e) {
-            throw new APIException("API connection interrupted: " + url + " (" + e.getMessage() + ")", e);
-        }
+        final HttpGet request = new HttpGet(url);
+        return this.execute(request, new HttpClientHelpers.JsonDeserializeResponseHandler<T>(typeToken));
+
     }
 
     public <T> Future<T> get(String url, HttpAsyncResponseConsumer<T> consumer) {
-        return this.execute(new HttpGet(url), consumer);
+        final HttpGet request = new HttpGet(url);
+        return this.executeAsync(request, consumer);
     }
 
+    /*
+    * POST requests
+    */
+
     public HttpResponse post(String url, HttpEntity data) throws APIException {
-        try {
-            return this.post(url, data, new BasicAsyncResponseConsumer()).get();
-        } catch(java.util.concurrent.ExecutionException e) {
-            throw new APIException(e.getCause().getMessage());
-        } catch(java.util.concurrent.CancellationException e) {
-            throw new APIException("API connection cancelled: " + url + " (" + e.getMessage() + ")", e);
-        } catch(java.lang.InterruptedException e) {
-            throw new APIException("API connection interrupted: " + url + " (" + e.getMessage() + ")", e);
-        }
+        final HttpPost request = new HttpPost(url);
+        request.setEntity(data);
+        return this.execute(request);
     }
 
     public <T> Future<T> post(String url, HttpEntity data, HttpAsyncResponseConsumer<T> consumer) {
         final HttpPost request = new HttpPost(url);
         request.setEntity(data);
-        return this.execute(request, consumer);
+        return this.executeAsync(request, consumer);
     }
 
+    /*
+    * PUT requests
+    */
+
     public HttpResponse put(String url, HttpEntity data) throws APIException {
-        try {
-            return this.put(url, data, new BasicAsyncResponseConsumer()).get();
-        } catch(java.util.concurrent.ExecutionException e) {
-            throw new APIException(e.getCause().getMessage());
-        } catch(java.util.concurrent.CancellationException e) {
-            throw new APIException("API connection cancelled: " + url + " (" + e.getMessage() + ")", e);
-        } catch(java.lang.InterruptedException e) {
-            throw new APIException("API connection interrupted: " + url + " (" + e.getMessage() + ")", e);
-        }
+        final HttpPut request = new HttpPut(url);
+        request.setEntity(data);
+        return this.execute(request);
     }
 
     public <T> Future<T> put(String url, HttpEntity data, HttpAsyncResponseConsumer<T> consumer) {
         final HttpPut request = new HttpPut(url);
         request.setEntity(data);
-        return this.execute(request, consumer);
+        return this.executeAsync(request, consumer);
     }
 
+    /*
+    * DELETE requests
+    */
 
     public HttpResponse delete(String url) throws APIException {
-        try {
-            return this.delete(url, new BasicAsyncResponseConsumer()).get();
-        } catch(java.util.concurrent.ExecutionException e) {
-            throw new APIException(e.getCause().getMessage());
-        } catch(java.util.concurrent.CancellationException e) {
-            throw new APIException("API connection cancelled: " + url + " (" + e.getMessage() + ")", e);
-        } catch(java.lang.InterruptedException e) {
-            throw new APIException("API connection interrupted: " + url + " (" + e.getMessage() + ")", e);
-        }
+        final HttpDelete request = new HttpDelete(url);
+        return execute(request);
     }
 
     public <T> Future<T> delete(String url, HttpAsyncResponseConsumer<T> consumer) {
         final HttpDelete request = new HttpDelete(url);
-        return this.execute(request, consumer);
+        return executeAsync(request, consumer);
     }
 
+    /*
+    * HEAD requests
+    */
+
     public HttpResponse head(String url) throws APIException {
-        try {
-            return this.head(url, new BasicAsyncResponseConsumer()).get();
-        } catch(java.util.concurrent.ExecutionException e) {
-            throw new APIException(e.getCause().getMessage());
-        } catch(java.util.concurrent.CancellationException e) {
-            throw new APIException("API connection cancelled: " + url + " (" + e.getMessage() + ")", e);
-        } catch(java.lang.InterruptedException e) {
-            throw new APIException("API connection interrupted: " + url + " (" + e.getMessage() + ")", e);
-        }
+        final HttpHead request = new HttpHead(url);
+        return execute(request);
     }
 
     public <T> Future<T> head(String url, HttpAsyncResponseConsumer<T> consumer) {
         final HttpHead request = new HttpHead(url);
-        return this.execute(request, consumer);
+        return executeAsync(request, consumer);
     }
 
-    private <T> Future<T> execute(HttpUriRequest request, HttpAsyncResponseConsumer<T> consumer) {
+
+    /*
+    * execute methods to execute a request
+    */
+
+    private HttpResponse execute(HttpUriRequest request) throws APIException {
+        return execute(request, new BasicAsyncResponseConsumer());
+    }
+
+    private <T> T execute(HttpUriRequest request, HttpAsyncResponseConsumer<T> consumer) throws APIException {
+        try {
+            return executeAsync(request, consumer).get();
+        } catch(ExecutionException e) {
+            throw new APIException(e.getCause().getMessage());
+        } catch(CancellationException e) {
+            throw new APIException("API connection cancelled: " + request.getURI().toString() + " (" + e.getMessage() + ")", e);
+        } catch(InterruptedException e) {
+            throw new APIException("API connection interrupted: " + request.getURI().toString() + " (" + e.getMessage() + ")", e);
+        }
+    }
+
+    private <T> Future<T> executeAsync(HttpUriRequest request, HttpAsyncResponseConsumer<T> consumer) {
         this.auth.authenticateRequest(request);
 
         HttpHost target = new HttpHost(request.getURI().getHost());

@@ -37,7 +37,7 @@ public abstract class AlgoResponse {
      */
     public <T> T as(TypeToken typeToken) throws AlgorithmException {
         return this.as(typeToken.getType());
-    };
+    }
 
     /**
      * Get string representation of the result or throw an exception
@@ -46,7 +46,7 @@ public abstract class AlgoResponse {
      */
     public String get() throws AlgorithmException {
         return this.as(JsonElement.class).toString();
-    };
+    }
 
 
 }

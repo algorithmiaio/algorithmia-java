@@ -1,22 +1,15 @@
 package algorithmia.client;
 
 import algorithmia.APIException;
-import org.apache.http.entity.ContentType;
 import org.apache.http.client.methods.*;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.http.nio.protocol.HttpAsyncResponseConsumer;
 import org.apache.http.nio.protocol.BasicAsyncResponseConsumer;
 import org.apache.http.nio.protocol.BasicAsyncRequestProducer;
-import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpHost;
-import org.apache.http.message.BasicHttpEntityEnclosingRequest;
-import org.apache.http.message.BasicHttpRequest;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.CancellationException;
@@ -44,7 +37,7 @@ public class HttpClient {
 
     public <T> T get(String url, TypeToken<T> typeToken) throws APIException {
         final HttpGet request = new HttpGet(url);
-        return this.execute(request, new HttpClientHelpers.JsonDeserializeResponseHandler<T>(typeToken));
+        return this.execute(request, new HttpClientHelpers.JsonDeserializeResponseHandler<>(typeToken));
 
     }
 

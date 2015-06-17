@@ -6,20 +6,14 @@ import algorithmia.algo.AlgoFailure;
 import algorithmia.algo.Metadata;
 import algorithmia.AlgorithmException;
 import algorithmia.APIException;
-import algorithmia.util.JsonHelpers;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Type;
-import java.util.function.Function;
-import org.apache.commons.io.Charsets;
-import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.concurrent.FutureCallback;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -78,12 +72,12 @@ public class HttpClientHelpers {
         }
     }
 
-    static public class JsonResponseHandler extends AbstractBasicResponseConsumer<JsonElement> {
-        @Override
-        protected JsonElement buildResult(HttpContext context) throws APIException {
-            return parseResponseJson(response);
-        }
-    }
+//    static public class JsonResponseHandler extends AbstractBasicResponseConsumer<JsonElement> {
+//        @Override
+//        protected JsonElement buildResult(HttpContext context) throws APIException {
+//            return parseResponseJson(response);
+//        }
+//    }
 
     static public class JsonDeserializeResponseHandler<T> extends AbstractBasicResponseConsumer<T> {
         final private TypeToken typeToken;

@@ -48,7 +48,7 @@ public class AlgoResponseTest {
     public void algoResponseMetadata() throws Exception {
         final AlgoResponse response = parseResourceAsResponse("algo_success_array_long.json");
         Metadata meta = response.metadata();
-        Assert.assertEquals(0.035916637, meta.duration.doubleValue(), 0.0001);
+        Assert.assertEquals(0.035916637, meta.duration, 0.0001);
     }
 
 

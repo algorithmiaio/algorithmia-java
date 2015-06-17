@@ -1,6 +1,5 @@
 package algorithmia.data;
 
-import algorithmia.AlgorithmiaConf;
 import algorithmia.APIException;
 import algorithmia.client.*;
 
@@ -10,18 +9,16 @@ import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.HttpResponse;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.StringWriter;
 import java.io.IOException;
 import org.apache.commons.io.IOUtils;
 
-// /**
-//  * A singular piece of data
-//  */
+/**
+ * A reference to a file in the data api
+ */
 public class DataFile extends DataObject {
 
     public DataFile(HttpClient client, String dataUrl) {

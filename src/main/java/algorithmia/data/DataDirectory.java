@@ -1,30 +1,19 @@
 package algorithmia.data;
 
-import algorithmia.AlgorithmiaConf;
 import algorithmia.APIException;
 import algorithmia.client.*;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 
-import com.google.gson.JsonElement;
-
-import algorithmia.client.HttpClientHelpers;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.HttpResponse;
-import java.util.concurrent.Future;
 
 /**
  * A data stream
@@ -59,13 +48,13 @@ public class DataDirectory extends DataObject {
      * @param filename the name of the file within this collection to get a reference for
      * @return a handle to the requested file
      */
-    public DataFile file(String filename) throws APIException {
+    public DataFile file(String filename) {
         return new DataFile(client, path + "/" + filename);
     }
 
     /**
-     * Convenience wrapper for putting a File using the file's filename
-     * @param filename the name of the file within this collection to get a reference for
+     * Convenience wrapper for putting a File
+     * @param file a file to put into this data directory
      * @return a handle to the requested file
      */
     public DataFile putFile(File file) throws APIException, FileNotFoundException {

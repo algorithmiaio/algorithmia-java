@@ -3,10 +3,7 @@ package algorithmia.algo;
 import algorithmia.APIException;
 import algorithmia.client.HttpClient;
 import algorithmia.client.HttpClientHelpers.AlgoResponseHandler;
-import algorithmia.util.JsonHelpers;
 
-import java.io.IOException;
-import java.net.ConnectException;
 import java.util.concurrent.Future;
 
 import org.apache.http.entity.ContentType;
@@ -40,7 +37,6 @@ public class Algorithm {
      * Calls the Algorithmia API on a given input.
      * Attempts to automatically format the input as JSON.
      *
-     * @param algoRef identifier of the algorithm to call (eg- "/kenny/Dijkstra")
      * @param input algorithm input, will automatically be converted into JSON
      * @return algorithm result (AlgoSuccess or AlgoFailure)
      * @throws APIException if there is a problem communication with the Algorithmia API.
@@ -69,7 +65,6 @@ public class Algorithm {
 
     /**
      * Run an algorithm on JSON input directly
-     * @param algo algorithm reference to call
      * @param inputJson json input value
      * @return success or failure
      * @throws APIException if there is a problem communication with the Algorithmia API.
@@ -88,7 +83,6 @@ public class Algorithm {
 
     /**
      * Run an algorithm on JSON input directly
-     * @param algo algorithm reference to call
      * @param inputJson json input value
      * @return success or failure
      */

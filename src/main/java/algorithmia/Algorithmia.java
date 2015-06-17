@@ -3,10 +3,6 @@ package algorithmia;
 import algorithmia.algo.*;
 import algorithmia.client.*;
 import algorithmia.data.*;
-import algorithmia.APIException;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import java.lang.reflect.Type;
 
 /**
  * Algorithmia main class for running and testing algorithms

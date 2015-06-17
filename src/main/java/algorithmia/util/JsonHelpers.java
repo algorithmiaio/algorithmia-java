@@ -1,26 +1,13 @@
 package algorithmia.util;
 
-import algorithmia.AlgorithmiaConf;
 import algorithmia.AlgorithmException;
 import algorithmia.APIException;
 import algorithmia.algo.AlgoFailure;
 import algorithmia.algo.AlgoResponse;
 import algorithmia.algo.AlgoSuccess;
 import algorithmia.algo.Metadata;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.Type;
-import java.net.MalformedURLException;
-import org.apache.commons.io.Charsets;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 
 /**
  * Various HTTP actions, using our HttpClient class, and automatically adding authorization

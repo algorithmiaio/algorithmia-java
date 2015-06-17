@@ -4,8 +4,6 @@ import algorithmia.algo.*;
 import org.junit.Test;
 import org.junit.Assume;
 import org.junit.Assert;
-import java.util.List;
-import java.util.Arrays;
 
 public class AlgorithmTest {
 

@@ -77,12 +77,12 @@ public class DataDirectory extends DataObject {
 
         String url = this.getParent().url();
         HttpResponse response = this.client.post(url, new StringEntity(inputJson.toString(), ContentType.APPLICATION_JSON));
-        HttpClientHelpers.assertStatusSuccess(response);
+        HttpClientHelpers.throwIfNotOk(response);
     }
 
     public void delete(boolean forceDelete) throws APIException {
         HttpResponse response = this.client.delete(this.url() + "?force=" + forceDelete);
-        HttpClientHelpers.assertStatusSuccess(response);
+        HttpClientHelpers.throwIfNotOk(response);
     }
 
     public class FileMetadata {

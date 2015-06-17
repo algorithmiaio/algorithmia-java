@@ -54,7 +54,7 @@ public class DataFile extends DataObject {
 
     public InputStream getInputStream() throws APIException, IOException {
         final HttpResponse response = client.get(url());
-        HttpClientHelpers.assertStatusSuccess(response);
+        HttpClientHelpers.throwIfNotOk(response);
         return response.getEntity().getContent();
     }
 
@@ -83,7 +83,7 @@ public class DataFile extends DataObject {
      */
     public void put(String data) throws APIException {
         HttpResponse response = client.put(url(), new StringEntity(data, ContentType.DEFAULT_TEXT));
-        HttpClientHelpers.assertStatusSuccess(response);
+        HttpClientHelpers.throwIfNotOk(response);
     }
 
     /**
@@ -93,7 +93,7 @@ public class DataFile extends DataObject {
      */
     public void put(byte[] data) throws APIException {
         HttpResponse response = client.put(url(), new ByteArrayEntity(data, ContentType.APPLICATION_OCTET_STREAM));
-        HttpClientHelpers.assertStatusSuccess(response);
+        HttpClientHelpers.throwIfNotOk(response);
     }
 
     /**
@@ -103,7 +103,7 @@ public class DataFile extends DataObject {
      */
     public void put(InputStream is) throws APIException {
         HttpResponse response = client.put(url(), new InputStreamEntity(is));
-        HttpClientHelpers.assertStatusSuccess(response);
+        HttpClientHelpers.throwIfNotOk(response);
     }
 
     /**
@@ -121,7 +121,7 @@ public class DataFile extends DataObject {
      */
     public void delete() throws APIException {
         HttpResponse response = this.client.delete(this.url());
-        HttpClientHelpers.assertStatusSuccess(response);
+        HttpClientHelpers.throwIfNotOk(response);
     }
 
 }

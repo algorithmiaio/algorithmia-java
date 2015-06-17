@@ -87,7 +87,7 @@ public class HttpClientHelpers {
         @Override
         protected T buildResult(HttpContext context) throws APIException {
             JsonElement json = parseResponseJson(response);
-            assertNonError(json);
+            throwIfJsonHasError(json);
             Gson gson = new Gson();
             return gson.fromJson(json, typeToken.getType());
         }
@@ -119,14 +119,14 @@ public class HttpClientHelpers {
     }
 
 
-    public static void assertStatusSuccess(HttpResponse response) throws APIException {
+    public static void throwIfNotOk(HttpResponse response) throws APIException {
         final int status = response.getStatusLine().getStatusCode();
         if(200 > status || status > 300) {
             throw APIException.fromHttpResponse(response);
         }
     }
 
-    public static void assertNonError(JsonElement json) throws APIException {
+    public static void throwIfJsonHasError(JsonElement json) throws APIException {
         if(json != null && json.isJsonObject()) {
             final JsonObject obj = json.getAsJsonObject();
             if(obj.has("error")) {
@@ -138,7 +138,7 @@ public class HttpClientHelpers {
     }
 
     public static JsonElement parseResponseJson(HttpResponse response) throws APIException {
-        assertStatusSuccess(response);
+        throwIfNotOk(response);
 
         try {
             final HttpEntity entity = response.getEntity();

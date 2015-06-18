@@ -3,9 +3,21 @@ algorithmia-java
 
 Java client for accessing Algorithmia's algorithm marketplace and data APIs.
 
+[![Build Status](https://img.shields.io/shippable/557f23a8edd7f2c052184a2d/master.svg)](https://app.shippable.com/projects/557f23a8edd7f2c052184a2d)
+
+TODO: badge for maven central version
+
+TODO: link to java docs
+
 # Getting started
 
-TODO: How to add as a project dependency (pending artifact publishing)
+algorithmia-java is published to Maven Central. To add as a dependency:
+
+<dependency>
+  <groupId>com.algorithmia</groupId>
+  <artifactId>algorithmia-client</artifactId>
+  <version>0.9.0</version>
+</dependency>
 
 Instantiate a client using your API Key:
 
@@ -54,3 +66,4 @@ File tempFile = foo.file("myfile").getFile();
 foo.file("sample.txt").delete();
 foo.delete(true); // true implies force deleting the directory and its contents
 ````
+

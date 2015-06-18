@@ -1,5 +1,5 @@
 import com.algorithmia.algo.*;
-import com.algorithmia.util.JsonHelpers;
+import com.algorithmia.client.HttpClientHelpers;
 import com.algorithmia.TypeToken;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
@@ -56,7 +56,7 @@ public class AlgoResponseTest {
         final JsonParser parser = new JsonParser();
         final InputStream is = this.getClass().getResourceAsStream(filename);
         final JsonElement jsonOutput = parser.parse(new InputStreamReader(is, "UTF-8"));
-        return JsonHelpers.jsonToAlgoResponse(jsonOutput);
+        return HttpClientHelpers.jsonToAlgoResponse(jsonOutput);
     }
 }
 

@@ -97,27 +97,31 @@ public class HttpClientHelpers {
         @Override
         protected AlgoResponse buildResult(HttpContext context) throws APIException {
             JsonElement json = parseResponseJson(response);
-            if(json != null && json.isJsonObject()) {
-                final JsonObject obj = json.getAsJsonObject();
-                if(obj.has("error")) {
-                    final JsonObject error = obj.getAsJsonObject("error");
-                    final String msg = error.get("message").getAsString();
-                    final String stacktrace = error.get("stacktrace").getAsString();
-                    return new AlgoFailure(new AlgorithmException(msg, null, stacktrace));
-                } else {
-                    JsonObject metaJson = obj.getAsJsonObject("metadata");
-                    Double duration = metaJson.get("duration").getAsDouble();
-                    JsonElement stdoutJson = metaJson.get("stdout");
-                    String stdout = (stdoutJson == null) ? null : stdoutJson.getAsString();
-                    Metadata meta = new Metadata(duration, stdout);
-                    return new AlgoSuccess(obj.get("result"), meta);
-                }
-            } else {
-                throw new APIException("Unexpected API response: " + json);
-            }
+            return jsonToAlgoResponse(json);
         }
     }
 
+
+    public static AlgoResponse jsonToAlgoResponse(JsonElement json) throws APIException {
+        if(json != null && json.isJsonObject()) {
+            final JsonObject obj = json.getAsJsonObject();
+            if(obj.has("error")) {
+                final JsonObject error = obj.getAsJsonObject("error");
+                final String msg = error.get("message").getAsString();
+                final String stacktrace = error.get("stacktrace").getAsString();
+                return new AlgoFailure(new AlgorithmException(msg, null, stacktrace));
+            } else {
+                JsonObject metaJson = obj.getAsJsonObject("metadata");
+                Double duration = metaJson.get("duration").getAsDouble();
+                JsonElement stdoutJson = metaJson.get("stdout");
+                String stdout = (stdoutJson == null) ? null : stdoutJson.getAsString();
+                Metadata meta = new Metadata(duration, stdout);
+                return new AlgoSuccess(obj.get("result"), meta);
+            }
+        } else {
+            throw new APIException("Unexpected API response: " + json);
+        }
+    }
 
     public static void throwIfNotOk(HttpResponse response) throws APIException {
         final int status = response.getStatusLine().getStatusCode();

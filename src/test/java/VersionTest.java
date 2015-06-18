@@ -1,4 +1,4 @@
-import algorithmia.algo.Version;
+import com.algorithmia.algo.Version;
 
 import org.junit.Test;
 import org.junit.Assert;

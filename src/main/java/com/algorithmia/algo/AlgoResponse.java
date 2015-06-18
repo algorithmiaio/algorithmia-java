@@ -1,7 +1,7 @@
-package algorithmia.algo;
+package com.algorithmia.algo;
 
-import algorithmia.AlgorithmException;
-import algorithmia.TypeToken;
+import com.algorithmia.AlgorithmException;
+import com.algorithmia.TypeToken;
 import com.google.gson.JsonElement;
 import java.lang.reflect.Type;
 

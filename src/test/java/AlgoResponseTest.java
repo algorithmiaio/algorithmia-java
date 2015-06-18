@@ -1,6 +1,6 @@
-import algorithmia.algo.*;
-import algorithmia.util.JsonHelpers;
-import algorithmia.TypeToken;
+import com.algorithmia.algo.*;
+import com.algorithmia.util.JsonHelpers;
+import com.algorithmia.TypeToken;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import java.io.InputStream;

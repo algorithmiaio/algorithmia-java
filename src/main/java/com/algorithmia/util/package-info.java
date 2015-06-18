@@ -6,4 +6,4 @@
  *
  * @version 0.1.0
  */
-package algorithmia.util;
+package com.algorithmia.util;

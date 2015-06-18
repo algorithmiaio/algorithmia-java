@@ -1,11 +1,11 @@
-package algorithmia.client;
+package com.algorithmia.client;
 
-import algorithmia.algo.AlgoResponse;
-import algorithmia.algo.AlgoSuccess;
-import algorithmia.algo.AlgoFailure;
-import algorithmia.algo.Metadata;
-import algorithmia.AlgorithmException;
-import algorithmia.APIException;
+import com.algorithmia.algo.AlgoResponse;
+import com.algorithmia.algo.AlgoSuccess;
+import com.algorithmia.algo.AlgoFailure;
+import com.algorithmia.algo.Metadata;
+import com.algorithmia.AlgorithmException;
+import com.algorithmia.APIException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;

@@ -1,4 +1,4 @@
-package algorithmia.client;
+package com.algorithmia.client;
 
 import org.apache.http.HttpRequest;
 

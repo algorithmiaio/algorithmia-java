@@ -1,5 +1,5 @@
-import algorithmia.Algorithmia;
-import algorithmia.data.*;
+import com.algorithmia.Algorithmia;
+import com.algorithmia.data.*;
 
 import org.junit.Test;
 import org.junit.Assume;

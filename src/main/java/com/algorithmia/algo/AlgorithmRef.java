@@ -1,6 +1,6 @@
-package algorithmia.algo;
+package com.algorithmia.algo;
 
-import algorithmia.AlgorithmiaConf;
+import com.algorithmia.AlgorithmiaConf;
 import java.lang.IllegalArgumentException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

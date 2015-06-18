@@ -1,6 +1,6 @@
-package algorithmia.algo;
+package com.algorithmia.algo;
 
-import algorithmia.AlgorithmException;
+import com.algorithmia.AlgorithmException;
 import java.lang.reflect.Type;
 
 /**

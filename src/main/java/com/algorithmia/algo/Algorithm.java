@@ -1,8 +1,8 @@
-package algorithmia.algo;
+package com.algorithmia.algo;
 
-import algorithmia.APIException;
-import algorithmia.client.HttpClient;
-import algorithmia.client.HttpClientHelpers.AlgoResponseHandler;
+import com.algorithmia.APIException;
+import com.algorithmia.client.HttpClient;
+import com.algorithmia.client.HttpClientHelpers.AlgoResponseHandler;
 
 import java.util.concurrent.Future;
 

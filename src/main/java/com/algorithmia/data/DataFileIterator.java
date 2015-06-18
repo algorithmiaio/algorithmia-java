@@ -1,6 +1,6 @@
-package algorithmia.data;
+package com.algorithmia.data;
 
-import algorithmia.APIException;
+import com.algorithmia.APIException;
 
 import java.util.NoSuchElementException;
 import java.lang.UnsupportedOperationException;

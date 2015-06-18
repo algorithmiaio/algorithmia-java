@@ -1,8 +1,8 @@
-package algorithmia;
+package com.algorithmia;
 
-import algorithmia.algo.*;
-import algorithmia.client.*;
-import algorithmia.data.*;
+import com.algorithmia.algo.*;
+import com.algorithmia.client.*;
+import com.algorithmia.data.*;
 
 /**
  * Algorithmia main class for running and testing algorithms

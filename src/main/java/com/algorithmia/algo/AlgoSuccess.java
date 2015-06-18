@@ -1,4 +1,4 @@
-package algorithmia.algo;
+package com.algorithmia.algo;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;

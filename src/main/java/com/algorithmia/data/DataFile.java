@@ -1,7 +1,7 @@
-package algorithmia.data;
+package com.algorithmia.data;
 
-import algorithmia.APIException;
-import algorithmia.client.*;
+import com.algorithmia.APIException;
+import com.algorithmia.client.*;
 
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;

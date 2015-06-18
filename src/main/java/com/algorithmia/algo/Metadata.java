@@ -1,4 +1,4 @@
-package algorithmia.algo;
+package com.algorithmia.algo;
 
 /**
  * A result representing success

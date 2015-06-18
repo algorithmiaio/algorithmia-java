@@ -1,6 +1,6 @@
-package algorithmia.client;
+package com.algorithmia.client;
 
-import algorithmia.APIException;
+import com.algorithmia.APIException;
 import org.apache.http.client.methods.*;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClients;

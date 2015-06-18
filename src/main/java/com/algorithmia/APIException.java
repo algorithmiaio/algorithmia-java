@@ -1,4 +1,4 @@
-package algorithmia;
+package com.algorithmia;
 
 import java.io.IOException;
 

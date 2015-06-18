@@ -1,8 +1,8 @@
-package algorithmia.data;
+package com.algorithmia.data;
 
-import algorithmia.AlgorithmiaConf;
-import algorithmia.APIException;
-import algorithmia.client.*;
+import com.algorithmia.AlgorithmiaConf;
+import com.algorithmia.APIException;
+import com.algorithmia.client.*;
 
 
 

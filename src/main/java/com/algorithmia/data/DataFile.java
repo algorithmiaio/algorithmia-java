@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.FileNotFoundException;
 import org.apache.commons.io.IOUtils;
 
 /**
@@ -40,18 +41,24 @@ public class DataFile extends DataObject {
     }
 
     /**
-     * Returns the data as a raw file
+     * Gets the data for this file and saves it to a local temporary file
      * @return the data as a local temporary file
-     * @throws IOException if there were any problems communicating with the DataAPI
+     * @throws APIException if there were any problems communicating with the DataAPI
+     * @throws IOException if there were any problems consuming the response content
      */
-    public File getFile() throws IOException {
+    public File getFile() throws APIException, IOException {
         File tempFile = File.createTempFile(getName(), null);
         FileOutputStream outputStream = new FileOutputStream(tempFile);
         IOUtils.copy(getInputStream(), outputStream);
         return tempFile;
     }
 
-
+    /**
+     * Gets the data for this file as an InputStream
+     * @return the data as an InputStream
+     * @throws APIException if there were any problems communicating with the Algorithmia API
+     * @throws IOException if there were any problems consuming the response content
+    */
     public InputStream getInputStream() throws APIException, IOException {
         final HttpResponse response = client.get(url());
         HttpClientHelpers.throwIfNotOk(response);
@@ -61,7 +68,8 @@ public class DataFile extends DataObject {
     /**
      * Gets the data for this file as as string
      * @return the data as a String
-     * @throws IOException if there were any problems communicating with the DataAPI
+     * @throws APIException if there were any problems communicating with the Algorithmia API
+     * @throws IOException if there were any problems consuming the response content
      */
     public String getString() throws IOException {
         return IOUtils.toString(getInputStream(), "UTF-8");
@@ -70,7 +78,8 @@ public class DataFile extends DataObject {
     /**
      * Gets the data for this file as as string
      * @return the data as a String
-     * @throws IOException if there were any problems communicating with the DataAPI
+     * @throws APIException if there were any problems communicating with the Algorithmia API
+     * @throws IOException if there were any problems consuming the response content
      */
     public byte[] getBytes() throws IOException {
         return IOUtils.toByteArray(getInputStream());
@@ -79,7 +88,7 @@ public class DataFile extends DataObject {
     /**
      * Upload string data to this file as text
      * @param data the data to upload
-     * @throws APIException if there were any problems communicating with the DataAPI
+     * @throws APIException if there were any problems communicating with the Algorithmia API
      */
     public void put(String data) throws APIException {
         HttpResponse response = client.put(url(), new StringEntity(data, ContentType.DEFAULT_TEXT));
@@ -89,7 +98,7 @@ public class DataFile extends DataObject {
     /**
      * Upload raw data to this file as binary
      * @param data the data to upload
-     * @throws APIException if there were any problems communicating with the DataAPI
+     * @throws APIException if there were any problems communicating with the Algorithmia API
      */
     public void put(byte[] data) throws APIException {
         HttpResponse response = client.put(url(), new ByteArrayEntity(data, ContentType.APPLICATION_OCTET_STREAM));
@@ -99,7 +108,7 @@ public class DataFile extends DataObject {
     /**
      * Upload raw data to this file as an input stream
      * @param is the input stream of data to upload
-     * @throws APIException if there were any problems communicating with the DataAPI
+     * @throws APIException if there were any problems communicating with the Algorithmia API
      */
     public void put(InputStream is) throws APIException {
         HttpResponse response = client.put(url(), new InputStreamEntity(is));
@@ -109,15 +118,16 @@ public class DataFile extends DataObject {
     /**
      * Upload new data to this file from an existing file. These is a convenience wrapper for using InputStream.
      * @param file the file to upload data from
-     * @throws APIException if there were any problems communicating with the DataAPI
-     */
-    public void put(File file) throws APIException, java.io.FileNotFoundException {
+     * @throws APIException if there were any problems communicating with the Algorithmia API
+     * @throws FileNotFoundException if the specified file does not exist
+    */
+    public void put(File file) throws APIException, FileNotFoundException {
         put(new FileInputStream(file));
     }
 
     /**
      * Deletes this file.
-     * @throws APIException if there were any problems communicating with the DataAPI
+     * @throws APIException if there were any problems communicating with the Algorithmia API
      */
     public void delete() throws APIException {
         HttpResponse response = this.client.delete(this.url());

@@ -1,5 +1,5 @@
 /**
- * Algorithmia algo is a package for interacting with Algorithmia algorithms
+ * Provides objects and methods for interacting with Algorithmia algorithms
  *
  * @version 0.1.0
  */

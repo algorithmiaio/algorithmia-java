@@ -15,7 +15,12 @@ import com.google.gson.JsonObject;
 public class JsonHelpers {
     private JsonHelpers() {}  // non-instantiable
 
-    /** Parse JSON RPC style result */
+    /**
+    * Parse JSON RPC style result
+     * @param json response that will be deserialized into an AlgoResponse
+     * @return algorithm result (AlgoSuccess or AlgoFailure)
+     * @throws APIException if there is a problem communication with the Algorithmia API.
+    */
     public static AlgoResponse jsonToAlgoResponse(JsonElement json) throws APIException {
         if(json != null && json.isJsonObject()) {
             final JsonObject obj = json.getAsJsonObject();

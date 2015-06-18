@@ -17,6 +17,8 @@ public abstract class AlgoResponse {
 
     /**
      * Convert the result to a specific class
+     * @param <T> the type that the response will be deserialized into
+     * @param returnClass the class used by the deserializer (should correspond with T)
      * @return the result, if this is AlgoSuccess
      * @throws AlgorithmException the error, if this is AlgoFailure
      */
@@ -24,6 +26,8 @@ public abstract class AlgoResponse {
 
     /**
      * Convert the result to a specific type
+     * @param <T> the type that the response will be deserialized into
+     * @param returnType the type used by the deserializer (should correspond with T)
      * @return the result, if this is AlgoSuccess
      * @throws AlgorithmException the error, if this is AlgoFailure
      */
@@ -31,7 +35,13 @@ public abstract class AlgoResponse {
 
 
     /**
-     * Convert the result to a specific type without causing type erasure
+     * Convert the result to a specific type.
+     * To avoid type erasure, be sure to instantiate as an anonymous class:
+     * <pre>
+     * {@code new TypeToken<MyClass>(){} }
+     * </pre>
+     * @param <T> the type that the response will be deserialized into
+     * @param typeToken the type used by the deserializer (should correspond with T)
      * @return the result, if this is AlgoSuccess
      * @throws AlgorithmException the error, if this is AlgoFailure
      */
@@ -41,7 +51,7 @@ public abstract class AlgoResponse {
 
     /**
      * Get string representation of the result or throw an exception
-     * @return the result, if this is AlgoSuccess
+     * @return the result as a UTF-8 string, if this is AlgoSuccess
      * @throws AlgorithmException the error, if this is AlgoFailure
      */
     public String get() throws AlgorithmException {

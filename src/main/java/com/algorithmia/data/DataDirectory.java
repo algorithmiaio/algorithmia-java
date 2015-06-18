@@ -24,6 +24,11 @@ public class DataDirectory extends DataObject {
         super(client, dataUrl);
     }
 
+    /**
+     * Determine if this Algorithmia data directory exists
+     * @return true iff the directory exists
+     * @throws APIException if there were any problems communicating with the Algorithmia API
+     */
     public boolean exists() throws APIException {
         HttpResponse response = this.client.get(url());
         int status = response.getStatusLine().getStatusCode();
@@ -37,7 +42,7 @@ public class DataDirectory extends DataObject {
      * Get an iterator for retrieving files in this DataDirectory
      * The file list retrieval is done in batches, generally ~1000 files at a time
      * @return the list of files
-     * @throws APIException if there were any problems communicating with the DataAPI
+     * @throws APIException if there were any problems communicating with the Algorithmia API
      */
     public DataFileIterator getFileIter() throws APIException {
         return new DataFileIterator(this);
@@ -56,6 +61,8 @@ public class DataDirectory extends DataObject {
      * Convenience wrapper for putting a File
      * @param file a file to put into this data directory
      * @return a handle to the requested file
+     * @throws APIException if there were any problems communicating with the Algorithmia API
+     * @throws FileNotFoundException if the specified file does not exist
      */
     public DataFile putFile(File file) throws APIException, FileNotFoundException {
         DataFile dataFile = new DataFile(client, path + "/" + file.getName());
@@ -70,6 +77,10 @@ public class DataDirectory extends DataObject {
         }
     }
 
+    /**
+     * Creates this directory via the Algorithmia Data API
+     * @throws APIException if there were any problems communicating with the Algorithmia API
+     */
     public void create() throws APIException {
         CreateDirectoryRequest reqObj = new CreateDirectoryRequest(this.getName());
         Gson gson = new Gson();
@@ -80,6 +91,11 @@ public class DataDirectory extends DataObject {
         HttpClientHelpers.throwIfNotOk(response);
     }
 
+    /**
+     * Creates this directory vi the Algorithmia Data API
+     * @param forceDelete forces deletion of the directory even if it still has other files in it
+     * @throws APIException if there were any problems communicating with the Algorithmia API
+     */
     public void delete(boolean forceDelete) throws APIException {
         HttpResponse response = this.client.delete(this.url() + "?force=" + forceDelete);
         HttpClientHelpers.throwIfNotOk(response);
@@ -109,6 +125,12 @@ public class DataDirectory extends DataObject {
         }
     }
 
+    /**
+     * Gets a single page of the directory listing. Subsquent pages are fetched with the returned marker value.
+     * @param marker indicates the specific page to fetch; first page is fetched if null
+     * @return a page of files and directories that exist within this directory
+     * @throws APIException if there were any problems communicating with the Algorithmia API
+     */
     protected DirectoryListResponse getPage(String marker) throws APIException {
         String url = (marker == null) ? url() : url() + "?marker=" + marker;
         return client.get(url, new TypeToken<DirectoryListResponse>(){});

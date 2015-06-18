@@ -2,7 +2,7 @@ package com.algorithmia;
 
 
 /**
- * Stores the Algorithmia SDK Configuration
+ * Stores configuration for the Algorithmia client library
  */
 public class AlgorithmiaConf {
     private AlgorithmiaConf() {}

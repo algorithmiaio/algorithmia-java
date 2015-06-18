@@ -37,7 +37,7 @@ public class HttpClient {
 
     public <T> T get(String url, TypeToken<T> typeToken) throws APIException {
         final HttpGet request = new HttpGet(url);
-        return this.execute(request, new HttpClientHelpers.JsonDeserializeResponseHandler<>(typeToken));
+        return this.execute(request, new HttpClientHelpers.JsonDeserializeResponseHandler<T>(typeToken));
 
     }
 

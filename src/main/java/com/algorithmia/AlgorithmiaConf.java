@@ -8,7 +8,7 @@ public class AlgorithmiaConf {
     private AlgorithmiaConf() {}
 
     /**
-     * Returns the base address of the API server (http://api.algorithmia.com)
+     * Returns the base address of the API server (https://api.algorithmia.com)
      * @return the base address of the API server
      */
     public static String apiAddress() {
@@ -22,7 +22,7 @@ public class AlgorithmiaConf {
             return envApiAddress;
         } else {
             // Default to official Algorithmia API
-            return "http://api.algorithmia.com";
+            return "https://api.algorithmia.com";
         }
     }
 

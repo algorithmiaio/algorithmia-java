@@ -1,0 +1,26 @@
+###############################################################
+##Shippable build and deploy script for dev.algorithmia.com ###
+## author: diego@algorithmia.com           					###
+###############################################################
+
+# Build Environment
+build_environment: ubuntu1404
+
+#Language
+language: java
+scala:
+   - 2.11.2
+
+jdk:
+  - openjdk7
+  - openjdk8
+
+script:
+  - sbt clean compile
+#  - sbt test
+
+
+notifications:
+  email:
+    - devops@algorithmia.io
+

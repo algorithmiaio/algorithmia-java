@@ -44,7 +44,7 @@ public class Algorithm {
     public AlgoResponse pipe(Object input) throws APIException {
         final Gson gson = new Gson();
         final JsonElement inputJson = gson.toJsonTree(input);
-        final AlgoResponse result = this.pipeJson(inputJson);
+        final AlgoResponse result = pipeJson(inputJson);
         return result;
     }
 
@@ -53,9 +53,9 @@ public class Algorithm {
      *
      * @param algoRef identifier of the algorithm to call (eg- "/kenny/Dijkstra")
      * @param input algorithm input, will automatically be converted into JSON
-     * @return future algorithm result
+     * @return future algorithm result (AlgoSuccess or AlgoFailure)
      */
-    // private Future<AlgoResponse> pipeAsync(Object input) {
+    // public Future<AlgoResponse> pipeAsync(Object input) {
     //     final Gson gson = new Gson();
     //     final JsonElement inputJson = gson.toJsonTree(input);
     //     final Future<AlgoResponse> result = this.pipeJsonAsync(inputJson);
@@ -75,9 +75,9 @@ public class Algorithm {
         } catch(java.util.concurrent.ExecutionException e) {
             throw new APIException(e.getCause().getMessage());
         } catch(java.util.concurrent.CancellationException e) {
-            throw new APIException("API connection cancelled: " + this.algoRef.url() + " (" + e.getMessage() + ")", e);
+            throw new APIException("API connection cancelled: " + algoRef.getUrl() + " (" + e.getMessage() + ")", e);
         } catch(java.lang.InterruptedException e) {
-            throw new APIException("API connection interrupted: " + this.algoRef.url() + " (" + e.getMessage() + ")", e);
+            throw new APIException("API connection interrupted: " + algoRef.getUrl() + " (" + e.getMessage() + ")", e);
         }
     }
 
@@ -87,8 +87,8 @@ public class Algorithm {
      * @return success or failure
      */
     private Future<AlgoResponse> pipeJsonAsync(JsonElement inputJson) {
-        return this.client.post(
-            this.algoRef.url(),
+        return client.post(
+            algoRef.getUrl(),
             new StringEntity(inputJson.toString(), ContentType.APPLICATION_JSON),
             new AlgoResponseHandler()
         );

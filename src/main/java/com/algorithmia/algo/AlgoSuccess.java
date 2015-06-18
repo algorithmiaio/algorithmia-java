@@ -9,8 +9,8 @@ import java.lang.reflect.Type;
  */
 public final class AlgoSuccess extends AlgoResponse {
 
-    public JsonElement result;
-    public Metadata metadata;
+    private JsonElement result;
+    private Metadata metadata;
 
     public AlgoSuccess(JsonElement result, Metadata metadata) {
         this.result = result;

@@ -53,7 +53,7 @@ public class AlgorithmRef {
      * Resolves this file reference into an HTTP url
      * @return the HTTP url for this file
      */
-    public String url() {
+    public String getUrl() {
         if(version.isLatest()) {
             return AlgorithmiaConf.apiAddress() + "/v1/algo/" + username+ "/" + algoname;
         } else {

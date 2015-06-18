@@ -33,7 +33,7 @@ abstract public class DataObject {
      * Resolves this collection into an HTTP url
      * @return the HTTP url for this collection
      */
-    public String url() {
+    public String getUrl() {
         return AlgorithmiaConf.apiAddress() + "/v1/data/" + path;
     }
 

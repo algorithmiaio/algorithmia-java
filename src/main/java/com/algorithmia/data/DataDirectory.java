@@ -30,7 +30,7 @@ public class DataDirectory extends DataObject {
      * @throws APIException if there were any problems communicating with the Algorithmia API
      */
     public boolean exists() throws APIException {
-        HttpResponse response = this.client.get(url());
+        HttpResponse response = this.client.get(getUrl());
         int status = response.getStatusLine().getStatusCode();
         if(status != 200 && status != 404) {
             throw APIException.fromHttpResponse(response);
@@ -86,7 +86,7 @@ public class DataDirectory extends DataObject {
         Gson gson = new Gson();
         JsonElement inputJson = gson.toJsonTree(reqObj);
 
-        String url = this.getParent().url();
+        String url = this.getParent().getUrl();
         HttpResponse response = this.client.post(url, new StringEntity(inputJson.toString(), ContentType.APPLICATION_JSON));
         HttpClientHelpers.throwIfNotOk(response);
     }
@@ -97,7 +97,7 @@ public class DataDirectory extends DataObject {
      * @throws APIException if there were any problems communicating with the Algorithmia API
      */
     public void delete(boolean forceDelete) throws APIException {
-        HttpResponse response = this.client.delete(this.url() + "?force=" + forceDelete);
+        HttpResponse response = client.delete(getUrl() + "?force=" + forceDelete);
         HttpClientHelpers.throwIfNotOk(response);
     }
 
@@ -132,7 +132,7 @@ public class DataDirectory extends DataObject {
      * @throws APIException if there were any problems communicating with the Algorithmia API
      */
     protected DirectoryListResponse getPage(String marker) throws APIException {
-        String url = (marker == null) ? url() : url() + "?marker=" + marker;
+        String url = (marker == null) ? getUrl() : getUrl() + "?marker=" + marker;
         return client.get(url, new TypeToken<DirectoryListResponse>(){});
     }
 }

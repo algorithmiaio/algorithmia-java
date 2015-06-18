@@ -32,7 +32,7 @@ public class DataFile extends DataObject {
       * @throws APIException if there were any problems communicating with the DataAPI
       */
     public boolean exists() throws APIException {
-        HttpResponse response = this.client.head(url());
+        HttpResponse response = client.head(getUrl());
         int status = response.getStatusLine().getStatusCode();
         if(status != 200 && status != 404) {
             throw APIException.fromHttpResponse(response);
@@ -60,7 +60,7 @@ public class DataFile extends DataObject {
      * @throws IOException if there were any problems consuming the response content
     */
     public InputStream getInputStream() throws APIException, IOException {
-        final HttpResponse response = client.get(url());
+        final HttpResponse response = client.get(getUrl());
         HttpClientHelpers.throwIfNotOk(response);
         return response.getEntity().getContent();
     }
@@ -91,7 +91,7 @@ public class DataFile extends DataObject {
      * @throws APIException if there were any problems communicating with the Algorithmia API
      */
     public void put(String data) throws APIException {
-        HttpResponse response = client.put(url(), new StringEntity(data, ContentType.DEFAULT_TEXT));
+        HttpResponse response = client.put(getUrl(), new StringEntity(data, ContentType.DEFAULT_TEXT));
         HttpClientHelpers.throwIfNotOk(response);
     }
 
@@ -101,7 +101,7 @@ public class DataFile extends DataObject {
      * @throws APIException if there were any problems communicating with the Algorithmia API
      */
     public void put(byte[] data) throws APIException {
-        HttpResponse response = client.put(url(), new ByteArrayEntity(data, ContentType.APPLICATION_OCTET_STREAM));
+        HttpResponse response = client.put(getUrl(), new ByteArrayEntity(data, ContentType.APPLICATION_OCTET_STREAM));
         HttpClientHelpers.throwIfNotOk(response);
     }
 
@@ -111,7 +111,7 @@ public class DataFile extends DataObject {
      * @throws APIException if there were any problems communicating with the Algorithmia API
      */
     public void put(InputStream is) throws APIException {
-        HttpResponse response = client.put(url(), new InputStreamEntity(is));
+        HttpResponse response = client.put(getUrl(), new InputStreamEntity(is));
         HttpClientHelpers.throwIfNotOk(response);
     }
 
@@ -130,7 +130,7 @@ public class DataFile extends DataObject {
      * @throws APIException if there were any problems communicating with the Algorithmia API
      */
     public void delete() throws APIException {
-        HttpResponse response = this.client.delete(this.url());
+        HttpResponse response = client.delete(getUrl());
         HttpClientHelpers.throwIfNotOk(response);
     }
 

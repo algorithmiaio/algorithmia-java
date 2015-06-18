@@ -13,11 +13,13 @@ TODO: link to java docs
 
 algorithmia-java is published to Maven Central. To add as a dependency:
 
+````xml
 <dependency>
   <groupId>com.algorithmia</groupId>
   <artifactId>algorithmia-client</artifactId>
   <version>0.9.0</version>
 </dependency>
+````
 
 Instantiate a client using your API Key:
 

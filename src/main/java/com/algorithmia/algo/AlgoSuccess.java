@@ -28,7 +28,7 @@ public final class AlgoSuccess extends AlgoResponse {
     }
 
     @Override
-    public Metadata metadata() {
+    public Metadata getMetadata() {
         return metadata;
     }
 

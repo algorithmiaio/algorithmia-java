@@ -1,12 +1,11 @@
 package com.algorithmia.algo;
 
 /**
- * A result representing success
+ * Algorithm response metadata
  */
 public final class Metadata {
     public Double duration;
     public String stdout;
-    // public List<String> alerts;
 
     public Metadata(Double duration) {
         this(duration, null);

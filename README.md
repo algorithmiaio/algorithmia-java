@@ -36,7 +36,7 @@ Algorithms are called with the `pipe` method:
 ````java
 Algorithm addOne = algorithmia.algo("docs/JavaAddOne");
 AlgoResponse response = addOne.pipe(72);
-int result = response.as(new TypeToken<int>(){});
+Integer result = response.as(new TypeToken<Integer>(){});
 Double durationInSeconds = response.getMetadata().duration;
 ````
 

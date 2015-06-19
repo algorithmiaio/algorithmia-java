@@ -12,4 +12,8 @@ package com.algorithmia;
  * </pre>
  */
 
-public class TypeToken<T> extends com.google.gson.reflect.TypeToken<T> { }
+public class TypeToken<T> extends com.google.gson.reflect.TypeToken<T> {
+    protected TypeToken() {
+        super();
+    }
+}

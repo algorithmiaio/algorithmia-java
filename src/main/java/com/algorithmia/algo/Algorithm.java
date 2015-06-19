@@ -50,17 +50,17 @@ public class Algorithm {
 
    /**
      * Calls the Algorithmia API on a given input asynchronously.
+     * The future response will complete when the algorithm has completed or errored
      *
-     * @param algoRef identifier of the algorithm to call (eg- "/kenny/Dijkstra")
      * @param input algorithm input, will automatically be converted into JSON
      * @return future algorithm result (AlgoSuccess or AlgoFailure)
      */
-    // public Future<AlgoResponse> pipeAsync(Object input) {
-    //     final Gson gson = new Gson();
-    //     final JsonElement inputJson = gson.toJsonTree(input);
-    //     final Future<AlgoResponse> result = this.pipeJsonAsync(inputJson);
-    //     return result;
-    // }
+    public FutureAlgoResponse pipeAsync(Object input) {
+        final Gson gson = new Gson();
+        final JsonElement inputJson = gson.toJsonTree(input);
+        final FutureAlgoResponse result = new FutureAlgoResponse(this.pipeJsonAsync(inputJson));
+        return result;
+    }
 
 
     /**

@@ -25,7 +25,7 @@ public final class AlgoFailure extends AlgoResponse {
     }
 
     @Override
-    public Metadata metadata() throws AlgorithmException {
+    public Metadata getMetadata() throws AlgorithmException {
         throw error;
     }
 

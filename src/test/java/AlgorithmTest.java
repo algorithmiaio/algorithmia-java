@@ -14,6 +14,7 @@ public class AlgorithmTest {
 
         Algorithmia algorithmia = new Algorithmia(key);
         AlgoResponse res = algorithmia.algo("kenny/factor").pipe("14");
-        Assert.assertEquals("[2,7]", res.get());
+        Assert.assertEquals("[2,7]", res.toString());
     }
+
 }

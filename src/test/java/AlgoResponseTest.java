@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.Integer;
 import java.util.List;
 import java.util.Arrays;
 
@@ -18,7 +19,7 @@ public class AlgoResponseTest {
         final AlgoResponse response = parseResourceAsResponse("algo_success_array_long.json");
         Assert.assertEquals(true, response.isSuccess());
         Assert.assertEquals(false, response.isFailure());
-        Assert.assertEquals("[2,2,2,3,3]", response.get());
+        Assert.assertEquals("[2,2,2,3,3]", response.toString());
     }
 
     @Test
@@ -39,15 +40,23 @@ public class AlgoResponseTest {
     @Test
     public void algoResponseAsString() throws Exception {
         final AlgoResponse response = parseResourceAsResponse("algo_success_string.json");
-        String result = response.as((new TypeToken<String>(){}));
+        String result = response.as(new TypeToken<String>(){});
         String expected = "Whuh... I think so, Brain. But this time I get to play the dishwasher repairman!";
         Assert.assertEquals(expected, result);
     }
 
     @Test
+    public void algoResponseAsInt() throws Exception {
+        final AlgoResponse response = parseResourceAsResponse("algo_success_int.json");
+        int result = response.as(new TypeToken<Integer>(){});
+        Assert.assertEquals(42, result);
+    }
+
+
+    @Test
     public void algoResponseMetadata() throws Exception {
         final AlgoResponse response = parseResourceAsResponse("algo_success_array_long.json");
-        Metadata meta = response.metadata();
+        Metadata meta = response.getMetadata();
         Assert.assertEquals(0.035916637, meta.duration, 0.0001);
     }
 

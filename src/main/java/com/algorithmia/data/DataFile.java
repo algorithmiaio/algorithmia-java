@@ -17,6 +17,9 @@ import java.io.IOException;
 import java.io.FileNotFoundException;
 import org.apache.commons.io.IOUtils;
 
+import java.util.ArrayList;
+
+
 /**
  * A reference to a file in the data api
  */
@@ -58,7 +61,7 @@ public class DataFile extends DataObject {
      * @return the data as an InputStream
      * @throws APIException if there were any problems communicating with the Algorithmia API
      * @throws IOException if there were any problems consuming the response content
-    */
+     */
     public InputStream getInputStream() throws APIException, IOException {
         final HttpResponse response = client.get(getUrl());
         HttpClientHelpers.throwIfNotOk(response);

@@ -48,6 +48,10 @@ public class DataDirectory extends DataObject {
         return new DataFileIterator(this);
     }
 
+    public DataDirectoryIterator getDirIter() throws APIException{
+        return new DataDirectoryIterator(this);
+    }
+
     /**
      * Queries the DataAPI for a particular data file
      * @param filename the name of the file within this collection to get a reference for
@@ -101,25 +105,25 @@ public class DataDirectory extends DataObject {
         HttpClientHelpers.throwIfNotOk(response);
     }
 
-    public class FileMetadata {
-        public String filename;
+    protected class FileMetadata {
+        protected String filename;
 
-        FileMetadata(String filename) {
+        protected FileMetadata(String filename) {
             this.filename = filename;
         }
     }
 
-    public class DirectoryMetadata {
-        public String name;
-        DirectoryMetadata(String name) {
+    protected class DirectoryMetadata {
+        protected String name;
+        protected DirectoryMetadata(String name) {
             this.name = name;
         }
     }
 
-    public class DirectoryListResponse {
-        public List<FileMetadata> files;
-        public List<DirectoryMetadata> folders;
-        DirectoryListResponse(List<FileMetadata> files, List<DirectoryMetadata> folders) {
+    protected class DirectoryListResponse {
+        protected List<FileMetadata> files;
+        protected List<DirectoryMetadata> folders;
+        protected DirectoryListResponse(List<FileMetadata> files, List<DirectoryMetadata> folders) {
             this.files = files;
             this.folders = folders;
         }

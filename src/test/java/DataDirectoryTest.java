@@ -58,8 +58,8 @@ public class DataDirectoryTest {
         dir.file("foo2").put("bar2");
         DataFileIterator iter = dir.getFileIter();
 
-        Assert.assertEquals("foo", iter.next().getName());
-        Assert.assertEquals("foo2", iter.next().getName());
+        Assert.assertEquals("data://me/javaDataDirList/foo", iter.next().toString());
+        Assert.assertEquals("data://me/javaDataDirList/foo2", iter.next().toString());
     }
 
 }

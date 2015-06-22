@@ -11,14 +11,14 @@ public class DataFileTest {
 
     @Test
     public void dataFileParent() throws Exception {
-        DataFile file = new DataFile(null, "/me/javaclienttest/foo");
-        DataDirectory parent = new DataDirectory(null, "/me/javaclienttest");
+        DataFile file = new DataFile(null, "/.my/javaclienttest/foo");
+        DataDirectory parent = new DataDirectory(null, "/.my/javaclienttest");
         Assert.assertEquals(parent.path, file.getParent().path);
     }
 
     @Test
     public void dataFileName() throws Exception {
-        DataDirectory file = new DataDirectory(null, "/me/javaDataFileName/foo");
+        DataDirectory file = new DataDirectory(null, "/.my/javaDataFileNa.my/foo");
         String expected = "foo";
         Assert.assertEquals(expected, file.getName());
     }
@@ -29,7 +29,7 @@ public class DataFileTest {
         Assume.assumeTrue(key != null);
 
         Algorithmia algorithmia = new Algorithmia(key);
-        DataFile file = algorithmia.file("/me/javaDataFileCreate/foo.txt");
+        DataFile file = algorithmia.file("/.my/javaDataFileCreate/foo.txt");
 
 
         // Make sure test starts in clean state
@@ -54,7 +54,7 @@ public class DataFileTest {
         Assume.assumeTrue(key != null);
 
         Algorithmia algorithmia = new Algorithmia(key);
-        DataFile file = algorithmia.file("/me/javaDataFileGet/foo.txt");
+        DataFile file = algorithmia.file("/.my/javaDataFileGet/foo.txt");
         String expected = "Simple text file";
 
         // Make sure test starts in clean state

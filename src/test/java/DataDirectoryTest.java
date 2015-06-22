@@ -10,14 +10,14 @@ public class DataDirectoryTest {
 
     @Test
     public void dataDirParent() throws Exception {
-        DataDirectory dir = new DataDirectory(null, "/me/javaclienttest");
+        DataDirectory dir = new DataDirectory(null, "/.my/javaclienttest");
         DataDirectory parent = new DataDirectory(null, "/me");
         Assert.assertEquals(parent.path, dir.getParent().path);
     }
 
     @Test
     public void dataDirName() throws Exception {
-        DataDirectory dir = new DataDirectory(null, "/me/javaclienttest");
+        DataDirectory dir = new DataDirectory(null, "/.my/javaclienttest");
         String expected = "javaclienttest";
         Assert.assertEquals(expected, dir.getName());
     }
@@ -28,7 +28,7 @@ public class DataDirectoryTest {
         Assume.assumeTrue(key != null);
 
         Algorithmia algorithmia = new Algorithmia(key);
-        DataDirectory dir = algorithmia.dir("/me/javaDataDirCreate");
+        DataDirectory dir = algorithmia.dir("/.my/javaDataDirCreate");
 
         // Make sure test starts in clean state
         if(dir.exists()) {
@@ -47,7 +47,7 @@ public class DataDirectoryTest {
         Assume.assumeTrue(key != null);
 
         Algorithmia algorithmia = new Algorithmia(key);
-        DataDirectory dir = algorithmia.dir("/me/javaDataDirList");
+        DataDirectory dir = algorithmia.dir("/.my/javaDataDirList");
 
         if(dir.exists()) {
             dir.delete(true);
@@ -58,8 +58,8 @@ public class DataDirectoryTest {
         dir.file("foo2").put("bar2");
         DataFileIterator iter = dir.getFileIter();
 
-        Assert.assertEquals("data://me/javaDataDirList/foo", iter.next().toString());
-        Assert.assertEquals("data://me/javaDataDirList/foo2", iter.next().toString());
+        Assert.assertEquals("data://.my/javaDataDirList/foo", iter.next().toString());
+        Assert.assertEquals("data://.my/javaDataDirList/foo2", iter.next().toString());
     }
 
 }

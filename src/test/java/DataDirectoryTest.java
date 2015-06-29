@@ -11,7 +11,7 @@ public class DataDirectoryTest {
     @Test
     public void dataDirParent() throws Exception {
         DataDirectory dir = new DataDirectory(null, "/.my/javaclienttest");
-        DataDirectory parent = new DataDirectory(null, "/me");
+        DataDirectory parent = new DataDirectory(null, "/.my");
         Assert.assertEquals(parent.path, dir.getParent().path);
     }
 
@@ -27,8 +27,7 @@ public class DataDirectoryTest {
         final String key = System.getenv("ALGORITHMIA_API_KEY");
         Assume.assumeTrue(key != null);
 
-        Algorithmia algorithmia = new Algorithmia(key);
-        DataDirectory dir = algorithmia.dir("/.my/javaDataDirCreate");
+        DataDirectory dir = Algorithmia.client(key).dir("/.my/javaDataDirCreate");
 
         // Make sure test starts in clean state
         if(dir.exists()) {
@@ -46,8 +45,7 @@ public class DataDirectoryTest {
         final String key = System.getenv("ALGORITHMIA_API_KEY");
         Assume.assumeTrue(key != null);
 
-        Algorithmia algorithmia = new Algorithmia(key);
-        DataDirectory dir = algorithmia.dir("/.my/javaDataDirList");
+        DataDirectory dir = Algorithmia.client(key).dir("/.my/javaDataDirList");
 
         if(dir.exists()) {
             dir.delete(true);

@@ -24,7 +24,7 @@ algorithmia-java is published to Maven Central. To add as a dependency:
 Instantiate a client using your API Key:
 
 ````java
-Algorithmia algorithmia = new Algorithmia(apiKey);
+AlgorithmiaClient client = Algorithmia.client(apiKey);
 ````
 
 Note: API key may be ommitted only when making calls from algorithms running on the Algorithmia cluster
@@ -34,7 +34,7 @@ Note: API key may be ommitted only when making calls from algorithms running on 
 Algorithms are called with the `pipe` method:
 
 ````java
-Algorithm addOne = algorithmia.algo("docs/JavaAddOne");
+Algorithm addOne = client.algo("docs/JavaAddOne");
 AlgoResponse response = addOne.pipe(72);
 Integer result = response.as(new TypeToken<Integer>(){});
 Double durationInSeconds = response.getMetadata().duration;
@@ -46,7 +46,7 @@ Manage your data stored within Algorithmia:
 
 ````java
 // Create a directory "foo"
-DataDirectory foo = algorithmia.dir("/.my/foo");
+DataDirectory foo = client.dir("/.my/foo");
 foo.create();
 
 // Upload files to "foo" directory

@@ -28,8 +28,7 @@ public class DataFileTest {
         final String key = System.getenv("ALGORITHMIA_API_KEY");
         Assume.assumeTrue(key != null);
 
-        Algorithmia algorithmia = new Algorithmia(key);
-        DataFile file = algorithmia.file("/.my/javaDataFileCreate/foo.txt");
+        DataFile file = Algorithmia.client(key).file("/.my/javaDataFileCreate/foo.txt");
 
 
         // Make sure test starts in clean state
@@ -53,8 +52,7 @@ public class DataFileTest {
         final String key = System.getenv("ALGORITHMIA_API_KEY");
         Assume.assumeTrue(key != null);
 
-        Algorithmia algorithmia = new Algorithmia(key);
-        DataFile file = algorithmia.file("/.my/javaDataFileGet/foo.txt");
+        DataFile file = Algorithmia.client(key).file("/.my/javaDataFileGet/foo.txt");
         String expected = "Simple text file";
 
         // Make sure test starts in clean state

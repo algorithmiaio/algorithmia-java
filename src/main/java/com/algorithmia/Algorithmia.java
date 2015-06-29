@@ -8,45 +8,53 @@ import com.algorithmia.data.*;
  * Instantiate Algorithmia clients for calling algorithms and accessing data
  */
 public final class Algorithmia {
-    private HttpClient client;
-    /**
-     * Instantiate Algorithmia client without credentials
-     * This only works for when running the client on top of the Algorithmia platform
-     */
-    public Algorithmia() {}
+    private Algorithmia() {} // Not instantiable
 
     /**
-     * Instantiate Algorithmia client without Simple Key Auth
-     * @param simpleKey an Algorithmia API key with the "sim" prefix
+     * Builds an Algorithmia client that makes all requests with your API key
+     * If API key is null, the default client is returned, which will
+     * look for ALGORITHMI_API_KEY environment variable or java property
+     * If no key is found, then requests will be unauthenticated which only works
+     * when making requests from an algorithm running within the Algorithmia cluster
+     * @param simpleKey API Key for simple authentication (prefixed with "sim")
+     * @return an Algorithmia client
      */
-    public Algorithmia(String simpleKey) {
-        this.client = new HttpClient(new SimpleAuth(simpleKey));
+    public static AlgorithmiaClient client(String simpleKey) {
+        if(simpleKey == null) {
+            return getDefaultClient();
+        } else {
+            return new AlgorithmiaClient(new SimpleAuth(simpleKey));
+        }
     }
 
     /**
-     * Initialize an Algorithm object from this client
+     * Initialize an Algorithm object using the default client
      * @param algoUri the algorithm's URI, e.g., algo://user/algoname
      * @return an Algorithm client for the specified algorithm
      */
-    public Algorithm algo(String algoUri) {
-        return new Algorithm(client, algoUri);
+    public static Algorithm algo(String algoUri) {
+        return getDefaultClient().algo(algoUri);
     }
 
-    /**
-     * Initialize a DataDirectory object from this client
+   /**
+     * Initialize a DataDirectory object using the default client
      * @param path to a data directory, e.g., data://.my/foo
      * @return a DataDirectory client for the specified directory
      */
     public DataDirectory dir(String path) {
-        return new DataDirectory(client, path);
+        return getDefaultClient().dir(path);
     }
 
     /**
-     * Initialize an DataFile object from this client
+     * Initialize an DataFile object using the default client
      * @param path to a data file, e.g., data://.my/foo/bar.txt
      * @return a DataFile client for the specified file
      */
     public DataFile file(String path) {
-        return new DataFile(client, path);
+        return getDefaultClient().file(path);
+    }
+
+    private static AlgorithmiaClient getDefaultClient() {
+        return new AlgorithmiaClient();
     }
 }

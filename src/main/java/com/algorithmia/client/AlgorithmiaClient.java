@@ -16,8 +16,8 @@ public final class AlgorithmiaClient {
     protected AlgorithmiaClient() {}
 
     /**
-     * Instantiate Algorithmia client without Simple Key Auth
-     * @param simpleKey an Algorithmia API key with the "sim" prefix
+     * Instantiate Algorithmia client with auth
+     * @param auth Algorithmia Auth object
      */
     protected AlgorithmiaClient(Auth auth) {
         this.client = new HttpClient(auth);

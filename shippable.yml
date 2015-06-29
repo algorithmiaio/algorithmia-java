@@ -1,6 +1,5 @@
 ###############################################################
 ##Shippable build and deploy script for dev.algorithmia.com ###
-## author: diego@algorithmia.com           					###
 ###############################################################
 
 # Build Environment

@@ -46,7 +46,7 @@ Manage your data stored within Algorithmia:
 
 ````java
 // Create a directory "foo"
-DataDirectory foo = client.dir("/.my/foo");
+DataDirectory foo = client.dir("data://.my/foo");
 foo.create();
 
 // Upload files to "foo" directory

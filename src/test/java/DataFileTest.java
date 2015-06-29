@@ -11,14 +11,14 @@ public class DataFileTest {
 
     @Test
     public void dataFileParent() throws Exception {
-        DataFile file = new DataFile(null, "/.my/javaclienttest/foo");
-        DataDirectory parent = new DataDirectory(null, "/.my/javaclienttest");
+        DataFile file = new DataFile(null, "data://.my/javaclienttest/foo");
+        DataDirectory parent = new DataDirectory(null, "data://.my/javaclienttest");
         Assert.assertEquals(parent.path, file.getParent().path);
     }
 
     @Test
     public void dataFileName() throws Exception {
-        DataDirectory file = new DataDirectory(null, "/.my/javaDataFileNa.my/foo");
+        DataDirectory file = new DataDirectory(null, "data://.my/javaDataFileNa.my/foo");
         String expected = "foo";
         Assert.assertEquals(expected, file.getName());
     }
@@ -28,7 +28,7 @@ public class DataFileTest {
         final String key = System.getenv("ALGORITHMIA_API_KEY");
         Assume.assumeTrue(key != null);
 
-        DataFile file = Algorithmia.client(key).file("/.my/javaDataFileCreate/foo.txt");
+        DataFile file = Algorithmia.client(key).file("data://.my/javaDataFileCreate/foo.txt");
 
 
         // Make sure test starts in clean state
@@ -52,7 +52,7 @@ public class DataFileTest {
         final String key = System.getenv("ALGORITHMIA_API_KEY");
         Assume.assumeTrue(key != null);
 
-        DataFile file = Algorithmia.client(key).file("/.my/javaDataFileGet/foo.txt");
+        DataFile file = Algorithmia.client(key).file("data://.my/javaDataFileGet/foo.txt");
         String expected = "Simple text file";
 
         // Make sure test starts in clean state

@@ -5,21 +5,9 @@ Java client for accessing Algorithmia's algorithm marketplace and data APIs.
 
 [![Build Status](https://img.shields.io/shippable/557f23a8edd7f2c052184a2d/master.svg)](https://app.shippable.com/projects/557f23a8edd7f2c052184a2d)
 
-TODO: badge for maven central version
-
-TODO: link to java docs
-
 # Getting started
 
-algorithmia-java is published to Maven Central. To add as a dependency:
-
-````xml
-<dependency>
-  <groupId>com.algorithmia</groupId>
-  <artifactId>algorithmia-client</artifactId>
-  <version>0.9.0</version>
-</dependency>
-````
+**We're in the process of publishing to Maven Central. Check back soon...**
 
 Instantiate a client using your API Key:
 

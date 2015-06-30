@@ -13,24 +13,15 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 
 /**
- * Generic algorithm interface. All algorithms in Algorithmia derive from this class.
+ * Represents an Algorithmia algorithm that can be called.
  */
 public class Algorithm {
     private AlgorithmRef algoRef;
     private HttpClient client;
 
-    public Algorithm(HttpClient client, String algoUri) {
+    public Algorithm(HttpClient client, AlgorithmRef algoRef) {
         this.client = client;
-        this.algoRef = new AlgorithmRef(algoUri);
-    }
-
-    public Algorithm(HttpClient client, String username, String algoname) {
-        this(client, username, algoname, Version.Latest());
-    }
-
-    public Algorithm(HttpClient client, String username, String algoname, Version version) {
-        this.client = client;
-        this.algoRef = new AlgorithmRef(username, algoname, version);
+        this.algoRef = algoRef;
     }
 
     /**

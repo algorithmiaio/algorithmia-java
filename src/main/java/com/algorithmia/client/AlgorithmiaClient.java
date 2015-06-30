@@ -29,7 +29,7 @@ public final class AlgorithmiaClient {
      * @return an Algorithm client for the specified algorithm
      */
     public Algorithm algo(String algoUri) {
-        return new Algorithm(client, algoUri);
+        return new Algorithm(client, new AlgorithmRef(algoUri));
     }
 
     /**

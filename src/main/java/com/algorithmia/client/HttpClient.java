@@ -132,7 +132,7 @@ public class HttpClient {
             this.auth.authenticateRequest(request);
         }
 
-        HttpHost target = new HttpHost(request.getURI().getHost());
+        HttpHost target = new HttpHost(request.getURI().getHost(), request.getURI().getPort());
         final CloseableHttpAsyncClient client = HttpAsyncClients.createDefault();
         client.start();
         return client.execute(new BasicAsyncRequestProducer(target, request), consumer, null);

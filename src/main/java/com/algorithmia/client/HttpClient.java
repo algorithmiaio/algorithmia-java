@@ -128,7 +128,9 @@ public class HttpClient {
     }
 
     private <T> Future<T> executeAsync(HttpUriRequest request, HttpAsyncResponseConsumer<T> consumer) {
-        this.auth.authenticateRequest(request);
+        if(this.auth != null) {
+            this.auth.authenticateRequest(request);
+        }
 
         HttpHost target = new HttpHost(request.getURI().getHost());
         final CloseableHttpAsyncClient client = HttpAsyncClients.createDefault();

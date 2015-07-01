@@ -13,7 +13,9 @@ public final class AlgorithmiaClient {
      * Instantiate Algorithmia client without credentials
      * This only works for when running the client on top of the Algorithmia platform
      */
-    protected AlgorithmiaClient() {}
+    protected AlgorithmiaClient() {
+        this.client = new HttpClient(null);
+    }
 
     /**
      * Instantiate Algorithmia client with auth

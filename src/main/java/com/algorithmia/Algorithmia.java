@@ -41,7 +41,7 @@ public final class Algorithmia {
      * @param path to a data directory, e.g., data://.my/foo
      * @return a DataDirectory client for the specified directory
      */
-    public DataDirectory dir(String path) {
+    public static DataDirectory dir(String path) {
         return getDefaultClient().dir(path);
     }
 
@@ -50,7 +50,7 @@ public final class Algorithmia {
      * @param path to a data file, e.g., data://.my/foo/bar.txt
      * @return a DataFile client for the specified file
      */
-    public DataFile file(String path) {
+    public static DataFile file(String path) {
         return getDefaultClient().file(path);
     }
 

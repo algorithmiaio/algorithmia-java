@@ -21,8 +21,8 @@ public class FutureAlgoResponse implements Future<AlgoResponse> {
         this.promise = promise;
     }
 
-    public boolean cancel(boolean mayInerruptIfRunning) {
-        return promise.cancel(mayInerruptIfRunning);
+    public boolean cancel(boolean mayInterruptIfRunning) {
+        return promise.cancel(mayInterruptIfRunning);
     }
 
     public boolean isCancelled() {

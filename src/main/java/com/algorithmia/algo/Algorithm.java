@@ -25,8 +25,8 @@ public final class Algorithm {
     }
 
     /**
-     * Calls the Algorithmia API on a given input.
-     * Attempts to automatically format the input as JSON.
+     * Calls the Algorithmia API for a given input.
+     * Attempts to automatically serialize the input to JSON.
      *
      * @param input algorithm input, will automatically be converted into JSON
      * @return algorithm result (AlgoSuccess or AlgoFailure)
@@ -35,12 +35,13 @@ public final class Algorithm {
     public AlgoResponse pipe(Object input) throws APIException {
         final Gson gson = new Gson();
         final JsonElement inputJson = gson.toJsonTree(input);
-        final AlgoResponse result = pipeJson(inputJson);
+        final AlgoResponse result = pipeJson(inputJson.toString());
         return result;
     }
 
    /**
-     * Calls the Algorithmia API on a given input asynchronously.
+     * Calls the Algorithmia API asynchronously for a given input.
+     * Attempts to automatically serialize the input to JSON.
      * The future response will complete when the algorithm has completed or errored
      *
      * @param input algorithm input, will automatically be converted into JSON
@@ -49,18 +50,18 @@ public final class Algorithm {
     public FutureAlgoResponse pipeAsync(Object input) {
         final Gson gson = new Gson();
         final JsonElement inputJson = gson.toJsonTree(input);
-        final FutureAlgoResponse result = new FutureAlgoResponse(this.pipeJsonAsync(inputJson));
-        return result;
+        return pipeJsonAsync(inputJson.toString());
     }
 
 
     /**
-     * Run an algorithm on JSON input directly
+     * Calls the Algorithmia API for given input that will be treated as JSON
+     *
      * @param inputJson json input value
      * @return success or failure
      * @throws APIException if there is a problem communication with the Algorithmia API.
      */
-    private AlgoResponse pipeJson(JsonElement inputJson) throws APIException {
+    public AlgoResponse pipeJson(String inputJson) throws APIException {
         try {
             return pipeJsonAsync(inputJson).get();
         } catch(java.util.concurrent.ExecutionException e) {
@@ -73,16 +74,19 @@ public final class Algorithm {
     }
 
     /**
-     * Run an algorithm on JSON input directly
+     * Calls the Algorithmia API asynchronously for given input that will be treated as JSON
+     * The future response will complete when the algorithm has completed or errored
+     *
      * @param inputJson json input value
      * @return success or failure
      */
-    private Future<AlgoResponse> pipeJsonAsync(JsonElement inputJson) {
-        return client.post(
+    public FutureAlgoResponse pipeJsonAsync(String inputJson) {
+        Future<AlgoResponse> promise = client.post(
             algoRef.getUrl(),
-            new StringEntity(inputJson.toString(), ContentType.APPLICATION_JSON),
+            new StringEntity(inputJson, ContentType.APPLICATION_JSON),
             new AlgoResponseHandler()
         );
+        return new FutureAlgoResponse(promise);
     }
 
 

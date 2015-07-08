@@ -4,7 +4,7 @@ package com.algorithmia;
 /**
  * Stores configuration for the Algorithmia client library
  */
-public class AlgorithmiaConf {
+public final class AlgorithmiaConf {
     private AlgorithmiaConf() {}
 
     private static String apiAddress;

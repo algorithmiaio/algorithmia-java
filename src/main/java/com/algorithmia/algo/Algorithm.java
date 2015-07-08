@@ -15,7 +15,7 @@ import com.google.gson.JsonElement;
 /**
  * Represents an Algorithmia algorithm that can be called.
  */
-public class Algorithm {
+public final class Algorithm {
     private AlgorithmRef algoRef;
     private HttpClient client;
 

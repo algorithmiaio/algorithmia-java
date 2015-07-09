@@ -4,7 +4,9 @@ import com.algorithmia.data.*;
 import org.junit.Test;
 import org.junit.Assume;
 import org.junit.Assert;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 
 public class DataFileTest {
 
@@ -45,6 +47,33 @@ public class DataFileTest {
         Assert.assertEquals(true, file.exists());
         file.delete();
         Assert.assertEquals(false, file.exists());
+    }
+
+    @Test
+    public void dataFileUpload() throws Exception {
+        final String key = System.getenv("ALGORITHMIA_API_KEY");
+        Assume.assumeTrue(key != null);
+
+        DataFile file = Algorithmia.client(key).file("data://.my/javaDataFileUpload/foo.txt");
+
+        // Make sure test starts in clean state
+        if(file.exists()) {
+            file.delete();
+        }
+        if(!file.getParent().exists()) {
+            file.getParent().create();
+        }
+
+        // Write expected string to a local temp file
+        String expected = "Are you pondering what I'm pondering?";
+        File temp = File.createTempFile("tempfile", ".tmp");
+        BufferedWriter bw = new BufferedWriter(new FileWriter(temp));
+        bw.write(expected);
+        bw.close();
+
+        file.put(temp);
+        Assert.assertEquals(true, file.exists());
+        Assert.assertEquals(expected, file.getString());
     }
 
     @Test

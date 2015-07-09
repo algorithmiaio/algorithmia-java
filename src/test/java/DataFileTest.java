@@ -18,7 +18,7 @@ public class DataFileTest {
 
     @Test
     public void dataFileName() throws Exception {
-        DataDirectory file = new DataDirectory(null, "data://.my/javaDataFileNa.my/foo");
+        DataDirectory file = new DataDirectory(null, "data://.my/javaDataFileName/foo");
         String expected = "foo";
         Assert.assertEquals(expected, file.getName());
     }

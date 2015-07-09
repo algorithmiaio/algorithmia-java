@@ -47,13 +47,13 @@ public class APIException extends IOException {
         if(status == 401) {
             return new APIException("401 not authorized" + errorMessage);
         } else if(status == 404) {
-            return new APIException("404 not found: " + errorMessage);
+            return new APIException("404 not found" + errorMessage);
         } else if(status == 415) {
             return new APIException("415 unsupported content type" + errorMessage);
         } else if(status == 504) {
             return new APIException("504 server timeout" + errorMessage);
         } else {
-            return new APIException(status + " unexpected API response, status" + errorMessage);
+            return new APIException(status + " unexpected API response" + errorMessage);
         }
     }
 

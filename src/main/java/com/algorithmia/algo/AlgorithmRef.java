@@ -1,9 +1,6 @@
 package com.algorithmia.algo;
 
 import com.algorithmia.AlgorithmiaConf;
-import java.lang.IllegalArgumentException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * A reference to an algorithm and possibly a specific version.

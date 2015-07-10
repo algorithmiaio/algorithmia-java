@@ -4,7 +4,6 @@ import com.algorithmia.APIException;
 import com.algorithmia.client.*;
 
 import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.HttpResponse;
@@ -16,8 +15,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import org.apache.commons.io.IOUtils;
-
-import java.util.ArrayList;
 
 
 /**
@@ -94,7 +91,7 @@ public class DataFile extends DataObject {
      * @throws APIException if there were any problems communicating with the Algorithmia API
      */
     public void put(String data) throws APIException {
-        HttpResponse response = client.put(getUrl(), new StringEntity(data, ContentType.DEFAULT_TEXT));
+        HttpResponse response = client.put(getUrl(), HttpClientHelpers.stringEntity(data, ContentType.DEFAULT_TEXT));
         HttpClientHelpers.throwIfNotOk(response);
     }
 
@@ -104,7 +101,7 @@ public class DataFile extends DataObject {
      * @throws APIException if there were any problems communicating with the Algorithmia API
      */
     public void put(byte[] data) throws APIException {
-        HttpResponse response = client.put(getUrl(), new ByteArrayEntity(data, ContentType.APPLICATION_OCTET_STREAM));
+        HttpResponse response = client.put(getUrl(), new ByteArrayEntity(data));
         HttpClientHelpers.throwIfNotOk(response);
     }
 

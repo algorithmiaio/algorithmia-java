@@ -18,15 +18,16 @@ import org.apache.http.HttpResponse;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.apache.http.ContentTooLongException;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.nio.protocol.AbstractAsyncResponseConsumer;
 import org.apache.http.nio.util.SimpleInputBuffer;
-import org.apache.http.entity.ContentType;
 import org.apache.http.nio.ContentDecoder;
 import org.apache.http.nio.IOControl;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.ContentTooLongException;
 import org.apache.http.nio.util.HeapByteBufferAllocator;
 import org.apache.http.nio.entity.ContentBufferEntity;
+import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.Asserts;
 
 /**
@@ -153,6 +154,15 @@ public class HttpClientHelpers {
 
         } catch(IOException ex) {
             throw new APIException("IOException: " + ex.getMessage());
+        }
+    }
+
+    public static StringEntity stringEntity(String input, ContentType contentType) {
+        try {
+            return new StringEntity(input, contentType.toString());
+        } catch(Exception e) {
+            // Should never happen
+            throw new RuntimeException("Unsupported encoding");
         }
     }
 

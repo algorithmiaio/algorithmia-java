@@ -2,12 +2,12 @@ package com.algorithmia.algo;
 
 import com.algorithmia.APIException;
 import com.algorithmia.client.HttpClient;
+import com.algorithmia.client.HttpClientHelpers;
 import com.algorithmia.client.HttpClientHelpers.AlgoResponseHandler;
 
 import java.util.concurrent.Future;
 
 import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -83,7 +83,7 @@ public final class Algorithm {
     public FutureAlgoResponse pipeJsonAsync(String inputJson) {
         Future<AlgoResponse> promise = client.post(
             algoRef.getUrl(),
-            new StringEntity(inputJson, ContentType.APPLICATION_JSON),
+            HttpClientHelpers.stringEntity(inputJson, ContentType.APPLICATION_JSON),
             new AlgoResponseHandler()
         );
         return new FutureAlgoResponse(promise);

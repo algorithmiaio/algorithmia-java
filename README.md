@@ -9,13 +9,21 @@ Java client for accessing Algorithmia's algorithm marketplace and data APIs.
 
 # Getting started
 
-**We're in the process of publishing to Maven Central. Check back soon...**
+The Algorithmia java client is published to Maven central and can be added as a dependency via:
+
+```xml
+<dependency>
+  <groupId>com.algorithmia</groupId>
+  <artifactId>algorithmia-client</artifactId>
+  <version>[,1.1.0)</version>
+</dependency>
+```
 
 Instantiate a client using your API Key:
 
-````java
+```java
 AlgorithmiaClient client = Algorithmia.client(apiKey);
-````
+```
 
 Note: API key may be ommitted only when making calls from algorithms running on the Algorithmia cluster
 
@@ -23,18 +31,18 @@ Note: API key may be ommitted only when making calls from algorithms running on 
 
 Algorithms are called with the `pipe` method:
 
-````java
+```java
 Algorithm addOne = client.algo("docs/JavaAddOne");
 AlgoResponse response = addOne.pipe(72);
 Integer result = response.as(new TypeToken<Integer>(){});
 Double durationInSeconds = response.getMetadata().duration;
-````
+```
 
 # Working with Data
 
 Manage your data stored within Algorithmia:
 
-````java
+```java
 // Create a directory "foo"
 DataDirectory foo = client.dir("data://.my/foo");
 foo.create();
@@ -57,5 +65,5 @@ File tempFile = foo.file("myfile").getFile();
 // Delete files and directories
 foo.file("sample.txt").delete();
 foo.delete(true); // true implies force deleting the directory and its contents
-````
+```
 

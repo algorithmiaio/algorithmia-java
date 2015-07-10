@@ -173,26 +173,16 @@ public class HttpClientHelpers {
 
     // Compat-shim for Android
     public static ByteArrayEntity byteArrayEntity(byte[] input, ContentType contentType) {
-        try {
-            ByteArrayEntity entity = new ByteArrayEntity(input);
-            entity.setContentType(contentType.toString());
-            return entity;
-        } catch(Exception e) {
-            // Should never happen
-            throw new RuntimeException("Unsupported encoding: " + contentType.getCharset().toString());
-        }
+        ByteArrayEntity entity = new ByteArrayEntity(input);
+        entity.setContentType(contentType.toString());
+        return entity;
     }
 
     // Compat-shim for Android
     public static InputStreamEntity inputStreamEntity(InputStream input, ContentType contentType) {
-        try {
-            InputStreamEntity entity = new InputStreamEntity(input, -1);
-            entity.setContentType(contentType.toString());
-            return entity;
-        } catch(Exception e) {
-            // Should never happen
-            throw new RuntimeException("Unsupported encoding: " + contentType.getCharset().toString());
-        }
+        InputStreamEntity entity = new InputStreamEntity(input, -1);
+        entity.setContentType(contentType.toString());
+        return entity;
     }
 
 }

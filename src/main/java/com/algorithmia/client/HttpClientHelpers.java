@@ -21,6 +21,8 @@ import com.google.gson.reflect.TypeToken;
 import org.apache.http.ContentTooLongException;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.InputStreamEntity;
+import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.nio.protocol.AbstractAsyncResponseConsumer;
 import org.apache.http.nio.util.SimpleInputBuffer;
 import org.apache.http.nio.ContentDecoder;
@@ -157,12 +159,39 @@ public class HttpClientHelpers {
         }
     }
 
+    // Compat-shim for Android
     public static StringEntity stringEntity(String input, ContentType contentType) {
         try {
-            return new StringEntity(input, contentType.toString());
+            StringEntity entity = new StringEntity(input, contentType.getCharset().toString());
+            entity.setContentType(contentType.toString());
+            return entity;
         } catch(Exception e) {
             // Should never happen
-            throw new RuntimeException("Unsupported encoding");
+            throw new RuntimeException("Unsupported encoding: " + contentType.toString());
+        }
+    }
+
+    // Compat-shim for Android
+    public static ByteArrayEntity byteArrayEntity(byte[] input, ContentType contentType) {
+        try {
+            ByteArrayEntity entity = new ByteArrayEntity(input);
+            entity.setContentType(contentType.toString());
+            return entity;
+        } catch(Exception e) {
+            // Should never happen
+            throw new RuntimeException("Unsupported encoding: " + contentType.getCharset().toString());
+        }
+    }
+
+    // Compat-shim for Android
+    public static InputStreamEntity inputStreamEntity(InputStream input, ContentType contentType) {
+        try {
+            InputStreamEntity entity = new InputStreamEntity(input, -1);
+            entity.setContentType(contentType.toString());
+            return entity;
+        } catch(Exception e) {
+            // Should never happen
+            throw new RuntimeException("Unsupported encoding: " + contentType.getCharset().toString());
         }
     }
 

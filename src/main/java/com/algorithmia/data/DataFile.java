@@ -4,8 +4,6 @@ import com.algorithmia.APIException;
 import com.algorithmia.client.*;
 
 import org.apache.http.entity.ContentType;
-import org.apache.http.entity.InputStreamEntity;
-import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.HttpResponse;
 
 import java.io.File;
@@ -91,7 +89,7 @@ public class DataFile extends DataObject {
      * @throws APIException if there were any problems communicating with the Algorithmia API
      */
     public void put(String data) throws APIException {
-        HttpResponse response = client.put(getUrl(), HttpClientHelpers.stringEntity(data, ContentType.DEFAULT_TEXT));
+        HttpResponse response = client.put(getUrl(), HttpClientHelpers.stringEntity(data, ContentType.TEXT_PLAIN));
         HttpClientHelpers.throwIfNotOk(response);
     }
 
@@ -101,7 +99,7 @@ public class DataFile extends DataObject {
      * @throws APIException if there were any problems communicating with the Algorithmia API
      */
     public void put(byte[] data) throws APIException {
-        HttpResponse response = client.put(getUrl(), new ByteArrayEntity(data));
+        HttpResponse response = client.put(getUrl(), HttpClientHelpers.byteArrayEntity(data, ContentType.APPLICATION_OCTET_STREAM));
         HttpClientHelpers.throwIfNotOk(response);
     }
 
@@ -111,7 +109,7 @@ public class DataFile extends DataObject {
      * @throws APIException if there were any problems communicating with the Algorithmia API
      */
     public void put(InputStream is) throws APIException {
-        HttpResponse response = client.put(getUrl(), new InputStreamEntity(is));
+        HttpResponse response = client.put(getUrl(), HttpClientHelpers.inputStreamEntity(is, ContentType.APPLICATION_OCTET_STREAM));
         HttpClientHelpers.throwIfNotOk(response);
     }
 

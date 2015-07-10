@@ -14,13 +14,30 @@ import org.apache.http.HttpHost;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.CancellationException;
 import java.lang.InterruptedException;
+import java.io.IOException;
 
 import com.google.gson.reflect.TypeToken;
 
 import java.util.concurrent.Future;
 
 public class HttpClient {
-    private Auth auth;
+    final private Auth auth;
+
+    private static CloseableHttpAsyncClient client;
+
+    static {
+        client = HttpAsyncClients.createDefault();
+        client.start();
+
+        Runtime.getRuntime().addShutdownHook(new Thread(){
+            @Override
+            public void run(){
+                try {
+                    client.close();
+                } catch(IOException e) {}
+            }
+        });
+    }
 
     public HttpClient(Auth auth) {
         this.auth = auth;
@@ -133,10 +150,7 @@ public class HttpClient {
         }
 
         HttpHost target = new HttpHost(request.getURI().getHost(), request.getURI().getPort());
-        final CloseableHttpAsyncClient client = HttpAsyncClients.createDefault();
-        client.start();
         return client.execute(new BasicAsyncRequestProducer(target, request), consumer, null);
     }
-
 
 }

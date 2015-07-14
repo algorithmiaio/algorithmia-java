@@ -17,11 +17,16 @@ jdk:
 env:
   - secure: TzzwWEi6MRLQ2EFAfu/ZgD8V+vfkM6GRorh3gX6zy1BdYAlnqqWOI+9yimfxx9gE/EQLfaFPGVFwIvIKoxfnYcFWK0e6SLoh7HoX31ABGb50j78RpNjUuI5xBzF3EPE9UJIOwX/SlgFfuxllkwKQzvrzdknGV7pSF2Aw625qwh6CYKZiWFcEfenmXW2sFGPLsPfG/0dMcIXr+r+CwBnsI4Wz3u2tGzWL/jclcFZZCQKq1aWDCO9DURuU0f+rMyoVYDBDzPztxNYFGGVUA+BMIIaL86simU2EPg4DF2V4dhZAKaaMwHK7Fl69nh74LiSXGAXpKQwSB6kS9UV1AWbfOw==
 
+before_script:
+    - mkdir -p shippable/testresults
+
 script:
   - sbt clean compile
   - sbt doc
   - sbt test
 
+after_script:
+  - mv $PWD/target/test-reports/*.xml $PWD/shippable/testresults/
 
 notifications:
   email:

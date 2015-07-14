@@ -3,6 +3,8 @@ algorithmia-java
 
 Java client for accessing Algorithmia's algorithm marketplace and data APIs.
 
+For API documentation, see the [JavaDocs](https://algorithmia.com/docs/lang/java)
+
 [![Build Status](https://api.shippable.com/projects/557f23a8edd7f2c052184a2d/badge/master)](https://app.shippable.com/projects/557f23a8edd7f2c052184a2d)
 
 [![Latest Release](https://img.shields.io/maven-central/v/com.algorithmia/algorithmia-client.svg)](http://repo1.maven.org/maven2/com/algorithmia/algorithmia-client/)
@@ -25,7 +27,9 @@ Instantiate a client using your API Key:
 AlgorithmiaClient client = Algorithmia.client(apiKey);
 ```
 
-Note: API key may be ommitted only when making calls from algorithms running on the Algorithmia cluster
+Notes:
+- API key may be ommitted only when making calls from algorithms running on the Algorithmia cluster
+- Using version range `[,1.1.0)` is recommended as it implies using the latest backward-compatible bugfixes.
 
 # Calling Algorithms
 

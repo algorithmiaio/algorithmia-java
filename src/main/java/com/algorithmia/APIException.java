@@ -7,6 +7,7 @@ import org.apache.commons.io.Charsets;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.Header;
 
 /**
  * APIException indicates a problem communicating with Algorithmia
@@ -34,6 +35,7 @@ public class APIException extends IOException {
     public static APIException fromHttpResponse(HttpResponse response) {
         final int status = response.getStatusLine().getStatusCode();
         final HttpEntity entity = response.getEntity();
+        final Header errorHeader = response.getFirstHeader("X-Error-Message");
 
         String errorMessage = "";
         if(entity != null) {
@@ -43,8 +45,13 @@ public class APIException extends IOException {
             } catch(IOException e) {
                 errorMessage = ": IOException reading response: " + e.getMessage();
             }
+        } else if(errorHeader != null) {
+            errorMessage = ": " + errorHeader.getValue();
         }
-        if(status == 401) {
+
+        if(status == 400) {
+            return new APIException("400 malformed request" + errorMessage);
+        } else if(status == 401) {
             return new APIException("401 not authorized" + errorMessage);
         } else if(status == 404) {
             return new APIException("404 not found" + errorMessage);

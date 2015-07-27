@@ -9,9 +9,11 @@ import com.algorithmia.APIException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 
@@ -75,16 +77,10 @@ public class HttpClientHelpers {
         }
     }
 
-//    static public class JsonResponseHandler extends AbstractBasicResponseConsumer<JsonElement> {
-//        @Override
-//        protected JsonElement buildResult(HttpContext context) throws APIException {
-//            return parseResponseJson(response);
-//        }
-//    }
-
     static public class JsonDeserializeResponseHandler<T> extends AbstractBasicResponseConsumer<T> {
+        @SuppressWarnings("rawtypes")
         final private TypeToken typeToken;
-        public JsonDeserializeResponseHandler(TypeToken typeToken) {
+        public JsonDeserializeResponseHandler(@SuppressWarnings("rawtypes") TypeToken typeToken) {
             this.typeToken = typeToken;
         }
         @Override
@@ -116,9 +112,10 @@ public class HttpClientHelpers {
             } else {
                 JsonObject metaJson = obj.getAsJsonObject("metadata");
                 Double duration = metaJson.get("duration").getAsDouble();
+                com.algorithmia.algo.ContentType contentType = com.algorithmia.algo.ContentType.fromString(metaJson.get("content_type").getAsString());
                 JsonElement stdoutJson = metaJson.get("stdout");
                 String stdout = (stdoutJson == null) ? null : stdoutJson.getAsString();
-                Metadata meta = new Metadata(duration, stdout);
+                Metadata meta = new Metadata(contentType, duration, stdout);
                 return new AlgoSuccess(obj.get("result"), meta);
             }
         } else {

@@ -2,7 +2,6 @@ package com.algorithmia.data;
 
 import com.algorithmia.APIException;
 import com.algorithmia.client.*;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
@@ -74,6 +73,7 @@ public class DataDirectory extends DataObject {
     }
 
     private class CreateDirectoryRequest {
+        @SuppressWarnings("unused")//Used indirectly by GSON
         private String name;
         CreateDirectoryRequest(String name) {
             this.name = name;

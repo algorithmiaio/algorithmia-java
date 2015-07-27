@@ -3,6 +3,7 @@ package com.algorithmia.algo;
 import com.algorithmia.AlgorithmException;
 import com.algorithmia.TypeToken;
 import com.google.gson.JsonElement;
+
 import java.lang.reflect.Type;
 
 /**
@@ -45,7 +46,7 @@ public abstract class AlgoResponse {
      * @return the result, if this is AlgoSuccess
      * @throws AlgorithmException the error, if this is AlgoFailure
      */
-    public <T> T as(TypeToken typeToken) throws AlgorithmException {
+    public <T> T as(@SuppressWarnings("rawtypes") TypeToken typeToken) throws AlgorithmException {
         return this.as(typeToken.getType());
     }
 

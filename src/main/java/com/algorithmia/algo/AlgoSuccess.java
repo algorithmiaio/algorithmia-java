@@ -12,6 +12,8 @@ public final class AlgoSuccess extends AlgoResponse {
     private JsonElement result;
     private Metadata metadata;
 
+    private final Gson gson = new Gson();
+
     public AlgoSuccess(JsonElement result, Metadata metadata) {
         this.result = result;
         this.metadata = metadata;
@@ -34,13 +36,11 @@ public final class AlgoSuccess extends AlgoResponse {
 
     @Override
     protected <T> T as(Class<T> returnClass) {
-        final Gson gson = new Gson();
         return gson.fromJson(result, returnClass);
     }
 
     @Override
     protected <T> T as(Type returnType) {
-        final Gson gson = new Gson();
         return gson.fromJson(result, returnType);
     }
 

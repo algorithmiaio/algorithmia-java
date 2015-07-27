@@ -20,8 +20,8 @@ pomExtra := (
   </scm>
   <developers>
     <developer>
-      <name>Anthony Nowell</name>
-      <email>anthony@algorithmia.com</email>
+      <name>Algorithmia</name>
+      <email>support@algorithmia.com</email>
       <organization>Algorithmia</organization>
     </developer>
   </developers>
@@ -29,4 +29,3 @@ pomExtra := (
 
 // Stuff sonatype does not want
 pomIncludeRepository := { _ => false }
-

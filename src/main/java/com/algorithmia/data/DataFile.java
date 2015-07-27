@@ -1,19 +1,18 @@
 package com.algorithmia.data;
 
-import com.algorithmia.APIException;
-import com.algorithmia.client.*;
-
-import org.apache.http.entity.ContentType;
-import org.apache.http.HttpResponse;
-
 import java.io.File;
-import java.io.InputStream;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.FileNotFoundException;
-import org.apache.commons.io.IOUtils;
+import java.io.InputStream;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.entity.ContentType;
+
+import com.algorithmia.APIException;
+import com.algorithmia.client.*;
 
 /**
  * A reference to a file in the data api

@@ -1,6 +1,6 @@
-###############################################################
-##Shippable build and deploy script for dev.algorithmia.com ###
-###############################################################
+###########################################################
+##Shippable build and deploy script for algorithmia.com ###
+###########################################################
 
 # Build Environment
 build_environment: ubuntu1404

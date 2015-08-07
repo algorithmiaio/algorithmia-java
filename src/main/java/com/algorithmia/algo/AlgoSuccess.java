@@ -2,6 +2,10 @@ package com.algorithmia.algo;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
+import org.apache.commons.codec.binary.Base64;
+
+import java.lang.UnsupportedOperationException;
 import java.lang.reflect.Type;
 
 /**
@@ -36,12 +40,33 @@ public final class AlgoSuccess extends AlgoResponse {
 
     @Override
     protected <T> T as(Class<T> returnClass) {
-        return gson.fromJson(result, returnClass);
+        if(metadata.getContentType() == ContentType.Void) {
+            return null;
+        } else if(metadata.getContentType() == ContentType.Text) {
+            return gson.fromJson(new JsonPrimitive(result.getAsString()), returnClass);
+        } else if(metadata.getContentType() == ContentType.Json) {
+            return gson.fromJson(result, returnClass);
+        } else if(metadata.getContentType() == ContentType.Binary) {
+            return (T)Base64.decodeBase64(result.getAsString());
+        } else {
+            throw new UnsupportedOperationException("Unknown ContentType in response: " + metadata.getContentType().toString());
+        }
+
     }
 
     @Override
     protected <T> T as(Type returnType) {
-        return gson.fromJson(result, returnType);
+        if(metadata.getContentType() == ContentType.Void) {
+            return null;
+        } else if(metadata.getContentType() == ContentType.Text) {
+            return gson.fromJson(new JsonPrimitive(result.getAsString()), returnType);
+        } else if(metadata.getContentType() == ContentType.Json) {
+            return gson.fromJson(result, returnType);
+        } else if(metadata.getContentType() == ContentType.Binary) {
+            return (T)Base64.decodeBase64(result.getAsString());
+        } else {
+            throw new UnsupportedOperationException("Unknown ContentType in response: " + metadata.getContentType().toString());
+        }
     }
 
 }

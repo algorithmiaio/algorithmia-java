@@ -141,13 +141,13 @@ public class HttpClientHelpers {
         }
     }
 
+    final static JsonParser parser = new JsonParser();
     public static JsonElement parseResponseJson(HttpResponse response) throws APIException {
         throwIfNotOk(response);
 
         try {
             final HttpEntity entity = response.getEntity();
             final InputStream is = entity.getContent();
-            final JsonParser parser = new JsonParser();
             JsonElement json = parser.parse(new InputStreamReader(is));
             return json;
 

@@ -4,9 +4,10 @@ package com.algorithmia.algo;
  * Algorithm response metadata
  */
 public final class Metadata {
-    public ContentType content_type;
-    public Double duration;
-    public String stdout;
+
+    private ContentType content_type;
+    private Double duration;
+    private String stdout;
 
     public Metadata(ContentType content_type, Double duration) {
         this(content_type, duration, null);
@@ -16,6 +17,16 @@ public final class Metadata {
         this.content_type = content_type;
         this.duration = duration;
         this.stdout = stdout;
+    }
+
+    public ContentType getContentType() {
+      return content_type;
+    }
+    public Double getDuration() {
+      return duration;
+    }
+    public String getStdout() {
+      return stdout;
     }
 
 }

@@ -14,14 +14,9 @@ import org.junit.Assert;
 
 public class AlgoResponseTest {
 
-    @Test
-    public void algoSuccess() throws Exception {
-        final AlgoResponse response = parseResourceAsResponse("algo_success_array_long.json");
-        Assert.assertEquals(true, response.isSuccess());
-        Assert.assertEquals(false, response.isFailure());
-        Assert.assertEquals("[2,2,2,3,3]", response.toString());
-    }
-
+    ////
+    // Test - algo_failure
+    ////
     @Test
     public void algoFailure() throws Exception {
         final AlgoResponse response = parseResourceAsResponse("algo_failure.json");
@@ -29,38 +24,83 @@ public class AlgoResponseTest {
         Assert.assertEquals(true, response.isFailure());
     }
 
+    ////
+    // Test - algo_success
+    ////
+
+    //Void response
+    @Test
+    public void algoResponseAsVoid() throws Exception {
+        final AlgoResponse response = parseResourceAsResponse("algo_success_void.json");
+        Object result = response.as(new TypeToken<Integer>(){});
+        Assert.assertEquals(null, result);
+    }
+
+    //Text response
+    @Test
+    public void algoResponseAsString() throws Exception {
+        final AlgoResponse response = parseResourceAsResponse("algo_success_text_string.json");
+        String result = response.as(new TypeToken<String>(){});
+        String expected = "This is a success test";
+        Assert.assertEquals(expected, result);
+    }
+
+    @Test
+    public void algoResponseAsStringtoInt() throws Exception {
+        final AlgoResponse response = parseResourceAsResponse("algo_success_text_int.json");
+        int result = response.as(new TypeToken<Integer>(){});
+        Assert.assertEquals(42, result);
+    }
+
+    //Json response
+    @Test
+    public void algoResponseAsInt() throws Exception {
+        final AlgoResponse response = parseResourceAsResponse("algo_success_json_int.json");
+        int result = response.as(new TypeToken<Integer>(){});
+        Assert.assertEquals(42, result);
+    }
+
+    @Test
+    public void algoResponseAsIntToString() throws Exception {
+        final AlgoResponse response = parseResourceAsResponse("algo_success_json_int.json");
+        String result = response.as(new TypeToken<String>(){});
+        Assert.assertEquals("42", result);
+    }
+
+    @Test
+    public void algoSuccess() throws Exception {
+        final AlgoResponse response = parseResourceAsResponse("algo_success_json_array_long.json");
+        Assert.assertEquals(true, response.isSuccess());
+        Assert.assertEquals(false, response.isFailure());
+        Assert.assertEquals("[2,2,2,3,3]", response.toString());
+    }
+    @Test
+    public void algoResponseMetadata() throws Exception {
+        final AlgoResponse response = parseResourceAsResponse("algo_success_json_array_long.json");
+        Metadata meta = response.getMetadata();
+        Assert.assertEquals(0.035916637, meta.getDuration(), 0.0001);
+    }
+
     @Test
     public void algoResponseAsList() throws Exception {
-        final AlgoResponse response = parseResourceAsResponse("algo_success_array_long.json");
+        final AlgoResponse response = parseResourceAsResponse("algo_success_json_array_long.json");
         List<Long> result = response.as(new TypeToken<List<Long>>(){});
         List<Long> expected = Arrays.asList(2L, 2L, 2L, 3L, 3L);
         Assert.assertEquals(expected, result);
     }
 
+    //Binary response
     @Test
-    public void algoResponseAsString() throws Exception {
-        final AlgoResponse response = parseResourceAsResponse("algo_success_string.json");
-        String result = response.as(new TypeToken<String>(){});
-        String expected = "Whuh... I think so, Brain. But this time I get to play the dishwasher repairman!";
-        Assert.assertEquals(expected, result);
-    }
-
-    @Test
-    public void algoResponseAsInt() throws Exception {
-        final AlgoResponse response = parseResourceAsResponse("algo_success_int.json");
-        int result = response.as(new TypeToken<Integer>(){});
-        Assert.assertEquals(42, result);
+    public void algoResponseAsBinary() throws Exception {
+        final AlgoResponse response = parseResourceAsResponse("algo_success_binary.json");
+        byte[] result = response.as(new TypeToken<byte[]>(){});
+        Assert.assertEquals(10, result.length);
     }
 
 
-    @Test
-    public void algoResponseMetadata() throws Exception {
-        final AlgoResponse response = parseResourceAsResponse("algo_success_array_long.json");
-        Metadata meta = response.getMetadata();
-        Assert.assertEquals(0.035916637, meta.duration, 0.0001);
-    }
-
-
+    ////
+    // Helpers
+    ////
     private AlgoResponse parseResourceAsResponse(String filename) throws Exception {
         final JsonParser parser = new JsonParser();
         final InputStream is = this.getClass().getResourceAsStream(filename);
@@ -68,6 +108,3 @@ public class AlgoResponseTest {
         return HttpClientHelpers.jsonToAlgoResponse(jsonOutput);
     }
 }
-
-
-

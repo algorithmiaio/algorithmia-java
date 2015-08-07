@@ -1,6 +1,7 @@
 {
     "result":[2,2,2,3,3],
     "metadata":{
+         "content_type":"json",
         "duration":0.035916637
     }
 }

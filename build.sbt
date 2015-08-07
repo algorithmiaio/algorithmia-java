@@ -8,7 +8,7 @@ version := "1.0.1-SNAPSHOT"
 autoScalaLibrary := false
 
 // More compiler warnings
-scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature", "-Xlint")  // "-verbose"
+scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature", "-Xlint")
 
 libraryDependencies ++= Seq(
   "com.google.code.gson" % "gson" % "2.3.1",

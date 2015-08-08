@@ -50,8 +50,7 @@ public class HttpClientHelpers {
         }
 
         @Override
-        protected void onEntityEnclosed(final HttpEntity entity, final ContentType contentType)
-                throws IOException {
+        protected void onEntityEnclosed(final HttpEntity entity, final ContentType contentType) throws IOException {
             long len = entity.getContentLength();
             if (len > Integer.MAX_VALUE) {
                 throw new ContentTooLongException("Entity content is too long: " + len);
@@ -64,8 +63,7 @@ public class HttpClientHelpers {
         }
 
         @Override
-        protected void onContentReceived(final ContentDecoder decoder, final IOControl ioctrl)
-                throws IOException {
+        protected void onContentReceived(final ContentDecoder decoder, final IOControl ioctrl) throws IOException {
             Asserts.notNull(this.buf, "Content buffer");
             this.buf.consumeContent(decoder);
         }
@@ -99,7 +97,6 @@ public class HttpClientHelpers {
             return jsonToAlgoResponse(json);
         }
     }
-
 
     public static AlgoResponse jsonToAlgoResponse(JsonElement json) throws APIException {
         if(json != null && json.isJsonObject()) {

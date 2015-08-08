@@ -1,8 +1,11 @@
 import com.algorithmia.algo.*;
+
 import com.algorithmia.client.HttpClientHelpers;
 import com.algorithmia.TypeToken;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.Integer;
@@ -107,4 +110,5 @@ public class AlgoResponseTest {
         final JsonElement jsonOutput = parser.parse(new InputStreamReader(is, "UTF-8"));
         return HttpClientHelpers.jsonToAlgoResponse(jsonOutput);
     }
+
 }

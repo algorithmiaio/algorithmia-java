@@ -51,7 +51,7 @@ public abstract class AlgoResponse {
     }
 
     /**
-     * Get string representation of the result or throw an exception
+     * Get JSON string representation of the result or throw an exception
      * @return the result as a UTF-8 string if this is AlgoSuccess, otherwise null
      */
     public String toString() {

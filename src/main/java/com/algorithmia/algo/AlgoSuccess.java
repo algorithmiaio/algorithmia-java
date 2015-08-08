@@ -1,5 +1,7 @@
 package com.algorithmia.algo;
 
+import com.algorithmia.TypeToken;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
@@ -47,7 +49,12 @@ public final class AlgoSuccess extends AlgoResponse {
         } else if(metadata.getContentType() == ContentType.Json) {
             return gson.fromJson(result, returnClass);
         } else if(metadata.getContentType() == ContentType.Binary) {
-            return (T)Base64.decodeBase64(result.getAsString());
+            if(byte[].class == returnClass) {
+              return (T)Base64.decodeBase64(result.getAsString());
+            } else {
+              throw new UnsupportedOperationException("Only support returning as byte[] for Binary data");
+            }
+
         } else {
             throw new UnsupportedOperationException("Unknown ContentType in response: " + metadata.getContentType().toString());
         }
@@ -63,7 +70,11 @@ public final class AlgoSuccess extends AlgoResponse {
         } else if(metadata.getContentType() == ContentType.Json) {
             return gson.fromJson(result, returnType);
         } else if(metadata.getContentType() == ContentType.Binary) {
-            return (T)Base64.decodeBase64(result.getAsString());
+            if(new TypeToken<byte[]>(){}.getType().equals(returnType)) {
+              return (T)Base64.decodeBase64(result.getAsString());
+            } else {
+              throw new UnsupportedOperationException("Only support returning as byte[] for Binary data");
+            }
         } else {
             throw new UnsupportedOperationException("Unknown ContentType in response: " + metadata.getContentType().toString());
         }

@@ -7,7 +7,7 @@ import com.algorithmia.client.HttpClientHelpers.AlgoResponseHandler;
 
 import java.util.concurrent.Future;
 
-import org.apache.http.entity.ContentType;
+import org.apache.commons.codec.binary.Base64;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -18,6 +18,8 @@ import com.google.gson.JsonElement;
 public final class Algorithm {
     private AlgorithmRef algoRef;
     private HttpClient client;
+
+    final static Gson gson = new Gson();
 
     public Algorithm(HttpClient client, AlgorithmRef algoRef) {
         this.client = client;
@@ -33,10 +35,13 @@ public final class Algorithm {
      * @throws APIException if there is a problem communication with the Algorithmia API.
      */
     public AlgoResponse pipe(Object input) throws APIException {
-        final Gson gson = new Gson();
-        final JsonElement inputJson = gson.toJsonTree(input);
-        final AlgoResponse result = pipeJson(inputJson.toString());
-        return result;
+        if (input instanceof String) {
+            return pipeRequest((String)input,ContentType.Text);
+        } else if (input instanceof byte[]) {
+            return pipeBinaryRequest((byte[])input);
+        } else {
+            return pipeRequest(gson.toJsonTree(input).toString(),ContentType.Json);
+        }
     }
 
    /**
@@ -62,15 +67,7 @@ public final class Algorithm {
      * @throws APIException if there is a problem communication with the Algorithmia API.
      */
     public AlgoResponse pipeJson(String inputJson) throws APIException {
-        try {
-            return pipeJsonAsync(inputJson).get();
-        } catch(java.util.concurrent.ExecutionException e) {
-            throw new APIException(e.getCause().getMessage());
-        } catch(java.util.concurrent.CancellationException e) {
-            throw new APIException("API connection cancelled: " + algoRef.getUrl() + " (" + e.getMessage() + ")", e);
-        } catch(java.lang.InterruptedException e) {
-            throw new APIException("API connection interrupted: " + algoRef.getUrl() + " (" + e.getMessage() + ")", e);
-        }
+        return pipeRequest(inputJson,ContentType.Json);
     }
 
     /**
@@ -81,13 +78,55 @@ public final class Algorithm {
      * @return success or failure
      */
     public FutureAlgoResponse pipeJsonAsync(String inputJson) {
+        return pipeRequestAsync(inputJson,ContentType.Json);
+    }
+
+    private AlgoResponse pipeRequest(String input, ContentType content_type) throws APIException {
+        try {
+            return pipeRequestAsync(input,content_type).get();
+        } catch(java.util.concurrent.ExecutionException e) {
+            throw new APIException(e.getCause().getMessage());
+        } catch(java.util.concurrent.CancellationException e) {
+            throw new APIException("API connection cancelled: " + algoRef.getUrl() + " (" + e.getMessage() + ")", e);
+        } catch(java.lang.InterruptedException e) {
+            throw new APIException("API connection interrupted: " + algoRef.getUrl() + " (" + e.getMessage() + ")", e);
+        }
+    }
+
+    private FutureAlgoResponse pipeRequestAsync(String input, ContentType content_type) {
+        org.apache.http.entity.ContentType requestType = org.apache.http.entity.ContentType.APPLICATION_JSON;
+        if(content_type == ContentType.Text) {
+          requestType = org.apache.http.entity.ContentType.TEXT_PLAIN;
+        } else if(content_type == ContentType.Json) {
+          requestType = org.apache.http.entity.ContentType.APPLICATION_JSON;
+        }
         Future<AlgoResponse> promise = client.post(
             algoRef.getUrl(),
-            HttpClientHelpers.stringEntity(inputJson, ContentType.APPLICATION_JSON),
+            HttpClientHelpers.stringEntity(input, requestType),
             new AlgoResponseHandler()
         );
         return new FutureAlgoResponse(promise);
     }
 
+    private AlgoResponse pipeBinaryRequest(byte[] input) throws APIException {
+        try {
+            return pipeBinaryRequestAsync(input).get();
+        } catch(java.util.concurrent.ExecutionException e) {
+            throw new APIException(e.getCause().getMessage());
+        } catch(java.util.concurrent.CancellationException e) {
+            throw new APIException("API connection cancelled: " + algoRef.getUrl() + " (" + e.getMessage() + ")", e);
+        } catch(java.lang.InterruptedException e) {
+            throw new APIException("API connection interrupted: " + algoRef.getUrl() + " (" + e.getMessage() + ")", e);
+        }
+    }
+
+    private FutureAlgoResponse pipeBinaryRequestAsync(byte[] input) {
+        Future<AlgoResponse> promise = client.post(
+            algoRef.getUrl(),
+            HttpClientHelpers.byteArrayEntity(input, org.apache.http.entity.ContentType.APPLICATION_OCTET_STREAM),
+            new AlgoResponseHandler()
+        );
+        return new FutureAlgoResponse(promise);
+    }
 
 }

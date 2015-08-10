@@ -75,7 +75,7 @@ public class AlgoResponseTest {
         final AlgoResponse response = parseResourceAsResponse("algo_success_json_array_long.json");
         Assert.assertEquals(true, response.isSuccess());
         Assert.assertEquals(false, response.isFailure());
-        Assert.assertEquals("[2,2,2,3,3]", response.toString());
+        Assert.assertEquals("[2,2,2,3,3]", response.as(new TypeToken<JsonElement>(){}).toString());
     }
     @Test
     public void algoResponseMetadata() throws Exception {

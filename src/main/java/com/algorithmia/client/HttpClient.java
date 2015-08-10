@@ -21,6 +21,7 @@ import com.google.gson.reflect.TypeToken;
 import java.util.concurrent.Future;
 
 public class HttpClient {
+
     final private Auth auth;
 
     private static CloseableHttpAsyncClient client;

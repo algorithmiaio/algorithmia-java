@@ -2,7 +2,6 @@ package com.algorithmia.algo;
 
 import com.algorithmia.AlgorithmException;
 import com.algorithmia.TypeToken;
-import com.google.gson.JsonElement;
 
 import java.lang.reflect.Type;
 
@@ -10,9 +9,9 @@ import java.lang.reflect.Type;
  * A generic result, can be either AlgoSuccess or AlgoFailure
  */
 public abstract class AlgoResponse {
+
     public abstract boolean isSuccess();
     public abstract boolean isFailure();
-
 
     public abstract Metadata getMetadata() throws AlgorithmException;
 
@@ -49,18 +48,5 @@ public abstract class AlgoResponse {
     public <T> T as(@SuppressWarnings("rawtypes") TypeToken typeToken) throws AlgorithmException {
         return this.as(typeToken.getType());
     }
-
-    /**
-     * Get JSON string representation of the result or throw an exception
-     * @return the result as a UTF-8 string if this is AlgoSuccess, otherwise null
-     */
-    public String toString() {
-        try {
-            return this.as(JsonElement.class).toString();
-        } catch (Exception e) {
-            return null; // Because overriding toString can't throw
-        }
-    }
-
 
 }

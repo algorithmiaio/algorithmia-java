@@ -41,6 +41,7 @@ public final class AlgoSuccess extends AlgoResponse {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected <T> T as(Class<T> returnClass) {
         if(metadata.getContentType() == ContentType.Void) {
             return null;
@@ -62,6 +63,7 @@ public final class AlgoSuccess extends AlgoResponse {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected <T> T as(Type returnType) {
         if(metadata.getContentType() == ContentType.Void) {
             return null;

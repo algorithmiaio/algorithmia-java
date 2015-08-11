@@ -18,7 +18,8 @@ public final class AlgoSuccess extends AlgoResponse {
     private JsonElement result;
     private Metadata metadata;
 
-    private final Gson gson = new Gson();
+    private transient final Gson gson = new Gson();
+    private transient final Type byteType = new TypeToken<byte[]>(){}.getType();
 
     public AlgoSuccess(JsonElement result, Metadata metadata) {
         this.result = result;
@@ -72,7 +73,7 @@ public final class AlgoSuccess extends AlgoResponse {
         } else if(metadata.getContentType() == ContentType.Json) {
             return gson.fromJson(result, returnType);
         } else if(metadata.getContentType() == ContentType.Binary) {
-            if(new TypeToken<byte[]>(){}.getType().equals(returnType)) {
+            if(byteType.equals(returnType)) {
               return (T)Base64.decodeBase64(result.getAsString());
             } else {
               throw new UnsupportedOperationException("Only support returning as byte[] for Binary data");

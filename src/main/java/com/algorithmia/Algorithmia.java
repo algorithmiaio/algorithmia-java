@@ -11,6 +11,18 @@ public final class Algorithmia {
     private Algorithmia() {} // Not instantiable
 
     /**
+     * Returns the default Algorithmia client which will
+     * look for ALGORITHMI_API_KEY environment variable or java property
+     * If no key is found, then requests will be unauthenticated which only works
+     * when making requests from an algorithm running within the Algorithmia cluster
+     * @return an Algorithmia client
+     */
+    public static AlgorithmiaClient client() {
+        return getDefaultClient();
+    }
+
+
+    /**
      * Builds an Algorithmia client that makes all requests with your API key
      * If API key is null, the default client is returned, which will
      * look for ALGORITHMI_API_KEY environment variable or java property

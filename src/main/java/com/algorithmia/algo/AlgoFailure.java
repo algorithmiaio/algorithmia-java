@@ -39,4 +39,9 @@ public final class AlgoFailure extends AlgoResponse {
         throw error;
     }
 
+    @Override
+    public String asJsonString() throws AlgorithmException {
+        throw error;
+    }
+
 }

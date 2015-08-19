@@ -76,6 +76,7 @@ public class AlgoResponseTest {
         Assert.assertEquals(true, response.isSuccess());
         Assert.assertEquals(false, response.isFailure());
         Assert.assertEquals("[2,2,2,3,3]", response.as(new TypeToken<JsonElement>(){}).toString());
+        Assert.assertEquals("[2,2,2,3,3]", response.asJsonString());
     }
     @Test
     public void algoResponseMetadata() throws Exception {

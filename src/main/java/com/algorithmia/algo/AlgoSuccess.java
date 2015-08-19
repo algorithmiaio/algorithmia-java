@@ -83,4 +83,10 @@ public final class AlgoSuccess extends AlgoResponse {
         }
     }
 
+    @Override
+    public String asJsonString() {
+        return result.toString();
+    }
+
+
 }

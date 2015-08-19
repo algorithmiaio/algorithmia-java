@@ -49,4 +49,10 @@ public abstract class AlgoResponse {
         return this.as(typeToken.getType());
     }
 
+    /**
+     * Return JSON representation of the result.
+     * @return the result, if this is AlgoSuccess
+     * @throws AlgorithmException the error, if this is AlgoFailure
+     */
+    public abstract String asJsonString() throws AlgorithmException;
 }

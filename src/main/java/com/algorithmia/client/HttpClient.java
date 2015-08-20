@@ -24,6 +24,8 @@ public class HttpClient {
 
     final private Auth auth;
 
+    private String userAgent = "algorithmia-java:" + "1.0.2";
+
     private static CloseableHttpAsyncClient client;
 
     static {
@@ -149,6 +151,8 @@ public class HttpClient {
         if(this.auth != null) {
             this.auth.authenticateRequest(request);
         }
+
+        request.addHeader("User-Agent", this.userAgent);
 
         HttpHost target = new HttpHost(request.getURI().getHost(), request.getURI().getPort());
         return client.execute(new BasicAsyncRequestProducer(target, request), consumer, null);

@@ -2,12 +2,10 @@ package com.algorithmia.algo;
 
 import com.algorithmia.APIException;
 import com.algorithmia.client.HttpClient;
-import com.algorithmia.client.HttpClientHelpers;
 import com.algorithmia.client.HttpClientHelpers.AlgoResponseHandler;
 
 import java.util.concurrent.Future;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.StringEntity;
 

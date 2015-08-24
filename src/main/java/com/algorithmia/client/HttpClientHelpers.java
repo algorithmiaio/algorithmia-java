@@ -22,9 +22,6 @@ import com.google.gson.reflect.TypeToken;
 
 import org.apache.http.ContentTooLongException;
 import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.entity.InputStreamEntity;
-import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.nio.protocol.AbstractAsyncResponseConsumer;
 import org.apache.http.nio.util.SimpleInputBuffer;
 import org.apache.http.nio.ContentDecoder;
@@ -151,32 +148,6 @@ public class HttpClientHelpers {
         } catch(IOException ex) {
             throw new APIException("IOException: " + ex.getMessage());
         }
-    }
-
-    // Compat-shim for Android
-    public static StringEntity stringEntity(String input, ContentType contentType) {
-        try {
-            StringEntity entity = new StringEntity(input, contentType.getCharset().toString());
-            entity.setContentType(contentType.toString());
-            return entity;
-        } catch(Exception e) {
-            // Should never happen
-            throw new RuntimeException("Unsupported encoding: " + contentType.toString());
-        }
-    }
-
-    // Compat-shim for Android
-    public static ByteArrayEntity byteArrayEntity(byte[] input, ContentType contentType) {
-        ByteArrayEntity entity = new ByteArrayEntity(input);
-        entity.setContentType(contentType.toString());
-        return entity;
-    }
-
-    // Compat-shim for Android
-    public static InputStreamEntity inputStreamEntity(InputStream input, ContentType contentType) {
-        InputStreamEntity entity = new InputStreamEntity(input, -1);
-        entity.setContentType(contentType.toString());
-        return entity;
     }
 
 }

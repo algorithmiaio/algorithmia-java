@@ -8,6 +8,8 @@ import com.algorithmia.client.HttpClientHelpers.AlgoResponseHandler;
 import java.util.concurrent.Future;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.entity.StringEntity;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -94,15 +96,15 @@ public final class Algorithm {
     }
 
     private FutureAlgoResponse pipeRequestAsync(String input, ContentType content_type) {
-        org.apache.http.entity.ContentType requestType = org.apache.http.entity.ContentType.APPLICATION_JSON;
+        StringEntity requestEntity = null;
         if(content_type == ContentType.Text) {
-          requestType = org.apache.http.entity.ContentType.TEXT_PLAIN;
+          requestEntity = new StringEntity(input, "UTF-8");
         } else if(content_type == ContentType.Json) {
-          requestType = org.apache.http.entity.ContentType.APPLICATION_JSON;
+          requestEntity = new StringEntity(input, org.apache.http.entity.ContentType.APPLICATION_JSON);
         }
         Future<AlgoResponse> promise = client.post(
             algoRef.getUrl(),
-            HttpClientHelpers.stringEntity(input, requestType),
+            requestEntity,
             new AlgoResponseHandler()
         );
         return new FutureAlgoResponse(promise);
@@ -123,7 +125,7 @@ public final class Algorithm {
     private FutureAlgoResponse pipeBinaryRequestAsync(byte[] input) {
         Future<AlgoResponse> promise = client.post(
             algoRef.getUrl(),
-            HttpClientHelpers.byteArrayEntity(input, org.apache.http.entity.ContentType.APPLICATION_OCTET_STREAM),
+            new ByteArrayEntity(input, org.apache.http.entity.ContentType.APPLICATION_OCTET_STREAM),
             new AlgoResponseHandler()
         );
         return new FutureAlgoResponse(promise);

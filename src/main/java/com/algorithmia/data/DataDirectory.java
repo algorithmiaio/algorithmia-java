@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.HttpResponse;
 
 /**
@@ -90,7 +91,7 @@ public class DataDirectory extends DataObject {
         JsonElement inputJson = gson.toJsonTree(reqObj);
 
         String url = this.getParent().getUrl();
-        HttpResponse response = this.client.post(url, HttpClientHelpers.stringEntity(inputJson.toString(), ContentType.APPLICATION_JSON));
+        HttpResponse response = this.client.post(url, new StringEntity(inputJson.toString(), ContentType.APPLICATION_JSON));
         HttpClientHelpers.throwIfNotOk(response);
     }
 

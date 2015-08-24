@@ -6,10 +6,14 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
+import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.ContentType;
+import org.apache.http.entity.InputStreamEntity;
+import org.apache.http.entity.StringEntity;
 
 import com.algorithmia.APIException;
 import com.algorithmia.client.*;
@@ -63,13 +67,23 @@ public class DataFile extends DataObject {
     }
 
     /**
-     * Gets the data for this file as as string
+     * Gets the data for this file as as string using UTF-8 charset
      * @return the data as a String
      * @throws APIException if there were any problems communicating with the Algorithmia API
      * @throws IOException if there were any problems consuming the response content
      */
     public String getString() throws IOException {
-        return IOUtils.toString(getInputStream(), "UTF-8");
+        return IOUtils.toString(getInputStream(), Charset.forName("UTF-8"));
+    }
+
+    /**
+     * Gets the data for this file as as string using a custom charset
+     * @return the data as a String
+     * @throws APIException if there were any problems communicating with the Algorithmia API
+     * @throws IOException if there were any problems consuming the response content
+     */
+    public String getString(Charset encoding) throws IOException {
+        return IOUtils.toString(getInputStream(), encoding);
     }
 
     /**
@@ -83,12 +97,22 @@ public class DataFile extends DataObject {
     }
 
     /**
-     * Upload string data to this file as text
+     * Upload string data to this file as UTF-8 text
      * @param data the data to upload
      * @throws APIException if there were any problems communicating with the Algorithmia API
      */
     public void put(String data) throws APIException {
-        HttpResponse response = client.put(getUrl(), HttpClientHelpers.stringEntity(data, ContentType.TEXT_PLAIN));
+        HttpResponse response = client.put(getUrl(), new StringEntity(data, "UTF-8"));
+        HttpClientHelpers.throwIfNotOk(response);
+    }
+
+    /**
+     * Upload string data to this file as text using a custom Charset
+     * @param data the data to upload
+     * @throws APIException if there were any problems communicating with the Algorithmia API
+     */
+    public void put(String data,Charset charset) throws APIException {
+        HttpResponse response = client.put(getUrl(), new StringEntity(data, charset));
         HttpClientHelpers.throwIfNotOk(response);
     }
 
@@ -98,7 +122,7 @@ public class DataFile extends DataObject {
      * @throws APIException if there were any problems communicating with the Algorithmia API
      */
     public void put(byte[] data) throws APIException {
-        HttpResponse response = client.put(getUrl(), HttpClientHelpers.byteArrayEntity(data, ContentType.APPLICATION_OCTET_STREAM));
+        HttpResponse response = client.put(getUrl(), new ByteArrayEntity(data, ContentType.APPLICATION_OCTET_STREAM));
         HttpClientHelpers.throwIfNotOk(response);
     }
 
@@ -108,7 +132,7 @@ public class DataFile extends DataObject {
      * @throws APIException if there were any problems communicating with the Algorithmia API
      */
     public void put(InputStream is) throws APIException {
-        HttpResponse response = client.put(getUrl(), HttpClientHelpers.inputStreamEntity(is, ContentType.APPLICATION_OCTET_STREAM));
+        HttpResponse response = client.put(getUrl(), new InputStreamEntity(is, -1, ContentType.APPLICATION_OCTET_STREAM));
         HttpClientHelpers.throwIfNotOk(response);
     }
 

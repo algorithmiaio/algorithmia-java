@@ -8,6 +8,9 @@ import com.algorithmia.data.*;
  * Instantiate Algorithmia clients for calling algorithms and accessing data
  */
 public final class Algorithmia {
+
+    private static AlgorithmiaClient defaultClient = null;
+
     private Algorithmia() {} // Not instantiable
 
     /**
@@ -67,6 +70,9 @@ public final class Algorithmia {
     }
 
     private static AlgorithmiaClient getDefaultClient() {
-        return new AlgorithmiaClient();
+        if(defaultClient == null) {
+            defaultClient = new AlgorithmiaClient();
+        }
+        return defaultClient;
     }
 }

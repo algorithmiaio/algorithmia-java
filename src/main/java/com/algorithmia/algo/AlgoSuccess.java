@@ -88,5 +88,9 @@ public final class AlgoSuccess extends AlgoResponse {
         return result.toString();
     }
 
+    @Override
+    public String asString() {
+        return as(String.class);
+    }
 
 }

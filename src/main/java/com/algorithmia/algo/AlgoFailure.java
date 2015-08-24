@@ -44,4 +44,9 @@ public final class AlgoFailure extends AlgoResponse {
         throw error;
     }
 
+    @Override
+    public String asString() throws AlgorithmException {
+        throw error;
+    }
+
 }

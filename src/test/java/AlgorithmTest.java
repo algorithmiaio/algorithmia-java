@@ -29,7 +29,9 @@ public class AlgorithmTest {
 
         AlgoResponse res = Algorithmia.client(key).algo("demo/Hello").pipe("foo");
         Assert.assertEquals("\"Hello foo\"", res.as(new TypeToken<JsonElement>(){}).toString());
+        Assert.assertEquals("\"Hello foo\"", res.asJsonString());
         Assert.assertEquals("Hello foo", res.as(new TypeToken<String>(){}));
+        Assert.assertEquals("Hello foo", res.asString());
         Assert.assertEquals(ContentType.Text, res.getMetadata().getContentType());
     }
 

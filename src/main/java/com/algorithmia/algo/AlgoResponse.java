@@ -55,4 +55,12 @@ public abstract class AlgoResponse {
      * @throws AlgorithmException the error, if this is AlgoFailure
      */
     public abstract String asJsonString() throws AlgorithmException;
+
+    /**
+     * Return String representation of the result.
+     * @return the result, if this is AlgoSuccess
+     * @throws AlgorithmException the error, if this is AlgoFailure
+     */
+    public abstract String asString() throws AlgorithmException;
+
 }

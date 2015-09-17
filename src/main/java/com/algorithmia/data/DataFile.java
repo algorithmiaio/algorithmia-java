@@ -48,7 +48,7 @@ public class DataFile extends DataObject {
      * @throws IOException if there were any problems consuming the response content
      */
     public File getFile() throws APIException, IOException {
-        File tempFile = File.createTempFile(getName(), null);
+        File tempFile = File.createTempFile("algodata", null);
         FileOutputStream outputStream = new FileOutputStream(tempFile);
         IOUtils.copy(getInputStream(), outputStream);
         return tempFile;

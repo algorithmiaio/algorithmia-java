@@ -13,17 +13,33 @@ public abstract class AbstractDataIterator<T> implements Iterator<T> {
     protected String marker;
     protected int offset = 0;
     protected List<String> children;
+    private boolean loadedFirstPage = false;
 
-    protected AbstractDataIterator(DataDirectory dir) throws APIException {
+    protected AbstractDataIterator(DataDirectory dir) {
         this.dir = dir;
-        loadNextPage();
     }
 
     public boolean hasNext() {
+        if(!loadedFirstPage) {
+            loadedFirstPage = true;
+            try {
+                loadNextPage();
+            } catch(APIException ex) {
+                throw new NoSuchElementException(ex.getMessage());
+            }
+        }
         return (marker != null && children != null && offset >= children.size());
     }
 
     public T next() throws NoSuchElementException {
+        if(!loadedFirstPage) {
+            loadedFirstPage = true;
+            try {
+                loadNextPage();
+            } catch(APIException ex) {
+                throw new NoSuchElementException(ex.getMessage());
+            }
+        }
         if(children == null) {
             throw new NoSuchElementException();
         }

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DataDirectoryIterator extends AbstractDataIterator<DataDirectory> {
-    public DataDirectoryIterator(DataDirectory dir) throws APIException {
+    public DataDirectoryIterator(DataDirectory dir) {
         super(dir);
     }
 

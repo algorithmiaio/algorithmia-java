@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 
+import java.util.Iterator;
 import java.util.List;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -43,12 +44,28 @@ public class DataDirectory extends DataObject {
      * @return the list of files
      * @throws APIException if there were any problems communicating with the Algorithmia API
      */
+    @Deprecated
     public DataFileIterator getFileIter() throws APIException {
         return new DataFileIterator(this);
     }
+    public Iterable<DataFile> files() throws APIException {
+        return new Iterable<DataFile>() {
+            public DataFileIterator iterator() {
+                return new DataFileIterator(DataDirectory.this);
+            }
+        };
+    }
 
-    public DataDirectoryIterator getDirIter() throws APIException{
+    @Deprecated
+    public DataDirectoryIterator getDirIter() throws APIException {
         return new DataDirectoryIterator(this);
+    }
+    public Iterable<DataDirectory> dirs() throws APIException {
+        return new Iterable<DataDirectory>() {
+            public DataDirectoryIterator iterator() {
+                return new DataDirectoryIterator(DataDirectory.this);
+            }
+        };
     }
 
     /**

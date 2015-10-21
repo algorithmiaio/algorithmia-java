@@ -66,10 +66,9 @@ public class HttpClient {
         return this.executeAsync(request, consumer);
     }
 
-    /*
-    * POST requests
-    */
-
+    /**
+     * POST requests
+     */
     public HttpResponse post(String url, HttpEntity data) throws APIException {
         final HttpPost request = new HttpPost(url);
         request.setEntity(data);
@@ -82,10 +81,9 @@ public class HttpClient {
         return this.executeAsync(request, consumer);
     }
 
-    /*
-    * PUT requests
-    */
-
+    /**
+     * PUT requests
+     */
     public HttpResponse put(String url, HttpEntity data) throws APIException {
         final HttpPut request = new HttpPut(url);
         request.setEntity(data);
@@ -98,10 +96,9 @@ public class HttpClient {
         return this.executeAsync(request, consumer);
     }
 
-    /*
-    * DELETE requests
-    */
-
+    /**
+     * DELETE requests
+     */
     public HttpResponse delete(String url) throws APIException {
         final HttpDelete request = new HttpDelete(url);
         return execute(request);
@@ -112,10 +109,9 @@ public class HttpClient {
         return executeAsync(request, consumer);
     }
 
-    /*
-    * HEAD requests
-    */
-
+    /**
+     * HEAD requests
+     */
     public HttpResponse head(String url) throws APIException {
         final HttpHead request = new HttpHead(url);
         return execute(request);
@@ -127,10 +123,9 @@ public class HttpClient {
     }
 
 
-    /*
-    * execute methods to execute a request
-    */
-
+    /**
+     * execute methods to execute a request
+     */
     private HttpResponse execute(HttpUriRequest request) throws APIException {
         return execute(request, new BasicAsyncResponseConsumer());
     }
@@ -151,9 +146,7 @@ public class HttpClient {
         if(this.auth != null) {
             this.auth.authenticateRequest(request);
         }
-
-        request.addHeader("User-Agent", this.userAgent);
-
+        request.addHeader("User-Agent", HttpClient.userAgent);
         HttpHost target = new HttpHost(request.getURI().getHost(), request.getURI().getPort());
         return client.execute(new BasicAsyncRequestProducer(target, request), consumer, null);
     }

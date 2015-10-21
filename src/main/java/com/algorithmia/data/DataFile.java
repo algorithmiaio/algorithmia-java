@@ -16,7 +16,8 @@ import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
 
 import com.algorithmia.APIException;
-import com.algorithmia.client.*;
+import com.algorithmia.client.HttpClient;
+import com.algorithmia.client.HttpClientHelpers;
 
 /**
  * A reference to a file in the data api

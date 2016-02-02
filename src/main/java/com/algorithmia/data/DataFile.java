@@ -48,7 +48,19 @@ public class DataFile extends DataObject {
      * @throws IOException if there were any problems consuming the response content
      */
     public File getFile() throws APIException, IOException {
-        File tempFile = File.createTempFile("algodata", null);
+        int separatorIndex = path.lastIndexOf('/');
+        File tempFile;
+        if(separatorIndex > -1 && separatorIndex < path.length() - 1) {
+            String filename = path.substring(separatorIndex + 1);
+            int extensionIndex = filename.lastIndexOf('.');
+            if(extensionIndex > -1) {
+                tempFile = File.createTempFile(filename.substring(0,extensionIndex), filename.substring(extensionIndex + 1));
+            } else {
+                tempFile = File.createTempFile(filename, null);
+            }
+        } else {
+            tempFile = File.createTempFile("algodata", null);
+        }
         FileOutputStream outputStream = new FileOutputStream(tempFile);
         IOUtils.copy(getInputStream(), outputStream);
         return tempFile;

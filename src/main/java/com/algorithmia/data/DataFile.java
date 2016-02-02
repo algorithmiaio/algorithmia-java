@@ -48,10 +48,9 @@ public class DataFile extends DataObject {
      * @throws IOException if there were any problems consuming the response content
      */
     public File getFile() throws APIException, IOException {
-        int separatorIndex = path.lastIndexOf('/');
         File tempFile;
-        if(separatorIndex > -1 && separatorIndex < path.length() - 1) {
-            String filename = path.substring(separatorIndex + 1);
+        String filename = getName();
+        if(filename.length() > 0) {
             int extensionIndex = filename.lastIndexOf('.');
             if(extensionIndex > -1) {
                 tempFile = File.createTempFile(filename.substring(0,extensionIndex), filename.substring(extensionIndex + 1));

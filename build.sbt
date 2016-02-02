@@ -11,8 +11,8 @@ autoScalaLibrary := false
 scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature", "-Xlint")
 
 libraryDependencies ++= Seq(
-  "com.google.code.gson" % "gson" % "2.3.1",
-  "org.apache.httpcomponents" % "httpasyncclient" % "4.1",
+  "com.google.code.gson" % "gson" % "2.5",
+  "org.apache.httpcomponents" % "httpasyncclient" % "4.1.1",
   "commons-io" % "commons-io" % "2.4",
   "com.novocode" % "junit-interface" % "0.8" % "test->default",
   "junit" % "junit" % "4.12" % "test"

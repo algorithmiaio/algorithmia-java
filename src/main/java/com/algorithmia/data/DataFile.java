@@ -95,6 +95,7 @@ public class DataFile extends DataObject {
 
     /**
      * Gets the data for this file as as string using a custom charset
+     * @param encoding the character encoding of the string
      * @return the data as a String
      * @throws APIException if there were any problems communicating with the Algorithmia API
      * @throws IOException if there were any problems consuming the response content

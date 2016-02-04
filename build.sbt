@@ -3,7 +3,7 @@ name := "algorithmia-client"
 
 organization := "com.algorithmia"
 
-version := "1.0.4-SNAPSHOT"
+version := "1.0.4"
 
 autoScalaLibrary := false
 
@@ -11,6 +11,7 @@ autoScalaLibrary := false
 scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature", "-Xlint")
 
 javacOptions ++= Seq("-source", "1.6", "-target", "1.6")
+
 javacOptions in doc := Seq("-source", "1.6")
 
 libraryDependencies ++= Seq(

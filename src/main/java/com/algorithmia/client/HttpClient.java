@@ -26,9 +26,14 @@ public class HttpClient {
 
     private static String userAgent = "algorithmia-java/" + "1.0.4";
 
-    private static CloseableHttpAsyncClient client;
+    private CloseableHttpAsyncClient client;
 
-    static {
+    public HttpClient(Auth auth) {
+        this.auth = auth;
+        initializeClient();
+    }
+
+    private void initializeClient() {
         client = HttpAsyncClients.createDefault();
         client.start();
 
@@ -40,10 +45,6 @@ public class HttpClient {
                 } catch(IOException e) {}
             }
         });
-    }
-
-    public HttpClient(Auth auth) {
-        this.auth = auth;
     }
 
     /*

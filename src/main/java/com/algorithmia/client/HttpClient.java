@@ -34,6 +34,9 @@ public class HttpClient {
     }
 
     private void initializeClient() {
+        // Note: the default client has a low max number of concurrent connections, can create a
+        // custom client with a higher limit if desired, but at least creating multiple Algorithmia clients
+        // will guaranteed increase parallelization
         client = HttpAsyncClients.createDefault();
         client.start();
 

@@ -6,6 +6,7 @@ import com.algorithmia.client.HttpClientHelpers.AlgoResponseHandler;
 
 import java.util.concurrent.Future;
 
+import com.google.gson.JsonObject;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.StringEntity;
 
@@ -15,6 +16,8 @@ import com.google.gson.JsonElement;
 /**
  * Represents an Algorithmia algorithm that can be called.
  */
+
+
 public final class Algorithm {
     private AlgorithmRef algoRef;
     private HttpClient client;
@@ -29,7 +32,7 @@ public final class Algorithm {
     /**
      * Calls the Algorithmia API for a given input.
      * Attempts to automatically serialize the input to JSON.
-     *
+     * If input is derived from AlgoBaseClass, then we serialize with the class name as an identifier.
      * @param input algorithm input, will automatically be converted into JSON
      * @return algorithm result (AlgoSuccess or AlgoFailure)
      * @throws APIException if there is a problem communication with the Algorithmia API.
@@ -39,7 +42,14 @@ public final class Algorithm {
             return pipeRequest((String)input,ContentType.Text);
         } else if (input instanceof byte[]) {
             return pipeBinaryRequest((byte[])input);
-        } else {
+        }
+        else if (input instanceof AlgoInheritable) {
+            JsonElement classBody = gson.toJsonTree(input);
+            JsonObject serializedInput = new JsonObject();
+            serializedInput.add(input.getClass().getSimpleName(), classBody);
+            return pipeRequest(serializedInput.toString(), ContentType.Json);
+        }
+        else {
             return pipeRequest(gson.toJsonTree(input).toString(),ContentType.Json);
         }
     }
@@ -57,7 +67,6 @@ public final class Algorithm {
         final JsonElement inputJson = gson.toJsonTree(input);
         return pipeJsonAsync(inputJson.toString());
     }
-
 
     /**
      * Calls the Algorithmia API for given input that will be treated as JSON

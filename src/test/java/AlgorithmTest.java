@@ -3,6 +3,7 @@ import com.algorithmia.algo.*;
 import com.algorithmia.TypeToken;
 import com.google.gson.JsonElement;
 
+import com.sun.xml.internal.ws.api.message.ExceptionHasMessage;
 import org.apache.commons.codec.binary.Base64;
 import org.junit.Test;
 import org.junit.Assume;
@@ -47,4 +48,18 @@ public class AlgorithmTest {
         Assert.assertEquals(ContentType.Binary, res.getMetadata().getContentType());
     }
 
+    @Test
+    public void algorithmPipeClass() throws Exception {
+        final String key = System.getenv("ALGORITHMIA_API_KEY");
+        Assume.assumeTrue(key != null);
+
+        Weather input = Weather.Weather(22.5f, 14.6f, 0.95f);
+
+        AlgoResponse res = Algorithmia.client(key).algo("zeryx/ClassInputTest/75cd80070848202aa3a69991613b2d486f6204cb").pipe(input);
+        Assert.assertEquals(ContentType.Text, res.getMetadata().getContentType());
+
+
+    }
 }
+
+

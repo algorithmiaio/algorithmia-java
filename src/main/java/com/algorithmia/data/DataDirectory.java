@@ -161,13 +161,13 @@ public class DataDirectory extends DataObject {
     protected DirectoryListResponse getPage(String marker) throws APIException {
         String url = getUrl();
 
-        try {
-            if (marker != null) {
+        if (marker != null) {
+            try {
                 url += "?marker=" + URLEncoder.encode(marker, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                // If we can't encode this, just slap it on see what happens...
+                url += "?marker=" + marker;
             }
-        } catch (UnsupportedEncodingException e) {
-            // If we can't encode this, just slap it on see what happens...
-            url += "?marker=" + marker;
         }
 
         return client.get(url, new TypeToken<DirectoryListResponse>(){});

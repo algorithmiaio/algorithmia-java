@@ -99,7 +99,10 @@ public class HttpClientHelpers {
             if(obj.has("error")) {
                 final JsonObject error = obj.getAsJsonObject("error");
                 final String msg = error.get("message").getAsString();
-                final String stacktrace = error.get("stacktrace").getAsString();
+                String stacktrace = null;
+                if (error.has("stacktrace")) {
+                    stacktrace = error.get("stacktrace").getAsString();
+                }
                 return new AlgoFailure(new AlgorithmException(msg, null, stacktrace));
             } else {
                 JsonObject metaJson = obj.getAsJsonObject("metadata");

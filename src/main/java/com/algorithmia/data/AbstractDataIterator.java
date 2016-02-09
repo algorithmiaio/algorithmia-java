@@ -11,9 +11,9 @@ import java.util.List;
 public abstract class AbstractDataIterator<T> implements Iterator<T> {
     protected DataDirectory dir;
     protected String marker;
-    protected int offset = 0;
-    protected List<String> children;
-    private boolean loadedFirstPage = false;
+    private int offset;
+    private List<String> children;
+    private boolean loadedFirstPage;
 
     protected AbstractDataIterator(DataDirectory dir) {
         this.dir = dir;
@@ -61,6 +61,15 @@ public abstract class AbstractDataIterator<T> implements Iterator<T> {
         } else {
             throw new NoSuchElementException();
         }
+    }
+
+    final protected void setChildrenAndMarker(List<String> newChildren, String marker) {
+        if (children != null && offset < children.size())
+            throw new IllegalStateException("Skipping elements");
+
+        children = newChildren;
+        offset = 0;
+        this.marker = marker;
     }
 
     /*

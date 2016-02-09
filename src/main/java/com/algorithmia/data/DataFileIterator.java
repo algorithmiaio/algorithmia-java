@@ -17,9 +17,7 @@ public class DataFileIterator extends AbstractDataIterator<DataFile> {
         }
 
         // Update iterator state
-        children = filenames;
-        this.offset = 0;
-        this.marker = response.marker;
+        setChildrenAndMarker(filenames, response.marker);
     }
 
     protected DataFile newDataObjectInstance(String dataUri) {

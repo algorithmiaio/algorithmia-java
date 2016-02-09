@@ -17,9 +17,7 @@ public class DataDirectoryIterator extends AbstractDataIterator<DataDirectory> {
         }
 
         // Update iterator state
-        children = dirnames;
-        this.offset = 0;
-        this.marker = response.marker;
+        setChildrenAndMarker(dirnames, response.marker);
     }
 
     protected DataDirectory newDataObjectInstance(String dataUri) {

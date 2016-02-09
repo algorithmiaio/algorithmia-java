@@ -6,10 +6,12 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 
-import java.util.Iterator;
-import java.util.List;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -157,7 +159,17 @@ public class DataDirectory extends DataObject {
      * @throws APIException if there were any problems communicating with the Algorithmia API
      */
     protected DirectoryListResponse getPage(String marker) throws APIException {
-        String url = (marker == null) ? getUrl() : getUrl() + "?marker=" + marker;
+        String url = getUrl();
+
+        try {
+            if (marker != null) {
+                url += "?marker=" + URLEncoder.encode(marker, "UTF-8");
+            }
+        } catch (UnsupportedEncodingException e) {
+            // If we can't encode this, just slap it on see what happens...
+            url += "?marker=" + marker;
+        }
+
         return client.get(url, new TypeToken<DirectoryListResponse>(){});
     }
 }

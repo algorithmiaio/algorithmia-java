@@ -20,7 +20,7 @@ public abstract class AbstractDataIterator<T> implements Iterator<T> {
     }
 
     public boolean hasNext() {
-        return (marker != null && children != null && offset >= children.size());
+        return (children != null && offset < children.size());
     }
 
     public T next() throws NoSuchElementException {

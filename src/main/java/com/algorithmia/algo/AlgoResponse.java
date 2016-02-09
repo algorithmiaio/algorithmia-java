@@ -3,12 +3,13 @@ package com.algorithmia.algo;
 import com.algorithmia.AlgorithmException;
 import com.algorithmia.TypeToken;
 
+import java.io.Serializable;
 import java.lang.reflect.Type;
 
 /**
  * A generic result, can be either AlgoSuccess or AlgoFailure
  */
-public abstract class AlgoResponse {
+public abstract class AlgoResponse implements Serializable {
 
     public abstract boolean isSuccess();
     public abstract boolean isFailure();

@@ -28,7 +28,7 @@ public abstract class AbstractDataIterator<T> implements Iterator<T> {
                 throw new NoSuchElementException(ex.getMessage());
             }
         }
-        return (marker != null && children != null && offset >= children.size());
+        return (children != null && offset < children.size());
     }
 
     public T next() throws NoSuchElementException {

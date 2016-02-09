@@ -24,11 +24,19 @@ public class HttpClient {
 
     final private Auth auth;
 
-    private static String userAgent = "algorithmia-java/" + "1.0.3";
+    private static String userAgent = "algorithmia-java/" + "1.0.4";
 
-    private static CloseableHttpAsyncClient client;
+    private CloseableHttpAsyncClient client;
 
-    static {
+    public HttpClient(Auth auth) {
+        this.auth = auth;
+        initializeClient();
+    }
+
+    private void initializeClient() {
+        // Note: the default client has a low max number of concurrent connections, can create a
+        // custom client with a higher limit if desired, but at least creating multiple Algorithmia clients
+        // will guaranteed increase parallelization
         client = HttpAsyncClients.createDefault();
         client.start();
 
@@ -40,10 +48,6 @@ public class HttpClient {
                 } catch(IOException e) {}
             }
         });
-    }
-
-    public HttpClient(Auth auth) {
-        this.auth = auth;
     }
 
     /*
@@ -66,10 +70,9 @@ public class HttpClient {
         return this.executeAsync(request, consumer);
     }
 
-    /*
-    * POST requests
-    */
-
+    /**
+     * POST requests
+     */
     public HttpResponse post(String url, HttpEntity data) throws APIException {
         final HttpPost request = new HttpPost(url);
         request.setEntity(data);
@@ -82,10 +85,9 @@ public class HttpClient {
         return this.executeAsync(request, consumer);
     }
 
-    /*
-    * PUT requests
-    */
-
+    /**
+     * PUT requests
+     */
     public HttpResponse put(String url, HttpEntity data) throws APIException {
         final HttpPut request = new HttpPut(url);
         request.setEntity(data);
@@ -98,10 +100,9 @@ public class HttpClient {
         return this.executeAsync(request, consumer);
     }
 
-    /*
-    * DELETE requests
-    */
-
+    /**
+     * DELETE requests
+     */
     public HttpResponse delete(String url) throws APIException {
         final HttpDelete request = new HttpDelete(url);
         return execute(request);
@@ -112,10 +113,9 @@ public class HttpClient {
         return executeAsync(request, consumer);
     }
 
-    /*
-    * HEAD requests
-    */
-
+    /**
+     * HEAD requests
+     */
     public HttpResponse head(String url) throws APIException {
         final HttpHead request = new HttpHead(url);
         return execute(request);
@@ -127,10 +127,9 @@ public class HttpClient {
     }
 
 
-    /*
-    * execute methods to execute a request
-    */
-
+    /**
+     * execute methods to execute a request
+     */
     private HttpResponse execute(HttpUriRequest request) throws APIException {
         return execute(request, new BasicAsyncResponseConsumer());
     }
@@ -151,9 +150,7 @@ public class HttpClient {
         if(this.auth != null) {
             this.auth.authenticateRequest(request);
         }
-
-        request.addHeader("User-Agent", this.userAgent);
-
+        request.addHeader("User-Agent", HttpClient.userAgent);
         HttpHost target = new HttpHost(request.getURI().getHost(), request.getURI().getPort());
         return client.execute(new BasicAsyncRequestProducer(target, request), consumer, null);
     }

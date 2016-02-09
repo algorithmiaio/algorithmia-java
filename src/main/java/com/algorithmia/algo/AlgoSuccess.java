@@ -15,15 +15,17 @@ import java.lang.reflect.Type;
  */
 public final class AlgoSuccess extends AlgoResponse {
 
-    private JsonElement result;
+    private transient JsonElement result;
     private Metadata metadata;
+    private String resultJson;
 
-    private transient final Gson gson = new Gson();
-    private transient final Type byteType = new TypeToken<byte[]>(){}.getType();
+    private static transient final Gson gson = new Gson();
+    private static transient final Type byteType = new TypeToken<byte[]>(){}.getType();
 
     public AlgoSuccess(JsonElement result, Metadata metadata) {
         this.result = result;
         this.metadata = metadata;
+        this.resultJson = result.toString();
     }
 
     @Override
@@ -44,6 +46,9 @@ public final class AlgoSuccess extends AlgoResponse {
     @Override
     @SuppressWarnings("unchecked")
     protected <T> T as(Class<T> returnClass) {
+        if (result == null && resultJson != null) {
+            result = gson.toJsonTree(resultJson);
+        }
         if(metadata.getContentType() == ContentType.Void) {
             return null;
         } else if(metadata.getContentType() == ContentType.Text) {
@@ -66,6 +71,10 @@ public final class AlgoSuccess extends AlgoResponse {
     @Override
     @SuppressWarnings("unchecked")
     protected <T> T as(Type returnType) {
+        if (result == null && resultJson != null) {
+            result = gson.toJsonTree(resultJson);
+        }
+
         if(metadata.getContentType() == ContentType.Void) {
             return null;
         } else if(metadata.getContentType() == ContentType.Text) {
@@ -85,7 +94,7 @@ public final class AlgoSuccess extends AlgoResponse {
 
     @Override
     public String asJsonString() {
-        return result.toString();
+        return resultJson;
     }
 
     @Override

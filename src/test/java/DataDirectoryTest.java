@@ -1,6 +1,9 @@
 import com.algorithmia.Algorithmia;
 import com.algorithmia.data.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.junit.Test;
 import org.junit.Assume;
 import org.junit.Assert;
@@ -56,8 +59,17 @@ public class DataDirectoryTest {
         dir.file("foo2").put("bar2");
         DataFileIterator iter = dir.getFileIter();
 
-        Assert.assertEquals("data://.my/javaDataDirList/foo", iter.next().toString());
-        Assert.assertEquals("data://.my/javaDataDirList/foo2", iter.next().toString());
+        Set<String> filesFound = new HashSet<String>();
+        int numFiles = 0;
+
+        while (iter.hasNext()) {
+            numFiles++;
+            Assert.assertTrue(filesFound.add(iter.next().toString()));
+        }
+
+        Assert.assertEquals(2, numFiles);
+        Assert.assertTrue(filesFound.contains("data://.my/javaDataDirList/foo"));
+        Assert.assertTrue(filesFound.contains("data://.my/javaDataDirList/foo2"));
     }
 
 }

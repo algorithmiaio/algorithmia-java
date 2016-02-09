@@ -1,9 +1,11 @@
 package com.algorithmia.algo;
 
+import java.io.Serializable;
+
 /**
  * Algorithm response metadata
  */
-public final class Metadata {
+public final class Metadata implements Serializable {
 
     private ContentType content_type;
     private Double duration;

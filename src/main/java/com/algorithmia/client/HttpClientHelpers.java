@@ -1,35 +1,33 @@
 package com.algorithmia.client;
 
-import com.algorithmia.algo.AlgoResponse;
-import com.algorithmia.algo.AlgoSuccess;
-import com.algorithmia.algo.AlgoFailure;
-import com.algorithmia.algo.Metadata;
-import com.algorithmia.AlgorithmException;
-import com.algorithmia.APIException;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.http.ContentTooLongException;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import org.apache.http.ContentTooLongException;
 import org.apache.http.entity.ContentType;
-import org.apache.http.nio.protocol.AbstractAsyncResponseConsumer;
-import org.apache.http.nio.util.SimpleInputBuffer;
 import org.apache.http.nio.ContentDecoder;
 import org.apache.http.nio.IOControl;
-import org.apache.http.nio.util.HeapByteBufferAllocator;
 import org.apache.http.nio.entity.ContentBufferEntity;
+import org.apache.http.nio.protocol.AbstractAsyncResponseConsumer;
+import org.apache.http.nio.util.HeapByteBufferAllocator;
+import org.apache.http.nio.util.SimpleInputBuffer;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.Asserts;
+
+import com.algorithmia.APIException;
+import com.algorithmia.AlgorithmException;
+import com.algorithmia.algo.AlgoFailure;
+import com.algorithmia.algo.AlgoResponse;
+import com.algorithmia.algo.AlgoSuccess;
+import com.algorithmia.algo.Metadata;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 
 /**
  * Various HTTP actions, using our HttpClient class, and automatically adding authorization
@@ -142,9 +140,9 @@ public class HttpClientHelpers {
         try {
             final HttpEntity entity = response.getEntity();
             final InputStream is = entity.getContent();
-            JsonElement json = parser.parse(new InputStreamReader(is));
+            String jsonString = IOUtils.toString(is, "UTF-8");
+            JsonElement json = parser.parse(jsonString);
             return json;
-
         } catch(IOException ex) {
             throw new APIException("IOException: " + ex.getMessage());
         }

@@ -4,7 +4,8 @@ import com.algorithmia.AlgorithmiaConf;
 import com.algorithmia.APIException;
 import com.algorithmia.client.*;
 
-
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 /**
  * An abstract object for common functionality of DataFile and DataDirectory
@@ -34,7 +35,11 @@ abstract public class DataObject {
      * @return the HTTP url for this collection
      */
     public String getUrl() {
-        return AlgorithmiaConf.apiAddress() + "/v1/data/" + path;
+        try {
+          return AlgorithmiaConf.apiAddress() + "/v1/data/" + URLEncoder.encode(path, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+          throw new RuntimeException(e);
+        }
     }
 
     @Override

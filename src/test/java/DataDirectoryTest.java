@@ -73,6 +73,34 @@ public class DataDirectoryTest {
     }
 
     @Test
+    public void dataDirListIterable() throws Exception {
+        final String key = System.getenv("ALGORITHMIA_API_KEY");
+        Assume.assumeTrue(key != null);
+
+        DataDirectory dir = Algorithmia.client(key).dir("data://.my/javaDataDirList");
+
+        if(dir.exists()) {
+            dir.delete(true);
+        }
+
+        dir.create();
+        dir.file("foo").put("bar");
+        dir.file("foo2").put("bar2");
+
+        Set<String> filesFound = new HashSet<String>();
+        int numFiles = 0;
+
+        for(DataFile file : dir.files()) {
+            numFiles++;
+            Assert.assertTrue(filesFound.add(file.toString()));
+        }
+
+        Assert.assertEquals(2, numFiles);
+        Assert.assertTrue(filesFound.contains("data://.my/javaDataDirList/foo"));
+        Assert.assertTrue(filesFound.contains("data://.my/javaDataDirList/foo2"));
+    }
+
+    @Test
     public void dataDirListWithPaging() throws Exception {
         final String key = System.getenv("ALGORITHMIA_API_KEY");
         Assume.assumeTrue(key != null);
@@ -98,10 +126,49 @@ public class DataDirectoryTest {
 
         while (iter.hasNext()) {
             numFiles++;
-            String fileName = iter.next().toString();
-            int startIndex = fileName.lastIndexOf('/') + 1;
+            String fileName = iter.next().getName();
             int endIndex = fileName.length() - EXTENSION.length();
-            int index = Integer.parseInt(fileName.substring(startIndex, endIndex));
+            int index = Integer.parseInt(fileName.substring(0, endIndex));
+
+            seenFiles[index] = true;
+        }
+
+        boolean allSeen = true;
+        for (boolean cur : seenFiles) {
+            allSeen = (allSeen && cur);
+        }
+
+        Assert.assertEquals(NUM_FILES, numFiles);
+        Assert.assertTrue(allSeen);
+    }
+
+    @Test
+    public void dataDirListWithPagingIterable() throws Exception {
+        final String key = System.getenv("ALGORITHMIA_API_KEY");
+        Assume.assumeTrue(key != null);
+
+        DataDirectory dir = Algorithmia.client(key).dir("data://.my/javaLargeDataDirList");
+        final int NUM_FILES = 1100;
+        final String EXTENSION = ".txt";
+
+        // Since this test uploads a lot of files to the server, we want to recreate
+        // this directory only when it does not already exist.
+        if(!dir.exists()) {
+            dir.create();
+
+            for (int i = 0; i < NUM_FILES; i++) {
+                dir.file(i + EXTENSION).put(i + "");
+            }
+        }
+
+        boolean[] seenFiles = new boolean[NUM_FILES];
+        int numFiles = 0;
+
+        for(DataFile file : dir.files()) {
+            numFiles++;
+            String fileName = file.getName();
+            int endIndex = fileName.length() - EXTENSION.length();
+            int index = Integer.parseInt(fileName.substring(0, endIndex));
 
             seenFiles[index] = true;
         }

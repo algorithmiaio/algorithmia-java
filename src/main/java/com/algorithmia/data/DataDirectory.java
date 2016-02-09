@@ -123,9 +123,13 @@ public class DataDirectory extends DataObject {
     protected class DirectoryListResponse {
         protected List<FileMetadata> files;
         protected List<DirectoryMetadata> folders;
-        protected DirectoryListResponse(List<FileMetadata> files, List<DirectoryMetadata> folders) {
+        protected String marker;
+        protected DirectoryListResponse(List<FileMetadata> files,
+                                        List<DirectoryMetadata> folders,
+                                        String marker) {
             this.files = files;
             this.folders = folders;
+            this.marker = marker;
         }
     }
 

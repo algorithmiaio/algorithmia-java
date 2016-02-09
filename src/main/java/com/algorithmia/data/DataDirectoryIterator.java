@@ -11,13 +11,15 @@ public class DataDirectoryIterator extends AbstractDataIterator<DataDirectory> {
 
     protected void loadNextPage() throws APIException {
         List<String> dirnames = new ArrayList<String>();
-        for(DataDirectory.DirectoryMetadata meta : dir.getPage(marker).folders) {
+        DataDirectory.DirectoryListResponse response = dir.getPage(marker);
+        for(DataDirectory.DirectoryMetadata meta : response.folders) {
             dirnames.add(meta.name);
         }
 
         // Update iterator state
         children = dirnames;
         this.offset = 0;
+        this.marker = response.marker;
     }
 
     protected DataDirectory newDataObjectInstance(String dataUri) {

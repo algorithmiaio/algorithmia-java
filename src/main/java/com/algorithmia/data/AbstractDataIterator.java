@@ -20,7 +20,9 @@ public abstract class AbstractDataIterator<T> implements Iterator<T> {
     }
 
     public boolean hasNext() {
-        return (children != null && offset < children.size());
+        return
+            (children != null && offset < children.size()) || // We have data in memory
+            (children != null && offset >= children.size() && marker != null); // There is another page to fetch
     }
 
     public T next() throws NoSuchElementException {
@@ -44,7 +46,6 @@ public abstract class AbstractDataIterator<T> implements Iterator<T> {
             throw new NoSuchElementException();
         }
     }
-
 
     /*
      * @throws UnsupportedOperationException as remove is not supported for DataFileIterators

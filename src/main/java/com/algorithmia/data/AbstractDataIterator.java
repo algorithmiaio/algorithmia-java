@@ -20,28 +20,16 @@ public abstract class AbstractDataIterator<T> implements Iterator<T> {
     }
 
     public boolean hasNext() {
-        if(!loadedFirstPage) {
-            loadedFirstPage = true;
-            try {
-                loadNextPage();
-            } catch(APIException ex) {
-                throw new NoSuchElementException(ex.getMessage());
-            }
-        }
+        attemptToLoadFirstPage();
+
         return
             (children != null && offset < children.size()) || // We have data in memory
             (children != null && offset >= children.size() && marker != null); // There is another page to fetch
     }
 
     public T next() throws NoSuchElementException {
-        if(!loadedFirstPage) {
-            loadedFirstPage = true;
-            try {
-                loadNextPage();
-            } catch(APIException ex) {
-                throw new NoSuchElementException(ex.getMessage());
-            }
-        }
+        attemptToLoadFirstPage();
+
         if(children == null) {
             throw new NoSuchElementException();
         }
@@ -60,6 +48,17 @@ public abstract class AbstractDataIterator<T> implements Iterator<T> {
 
         } else {
             throw new NoSuchElementException();
+        }
+    }
+
+    private void attemptToLoadFirstPage() {
+        if (!loadedFirstPage) {
+            loadedFirstPage = true;
+            try {
+                loadNextPage();
+            } catch(APIException ex) {
+                throw new NoSuchElementException(ex.getMessage());
+            }
         }
     }
 

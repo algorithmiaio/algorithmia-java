@@ -10,7 +10,6 @@ import org.junit.Assert;
 
 public class DataDirectoryTest {
 
-
     @Test
     public void dataDirParent() throws Exception {
         DataDirectory dir = new DataDirectory(null, "data://.my/javaclienttest");
@@ -72,12 +71,11 @@ public class DataDirectoryTest {
         Assert.assertTrue(filesFound.contains("data://.my/javaDataDirList/foo2"));
     }
 
-    @Test
-    public void dataDirListIterable() throws Exception {
+    private void dataDirListIterable(String dirName) throws Exception {
         final String key = System.getenv("ALGORITHMIA_API_KEY");
         Assume.assumeTrue(key != null);
 
-        DataDirectory dir = Algorithmia.client(key).dir("data://.my/javaDataDirList");
+        DataDirectory dir = Algorithmia.client(key).dir(dirName);
 
         if(dir.exists()) {
             dir.delete(true);
@@ -98,6 +96,16 @@ public class DataDirectoryTest {
         Assert.assertEquals(2, numFiles);
         Assert.assertTrue(filesFound.contains("data://.my/javaDataDirList/foo"));
         Assert.assertTrue(filesFound.contains("data://.my/javaDataDirList/foo2"));
+    }
+
+    @Test
+    public void dataDirListIterableWithTrailingSlash() throws Exception {
+        dataDirListIterable("data://.my/javaDataDirList/");
+    }
+
+    @Test
+    public void dataDirListIterableWithoutTrailingSlash() throws Exception {
+        dataDirListIterable("data://.my/javaDataDirList");
     }
 
     @Test

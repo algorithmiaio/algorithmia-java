@@ -44,7 +44,7 @@ public abstract class AbstractDataIterator<T> implements Iterator<T> {
 
         if(offset < children.size()) {
             offset++;
-            return newDataObjectInstance(dir.path + "/" + children.get(offset-1));
+            return newDataObjectInstance(dir.trimmedPath + "/" + children.get(offset-1));
 
         } else {
             throw new NoSuchElementException();

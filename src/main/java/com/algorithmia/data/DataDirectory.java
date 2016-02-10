@@ -76,7 +76,7 @@ public class DataDirectory extends DataObject {
      * @return a handle to the requested file
      */
     public DataFile file(String filename) {
-        return new DataFile(client, path + "/" + filename);
+        return new DataFile(client, trimmedPath + "/" + filename);
     }
 
     /**
@@ -87,7 +87,7 @@ public class DataDirectory extends DataObject {
      * @throws FileNotFoundException if the specified file does not exist
      */
     public DataFile putFile(File file) throws APIException, FileNotFoundException {
-        DataFile dataFile = new DataFile(client, path + "/" + file.getName());
+        DataFile dataFile = new DataFile(client, trimmedPath + "/" + file.getName());
         dataFile.put(file);
         return dataFile;
     }

@@ -189,4 +189,30 @@ public class DataDirectoryTest {
         Assert.assertEquals(NUM_FILES, numFiles);
         Assert.assertTrue(allSeen);
     }
+
+    @Test
+    public void listingEmptyDirectory() throws Exception {
+        final String key = System.getenv("ALGORITHMIA_API_KEY");
+        Assume.assumeTrue(key != null);
+
+        DataDirectory dir = Algorithmia.client(key).dir("data://.my/test_empty_dir");
+        if (dir.exists())
+            dir.delete(true);
+
+        dir.create();
+
+        int dirCount = 0;
+        for (DataDirectory childDir : dir.dirs()) {
+            dirCount++;
+        }
+        Assert.assertEquals(0, dirCount);
+
+        int fileCount = 0;
+        for (DataFile childFile : dir.files()) {
+            fileCount++;
+        }
+        Assert.assertEquals(0, fileCount);
+
+        dir.delete(true);
+    }
 }

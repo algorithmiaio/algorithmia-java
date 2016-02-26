@@ -8,10 +8,9 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -23,7 +22,7 @@ import org.apache.http.HttpResponse;
 public class DataDirectory extends DataObject {
 
     public DataDirectory(HttpClient client, String dataUrl) {
-        super(client, dataUrl);
+        super(client, dataUrl, DataObjectType.DIRECTORY);
     }
 
     /**
@@ -95,8 +94,18 @@ public class DataDirectory extends DataObject {
     private class CreateDirectoryRequest {
         @SuppressWarnings("unused")//Used indirectly by GSON
         private String name;
-        CreateDirectoryRequest(String name) {
+        private DataAcl acl;
+        CreateDirectoryRequest(String name, DataAcl acl) {
             this.name = name;
+            this.acl = acl;
+        }
+    }
+
+    private class UpdateDirectoryRequest {
+        @SuppressWarnings("unused")//Used indirectly by GSON
+        private DataAcl acl;
+        UpdateDirectoryRequest(DataAcl acl) {
+            this.acl = acl;
         }
     }
 
@@ -105,11 +114,22 @@ public class DataDirectory extends DataObject {
      * @throws APIException if there were any problems communicating with the Algorithmia API
      */
     public void create() throws APIException {
-        CreateDirectoryRequest reqObj = new CreateDirectoryRequest(this.getName());
+        CreateDirectoryRequest reqObj = new CreateDirectoryRequest(this.getName(), null);
         Gson gson = new Gson();
         JsonElement inputJson = gson.toJsonTree(reqObj);
 
         String url = this.getParent().getUrl();
+        HttpResponse response = this.client.post(url, new StringEntity(inputJson.toString(), ContentType.APPLICATION_JSON));
+        HttpClientHelpers.throwIfNotOk(response);
+    }
+
+    public void create(DataAcl dataAcl) throws APIException {
+        CreateDirectoryRequest reqObj = new CreateDirectoryRequest(this.getName(), dataAcl);
+        Gson gson = new Gson();
+        JsonElement inputJson = gson.toJsonTree(reqObj);
+
+        String url = this.getParent().getUrl();
+
         HttpResponse response = this.client.post(url, new StringEntity(inputJson.toString(), ContentType.APPLICATION_JSON));
         HttpClientHelpers.throwIfNotOk(response);
     }
@@ -122,6 +142,23 @@ public class DataDirectory extends DataObject {
     public void delete(boolean forceDelete) throws APIException {
         HttpResponse response = client.delete(getUrl() + "?force=" + forceDelete);
         HttpClientHelpers.throwIfNotOk(response);
+    }
+
+    public DataAcl getPermissions() throws APIException {
+        DirectoryListResponse response = getPage(null, true);
+        return DataAcl.fromAclResponse(response.acl);
+    }
+
+    public boolean updatePermissions(DataAcl dataAcl) throws APIException {
+        UpdateDirectoryRequest request = new UpdateDirectoryRequest(dataAcl);
+        Gson gson = new Gson();
+        JsonElement inputJson = gson.toJsonTree(request);
+
+        StringEntity entity = new StringEntity(inputJson.toString(), "UTF-8");
+        HttpResponse response = client.patch(getUrl(), entity);
+
+        HttpClientHelpers.throwIfNotOk(response);
+        return true;
     }
 
     protected class FileMetadata {
@@ -143,12 +180,15 @@ public class DataDirectory extends DataObject {
         protected List<FileMetadata> files;
         protected List<DirectoryMetadata> folders;
         protected String marker;
+        protected Map<String, List<String>> acl;
         protected DirectoryListResponse(List<FileMetadata> files,
                                         List<DirectoryMetadata> folders,
-                                        String marker) {
+                                        String marker,
+                                        Map<String, List<String>> acl) {
             this.files = files;
             this.folders = folders;
             this.marker = marker;
+            this.acl = acl;
         }
     }
 
@@ -158,18 +198,17 @@ public class DataDirectory extends DataObject {
      * @return a page of files and directories that exist within this directory
      * @throws APIException if there were any problems communicating with the Algorithmia API
      */
-    protected DirectoryListResponse getPage(String marker) throws APIException {
+    protected DirectoryListResponse getPage(String marker, Boolean getAcl) throws APIException {
         String url = getUrl();
 
+        Map<String, String> params = new HashMap<String, String>();
         if (marker != null) {
-            try {
-                url += "?marker=" + URLEncoder.encode(marker, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                // If we can't encode this, just slap it on see what happens...
-                url += "?marker=" + marker;
-            }
+            params.put("marker", marker);
+        }
+        if (getAcl) {
+            params.put("acl", getAcl.toString());
         }
 
-        return client.get(url, new TypeToken<DirectoryListResponse>(){});
+        return client.get(url, new TypeToken<DirectoryListResponse>(){}, params);
     }
 }

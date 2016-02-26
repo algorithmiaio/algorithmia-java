@@ -1,3 +1,4 @@
+import com.algorithmia.APIException;
 import com.algorithmia.Algorithmia;
 import com.algorithmia.data.*;
 
@@ -214,5 +215,55 @@ public class DataDirectoryTest {
         Assert.assertEquals(0, fileCount);
 
         dir.delete(true);
+    }
+
+    @Test
+    public void dataDirType() {
+        DataDirectory dir = Algorithmia.client("").dir("data://.my/javaDataFileGet");
+        Assert.assertTrue(dir.isDirectory());
+        Assert.assertFalse(dir.isFile());
+        Assert.assertEquals(DataObject.DataObjectType.DIRECTORY, dir.getType());
+    }
+
+    @Test
+    public void dataDirGetPermissions() throws APIException {
+        final String key = System.getenv("ALGORITHMIA_API_KEY");
+        Assume.assumeTrue(key != null);
+
+        DataDirectory dir = Algorithmia.client(key).dir("data://.my/javaGetPermissions");
+        if (dir.exists()) {
+            dir.delete(true);
+        }
+        dir.create();
+        Assert.assertEquals(DataAclType.MY_ALGOS, dir.getPermissions().getReadPermissions());
+    }
+
+    @Test
+    public void dataDirCreateWithPermissions() throws APIException {
+        final String key = System.getenv("ALGORITHMIA_API_KEY");
+        Assume.assumeTrue(key != null);
+
+        DataDirectory dir = Algorithmia.client(key).dir("data://.my/javaCreateWithPermissions");
+        if (dir.exists()) {
+            dir.delete(true);
+        }
+        dir.create(DataAcl.PUBLIC);
+        Assert.assertEquals(DataAclType.PUBLIC, dir.getPermissions().getReadPermissions());
+    }
+
+    @Test
+    public void dataDirUpdatePermissions() throws APIException {
+        final String key = System.getenv("ALGORITHMIA_API_KEY");
+        Assume.assumeTrue(key != null);
+
+        DataDirectory dir = Algorithmia.client(key).dir("data://.my/javaUpdatePermissions");
+        if (dir.exists()) {
+            dir.delete(true);
+        }
+        dir.create(DataAcl.PUBLIC);
+        Assert.assertEquals(DataAclType.PUBLIC, dir.getPermissions().getReadPermissions());
+
+        dir.updatePermissions(DataAcl.PRIVATE);
+        Assert.assertEquals(DataAclType.PRIVATE, dir.getPermissions().getReadPermissions());
     }
 }

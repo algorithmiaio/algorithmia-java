@@ -11,7 +11,7 @@ public class DataDirectoryIterator extends AbstractDataIterator<DataDirectory> {
 
     protected void loadNextPage() throws APIException {
         List<String> dirnames = new ArrayList<String>();
-        DataDirectory.DirectoryListResponse response = dir.getPage(marker);
+        DataDirectory.DirectoryListResponse response = dir.getPage(marker, false);
 
         if (response.folders != null) {
             for(DataDirectory.DirectoryMetadata meta : response.folders) {

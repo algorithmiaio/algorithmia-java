@@ -119,5 +119,11 @@ public class DataFileTest {
         file.delete();
     }
 
-
+    @Test
+    public void dataFileType() {
+        DataFile file = Algorithmia.client("").file("data://.my/javaDataFileGet/foo.txt");
+        Assert.assertTrue(file.isFile());
+        Assert.assertFalse(file.isDirectory());
+        Assert.assertEquals(DataObject.DataObjectType.FILE, file.getType());
+    }
 }

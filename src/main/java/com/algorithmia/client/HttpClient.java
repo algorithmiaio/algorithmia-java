@@ -1,7 +1,10 @@
 package com.algorithmia.client;
 
 import com.algorithmia.APIException;
+import org.apache.http.HttpRequest;
 import org.apache.http.client.methods.*;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.http.nio.protocol.HttpAsyncResponseConsumer;
@@ -11,6 +14,9 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpHost;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.CancellationException;
 import java.lang.InterruptedException;
@@ -50,6 +56,23 @@ public class HttpClient {
         });
     }
 
+    /**
+     * Modifies request in place to add on any query parameters
+     */
+    private void addQueryParameters(HttpRequestBase request, Map<String, String> params) throws APIException {
+        if (params != null) {
+            URIBuilder builder = new URIBuilder(request.getURI());
+            for(Map.Entry<String, String> param : params.entrySet()) {
+                builder.addParameter(param.getKey(), param.getValue());
+            }
+            try {
+                request.setURI(builder.build());
+            } catch (URISyntaxException e) {
+                throw new APIException("Unable to construct API URI", e);
+            }
+        }
+    }
+
     /*
     * GET requests
     */
@@ -59,8 +82,9 @@ public class HttpClient {
         return this.execute(request);
     }
 
-    public <T> T get(String url, TypeToken<T> typeToken) throws APIException {
+    public <T> T get(String url, TypeToken<T> typeToken, Map<String, String> params) throws APIException {
         final HttpGet request = new HttpGet(url);
+        addQueryParameters(request, params);
         return this.execute(request, new HttpClientHelpers.JsonDeserializeResponseHandler<T>(typeToken));
 
     }
@@ -126,6 +150,15 @@ public class HttpClient {
         return executeAsync(request, consumer);
     }
 
+    /**
+     * PATCH requests
+     */
+     public HttpResponse patch(String url, StringEntity entity) throws APIException {
+        final HttpPatch request = new HttpPatch(url);
+        request.setEntity(entity);
+        request.setHeader("Content-type", "application/json");
+        return this.execute(request);
+    }
 
     /**
      * execute methods to execute a request

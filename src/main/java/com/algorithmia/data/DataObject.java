@@ -12,14 +12,21 @@ import java.net.URLEncoder;
  */
 abstract public class DataObject {
 
+    public enum DataObjectType {
+        FILE,
+        DIRECTORY
+    }
+
     public final String path;
     final String trimmedPath;
     protected final HttpClient client;
+    protected final DataObjectType dataType;
 
-    public DataObject(HttpClient client, String dataUrl) {
+    public DataObject(HttpClient client, String dataUrl, DataObjectType dataObjectType) {
         this.client = client;
         this.path = dataUrl.replaceAll("^data://|^/", "");
         this.trimmedPath = getTrimmedPath(this.path);
+        this.dataType = dataObjectType;
     }
 
     public DataDirectory getParent() {
@@ -28,6 +35,18 @@ abstract public class DataObject {
 
     public String getName() {
         return trimmedPath.substring(trimmedPath.lastIndexOf("/") + 1);
+    }
+
+    public DataObjectType getType() {
+        return this.dataType;
+    }
+
+    public boolean isFile() {
+        return this.dataType == DataObjectType.FILE;
+    }
+
+    public boolean isDirectory() {
+        return this.dataType == DataObjectType.DIRECTORY;
     }
 
     abstract public boolean exists() throws APIException;

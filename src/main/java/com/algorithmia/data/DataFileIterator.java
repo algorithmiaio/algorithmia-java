@@ -11,7 +11,7 @@ public class DataFileIterator extends AbstractDataIterator<DataFile> {
 
     protected void loadNextPage() throws APIException {
         List<String> filenames = new ArrayList<String>();
-        DataDirectory.DirectoryListResponse response = dir.getPage(marker);
+        DataDirectory.DirectoryListResponse response = dir.getPage(marker, false);
 
         if (response.files != null) {
             for(DataDirectory.FileMetadata meta : response.files) {

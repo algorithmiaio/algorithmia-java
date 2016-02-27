@@ -156,7 +156,6 @@ public class HttpClient {
      public HttpResponse patch(String url, StringEntity entity) throws APIException {
         final HttpPatch request = new HttpPatch(url);
         request.setEntity(entity);
-        request.setHeader("Content-type", "application/json");
         return this.execute(request);
     }
 

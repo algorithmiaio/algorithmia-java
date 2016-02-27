@@ -3,6 +3,10 @@ package com.algorithmia.client;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.algorithmia.algo.AlgoFailure;
+import com.algorithmia.algo.AlgoResponse;
+import com.algorithmia.algo.AlgoSuccess;
+import com.algorithmia.algo.Metadata;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.ContentTooLongException;
 import org.apache.http.HttpEntity;
@@ -19,10 +23,6 @@ import org.apache.http.util.Asserts;
 
 import com.algorithmia.APIException;
 import com.algorithmia.AlgorithmException;
-import com.algorithmia.algo.AlgoFailure;
-import com.algorithmia.algo.AlgoResponse;
-import com.algorithmia.algo.AlgoSuccess;
-import com.algorithmia.algo.Metadata;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

@@ -16,6 +16,7 @@ import org.apache.http.HttpHost;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.CancellationException;
@@ -59,7 +60,7 @@ public class HttpClient {
     /**
      * Modifies request in place to add on any query parameters
      */
-    private void addQueryParameters(HttpRequestBase request, Map<String, String> params) throws APIException {
+    private void addQueryParameters(HttpRequestBase request, Map<String, String> params) {
         if (params != null) {
             URIBuilder builder = new URIBuilder(request.getURI());
             for(Map.Entry<String, String> param : params.entrySet()) {
@@ -68,7 +69,7 @@ public class HttpClient {
             try {
                 request.setURI(builder.build());
             } catch (URISyntaxException e) {
-                throw new APIException("Unable to construct API URI", e);
+                throw new RuntimeException("Unable to construct API URI", e);
             }
         }
     }
@@ -104,8 +105,13 @@ public class HttpClient {
     }
 
     public <T> Future<T> post(String url, HttpEntity data, HttpAsyncResponseConsumer<T> consumer) {
+        return post(url, data, consumer, null);
+    }
+
+    public <T> Future<T> post(String url, HttpEntity data, HttpAsyncResponseConsumer<T> consumer, Map<String, String> parameters) {
         final HttpPost request = new HttpPost(url);
         request.setEntity(data);
+        addQueryParameters(request, parameters);
         return this.executeAsync(request, consumer);
     }
 

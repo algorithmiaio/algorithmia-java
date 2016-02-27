@@ -132,7 +132,8 @@ public final class Algorithm {
         Future<AlgoResponse> promise = client.post(
                 algoRef.getUrl(),
                 requestEntity,
-                new AlgoResponseHandler()
+                new AlgoResponseHandler(),
+                options
         );
         return new FutureAlgoResponse(promise);
     }
@@ -153,7 +154,8 @@ public final class Algorithm {
         Future<AlgoResponse> promise = client.post(
                 algoRef.getUrl(),
                 new ByteArrayEntity(input, org.apache.http.entity.ContentType.APPLICATION_OCTET_STREAM),
-                new AlgoResponseHandler()
+                new AlgoResponseHandler(),
+                options
         );
         return new FutureAlgoResponse(promise);
     }

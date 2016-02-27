@@ -4,7 +4,10 @@ import com.algorithmia.APIException;
 import com.algorithmia.client.HttpClient;
 import com.algorithmia.client.HttpClientHelpers.AlgoResponseHandler;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.StringEntity;
@@ -18,12 +21,38 @@ import com.google.gson.JsonElement;
 public final class Algorithm {
     private AlgorithmRef algoRef;
     private HttpClient client;
-
+    private Map<String, String> options = new HashMap<String, String>();
+    private AlgorithmOutputType outputType = AlgorithmOutputType.DEFAULT;
     final static Gson gson = new Gson();
 
     public Algorithm(HttpClient client, AlgorithmRef algoRef) {
         this.client = client;
         this.algoRef = algoRef;
+    }
+
+    public Algorithm setOptions(HashMap<String, String> options) {
+        if (options != null) {
+            for (Map.Entry<String, String> entry : options.entrySet()) {
+                options.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return this;
+    }
+
+    public Algorithm setTimeout(Long timeout, TimeUnit unit) {
+        Long time = unit.convert(timeout, TimeUnit.SECONDS);
+        this.options.put(AlgorithmOptions.TIMEOUT.toString(), time.toString());
+        return this;
+    }
+
+    public Algorithm setStdout(boolean showStdout) {
+        this.options.put(AlgorithmOptions.STDOUT.toString(), Boolean.TRUE.toString());
+        return this;
+    }
+
+    public Algorithm setOutputType(AlgorithmOutputType outputType) {
+        this.outputType = outputType;
+        return this;
     }
 
     /**
@@ -52,11 +81,11 @@ public final class Algorithm {
      * @param input algorithm input, will automatically be converted into JSON
      * @return future algorithm result (AlgoSuccess or AlgoFailure)
      */
-    public FutureAlgoResponse pipeAsync(Object input) {
-        final Gson gson = new Gson();
-        final JsonElement inputJson = gson.toJsonTree(input);
-        return pipeJsonAsync(inputJson.toString());
-    }
+   public FutureAlgoResponse pipeAsync(Object input) {
+       final Gson gson = new Gson();
+       final JsonElement inputJson = gson.toJsonTree(input);
+       return pipeJsonAsync(inputJson.toString());
+   }
 
 
     /**
@@ -96,14 +125,14 @@ public final class Algorithm {
     private FutureAlgoResponse pipeRequestAsync(String input, ContentType content_type) {
         StringEntity requestEntity = null;
         if(content_type == ContentType.Text) {
-          requestEntity = new StringEntity(input, "UTF-8");
+            requestEntity = new StringEntity(input, "UTF-8");
         } else if(content_type == ContentType.Json) {
-          requestEntity = new StringEntity(input, org.apache.http.entity.ContentType.APPLICATION_JSON);
+            requestEntity = new StringEntity(input, org.apache.http.entity.ContentType.APPLICATION_JSON);
         }
         Future<AlgoResponse> promise = client.post(
-            algoRef.getUrl(),
-            requestEntity,
-            new AlgoResponseHandler()
+                algoRef.getUrl(),
+                requestEntity,
+                new AlgoResponseHandler()
         );
         return new FutureAlgoResponse(promise);
     }
@@ -122,11 +151,40 @@ public final class Algorithm {
 
     private FutureAlgoResponse pipeBinaryRequestAsync(byte[] input) {
         Future<AlgoResponse> promise = client.post(
-            algoRef.getUrl(),
-            new ByteArrayEntity(input, org.apache.http.entity.ContentType.APPLICATION_OCTET_STREAM),
-            new AlgoResponseHandler()
+                algoRef.getUrl(),
+                new ByteArrayEntity(input, org.apache.http.entity.ContentType.APPLICATION_OCTET_STREAM),
+                new AlgoResponseHandler()
         );
         return new FutureAlgoResponse(promise);
     }
 
+    public static enum AlgorithmOptions {
+        TIMEOUT("timeout"),
+        STDOUT("stdout"),
+        OUTPUT("output");
+        private String parameter;
+
+        AlgorithmOptions(String parameter) {
+            this.parameter = parameter;
+        }
+
+        public String toString() {
+            return this.parameter;
+        }
+    }
+
+    public static enum AlgorithmOutputType {
+        RAW("raw"),
+        VOID("void"),
+        DEFAULT("default"); // not actually an API parameter
+        private String parameter;
+
+        AlgorithmOutputType(String parameter) {
+            this.parameter = parameter;
+        }
+
+        public String toString() {
+            return this.parameter;
+        }
+    }
 }

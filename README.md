@@ -42,6 +42,48 @@ Integer result = response.as(new TypeToken<Integer>(){});
 Double durationInSeconds = response.getMetadata().duration;
 ```
 
+You can also set options (query parameters in the API spec) on calls.  There are several approaches to do this, and they are all equivalent
+```java
+// Helper methods for specific parameters in the API spec:
+Algorithm addOne = client.algo("docs/JavaAddOne")
+                         .setTimeout(5, TimeUnit.MINUTES)
+                         .setStdout(false)
+                         .setOutputType(AlgorithmOutputType.RAW);
+
+// Or, set query parameter string directly:
+Algorithm addOne = client.algo("docs/JavaAddOne")
+                         .setOption("timeout", "300")
+                         .setOption("stdout","false")
+                         .setOption("output","raw");
+                         
+// Or, pass in a Map of options:
+HashMap<String, String> options = new HashMap<>();
+options.put("timeout", "300");
+options.put("stdout", "false");
+options.put("output", "raw");
+Algorithm addOne = client.algo("docs/JavaAddOne").setOptions(options);
+
+// These are all equivalant and do not impact the way an algorithm is called:
+AlgoResponse response = addOne.pipe(41);
+```
+
+Algorithms called with anything other than the default AlgorithmOutputType have special responses:
+```java
+// AlgorithmOutputType.RAW - does not contain metadata and result is always a string
+Algorithm rawAddOne = client.algo("docs/JavaAddOne").setOutputType(AlgorithmOutputType.RAW);
+AlgoResponse response = rawAddOne.pipe(41);
+response.getRawOutput(); // "41"
+// Calling any other method on this response object will throw an exception
+
+// AlgorithmOutputType.VOID - performs an asynchronous request and algorithm output is unaccessible
+Algorithm voidAddOne = client.algo("docs/JavaAddOne").setOutputType(AlgorithmOutputType.VOID);
+AlgoResponse response = voidAddOne.pipe(41);
+AlgoAsyncResponse asyncResponse = response.getAsyncResponse();
+asyncResponse.getAsyncProtocol(); // "void"
+asyncResponse.getRequestId();     // "req-abcd-efgh" 
+```
+
+
 # Working with Data
 
 Manage your data stored within Algorithmia:
@@ -50,6 +92,16 @@ Manage your data stored within Algorithmia:
 // Create a directory "foo"
 DataDirectory foo = client.dir("data://.my/foo");
 foo.create();
+
+// Create a directory with specific ACL
+DataDirectory fooLimited = client.dir("data://.my/fooLimited");
+fooLimited.create(DataAcl.PRIVATE);
+
+// Or, update the directory's ACL after creation
+fooLimited.updatePermissions(DataAcl.PRIVATE);
+
+// View the directory's permissions
+fooLimited.getPermissions().getReadPermissions() == DataAclType.PRIVATE
 
 // Upload files to "foo" directory
 foo.file("sample.txt").put("sample text contents");

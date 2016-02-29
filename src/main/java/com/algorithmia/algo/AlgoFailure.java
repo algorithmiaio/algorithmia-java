@@ -30,6 +30,11 @@ public final class AlgoFailure extends AlgoResponse {
     }
 
     @Override
+    public AlgoAsyncResponse getAsyncResponse() throws AlgorithmException {
+        throw error;
+    }
+
+    @Override
     protected <T> T as(Class<T> returnClass) throws AlgorithmException {
         throw error;
     }

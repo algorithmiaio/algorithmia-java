@@ -12,7 +12,8 @@ import java.lang.UnsupportedOperationException;
 import java.lang.reflect.Type;
 
 /**
- * A result representing success
+ * A result representing success, depending on how the algorithm was called it may have
+ * an async response, rawOutput, or metadata + result.
  */
 public final class AlgoSuccess extends AlgoResponse {
 
@@ -20,11 +21,12 @@ public final class AlgoSuccess extends AlgoResponse {
     private Metadata metadata;
     private String resultJson;
     private String rawOutput;
+    private AlgoAsyncResponse asyncResponse;
 
     private static transient final Gson gson = new Gson();
     private static transient final Type byteType = new TypeToken<byte[]>(){}.getType();
 
-    public AlgoSuccess(JsonElement result, Metadata metadata, String rawOutput) {
+    public AlgoSuccess(JsonElement result, Metadata metadata, String rawOutput, AlgoAsyncResponse asyncResponse) {
         this.result = result;
         this.metadata = metadata;
         if (result != null) {
@@ -33,6 +35,7 @@ public final class AlgoSuccess extends AlgoResponse {
             this.resultJson = null;
         }
         this.rawOutput = rawOutput;
+        this.asyncResponse = asyncResponse;
     }
 
     @Override
@@ -48,6 +51,11 @@ public final class AlgoSuccess extends AlgoResponse {
     @Override
     public Metadata getMetadata() {
         return metadata;
+    }
+
+    @Override
+    public AlgoAsyncResponse getAsyncResponse() throws AlgorithmException {
+        return asyncResponse;
     }
 
     @Override

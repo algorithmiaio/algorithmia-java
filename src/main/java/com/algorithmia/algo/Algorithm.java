@@ -39,6 +39,11 @@ public final class Algorithm {
         return this;
     }
 
+    public Algorithm setOption(String key, String value) {
+        this.options.put(key, value);
+        return this;
+    }
+
     public Algorithm setTimeout(Long timeout, TimeUnit unit) {
         Long time = unit.convert(timeout, TimeUnit.SECONDS);
         this.options.put(AlgorithmOptions.TIMEOUT.toString(), time.toString());

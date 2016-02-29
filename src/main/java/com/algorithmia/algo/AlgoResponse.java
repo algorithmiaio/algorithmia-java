@@ -16,6 +16,8 @@ public abstract class AlgoResponse implements Serializable {
 
     public abstract Metadata getMetadata() throws AlgorithmException;
 
+    public abstract AlgoAsyncResponse getAsyncResponse() throws AlgorithmException;
+
     /**
      * Convert the result to a specific class
      * @param <T> the type that the response will be deserialized into

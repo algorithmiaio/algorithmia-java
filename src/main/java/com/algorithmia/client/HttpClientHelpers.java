@@ -3,6 +3,7 @@ package com.algorithmia.client;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.algorithmia.algo.AlgoAsyncResponse;
 import com.algorithmia.algo.AlgoFailure;
 import com.algorithmia.algo.AlgoResponse;
 import com.algorithmia.algo.AlgoSuccess;
@@ -108,7 +109,7 @@ public class HttpClientHelpers {
             final HttpEntity entity = response.getEntity();
             final InputStream is = entity.getContent();
             String rawOutputString = IOUtils.toString(is, "UTF-8");
-            return new AlgoSuccess(null, null, rawOutputString);
+            return new AlgoSuccess(null, null, rawOutputString, null);
         } catch(IOException ex) {
             throw new APIException("IOException: " + ex.getMessage());
         }
@@ -132,9 +133,10 @@ public class HttpClientHelpers {
                 JsonElement stdoutJson = metaJson.get("stdout");
                 String stdout = (stdoutJson == null) ? null : stdoutJson.getAsString();
                 Metadata meta = new Metadata(contentType, duration, stdout);
-                return new AlgoSuccess(obj.get("result"), meta, null);
+                return new AlgoSuccess(obj.get("result"), meta, null, null);
             } else if (AlgorithmOutputType.VOID.equals(outputType)) {
-                return null;
+                AlgoAsyncResponse asyncResponse = new AlgoAsyncResponse(obj.get("async").getAsString(), obj.get("request_id").getAsString());
+                return new AlgoSuccess(null, null, null, asyncResponse);
             } else {
                 throw new APIException("Unexpected output type: " + outputType);
             }

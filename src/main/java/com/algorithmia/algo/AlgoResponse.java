@@ -64,4 +64,12 @@ public abstract class AlgoResponse implements Serializable {
      */
     public abstract String asString() throws AlgorithmException;
 
+    /**
+     * Return the raw output of the algorithm if it was called with AlgorithmOutputType.RAW
+     * This is the only valid way to retrieve a result from a RAW request.  Will return null
+     * for any other AlgorithmOutputType
+     * @return the result, if this is AlgoSuccess
+     * @throws AlgorithmException the error, if this is AlgoFailure
+     */
+    public abstract String getRawOutput() throws AlgorithmException;
 }

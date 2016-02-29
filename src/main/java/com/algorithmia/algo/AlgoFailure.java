@@ -49,4 +49,9 @@ public final class AlgoFailure extends AlgoResponse {
         throw error;
     }
 
+    @Override
+    public String getRawOutput() throws AlgorithmException {
+        throw error;
+    }
+
 }

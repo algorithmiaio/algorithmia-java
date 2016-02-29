@@ -47,4 +47,14 @@ public class AlgorithmTest {
         Assert.assertEquals(ContentType.Binary, res.getMetadata().getContentType());
     }
 
+    @Test
+    public void algorithmRawOutput() throws Exception {
+        final String key = System.getenv("ALGORITHMIA_API_KEY");
+        Assume.assumeTrue(key != null);
+
+        AlgoResponse res = Algorithmia.client(key).algo("demo/Hello").setOutputType(Algorithm.AlgorithmOutputType.RAW).pipe("foo");
+        Assert.assertEquals("Hello foo", res.getRawOutput());
+        Assert.assertEquals(null, res.getMetadata());
+    }
+
 }

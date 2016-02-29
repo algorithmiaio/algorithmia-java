@@ -1,5 +1,6 @@
 package com.algorithmia.algo;
 
+import com.algorithmia.AlgorithmException;
 import com.algorithmia.TypeToken;
 
 import com.google.gson.Gson;
@@ -18,14 +19,20 @@ public final class AlgoSuccess extends AlgoResponse {
     private transient JsonElement result;
     private Metadata metadata;
     private String resultJson;
+    private String rawOutput;
 
     private static transient final Gson gson = new Gson();
     private static transient final Type byteType = new TypeToken<byte[]>(){}.getType();
 
-    public AlgoSuccess(JsonElement result, Metadata metadata) {
+    public AlgoSuccess(JsonElement result, Metadata metadata, String rawOutput) {
         this.result = result;
         this.metadata = metadata;
-        this.resultJson = result.toString();
+        if (result != null) {
+            this.resultJson = result.toString();
+        } else {
+            this.resultJson = null;
+        }
+        this.rawOutput = rawOutput;
     }
 
     @Override
@@ -100,6 +107,11 @@ public final class AlgoSuccess extends AlgoResponse {
     @Override
     public String asString() {
         return as(String.class);
+    }
+
+    @Override
+    public String getRawOutput() throws AlgorithmException {
+        return rawOutput;
     }
 
 }

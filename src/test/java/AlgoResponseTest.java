@@ -109,7 +109,7 @@ public class AlgoResponseTest {
         final JsonParser parser = new JsonParser();
         final InputStream is = this.getClass().getResourceAsStream(filename);
         final JsonElement jsonOutput = parser.parse(new InputStreamReader(is, "UTF-8"));
-        return HttpClientHelpers.jsonToAlgoResponse(jsonOutput);
+        return HttpClientHelpers.jsonToAlgoResponse(jsonOutput, Algorithm.AlgorithmOutputType.DEFAULT);
     }
 
 }

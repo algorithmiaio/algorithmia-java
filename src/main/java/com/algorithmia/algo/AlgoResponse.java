@@ -16,6 +16,8 @@ public abstract class AlgoResponse implements Serializable {
 
     public abstract Metadata getMetadata() throws AlgorithmException;
 
+    public abstract AlgoAsyncResponse getAsyncResponse() throws AlgorithmException;
+
     /**
      * Convert the result to a specific class
      * @param <T> the type that the response will be deserialized into
@@ -64,4 +66,12 @@ public abstract class AlgoResponse implements Serializable {
      */
     public abstract String asString() throws AlgorithmException;
 
+    /**
+     * Return the raw output of the algorithm if it was called with AlgorithmOutputType.RAW
+     * This is the only valid way to retrieve a result from a RAW request.  Will return null
+     * for any other AlgorithmOutputType
+     * @return the result, if this is AlgoSuccess
+     * @throws AlgorithmException the error, if this is AlgoFailure
+     */
+    public abstract String getRawOutput() throws AlgorithmException;
 }

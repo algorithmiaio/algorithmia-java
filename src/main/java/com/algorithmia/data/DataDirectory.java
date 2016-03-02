@@ -154,7 +154,7 @@ public class DataDirectory extends DataObject {
         Gson gson = new Gson();
         JsonElement inputJson = gson.toJsonTree(request);
 
-        StringEntity entity = new StringEntity(inputJson.toString(), "UTF-8");
+        StringEntity entity = new StringEntity(inputJson.toString(), ContentType.APPLICATION_JSON);
         HttpResponse response = client.patch(getUrl(), entity);
 
         HttpClientHelpers.throwIfNotOk(response);

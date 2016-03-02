@@ -3,6 +3,11 @@ package com.algorithmia.client;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.algorithmia.algo.AlgoAsyncResponse;
+import com.algorithmia.algo.AlgoFailure;
+import com.algorithmia.algo.AlgoResponse;
+import com.algorithmia.algo.AlgoSuccess;
+import com.algorithmia.algo.Metadata;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.ContentTooLongException;
 import org.apache.http.HttpEntity;
@@ -19,16 +24,13 @@ import org.apache.http.util.Asserts;
 
 import com.algorithmia.APIException;
 import com.algorithmia.AlgorithmException;
-import com.algorithmia.algo.AlgoFailure;
-import com.algorithmia.algo.AlgoResponse;
-import com.algorithmia.algo.AlgoSuccess;
-import com.algorithmia.algo.Metadata;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
+import static com.algorithmia.algo.Algorithm.AlgorithmOutputType;
 /**
  * Various HTTP actions, using our HttpClient class, and automatically adding authorization
  */
@@ -86,14 +88,34 @@ public class HttpClientHelpers {
     }
 
     static public class AlgoResponseHandler extends AbstractBasicResponseConsumer<AlgoResponse> {
+        private AlgorithmOutputType outputType;
+        public AlgoResponseHandler(AlgorithmOutputType outputType) {
+            this.outputType = outputType;
+        }
         @Override
         protected AlgoResponse buildResult(HttpContext context) throws APIException {
-            JsonElement json = parseResponseJson(response);
-            return jsonToAlgoResponse(json);
+            if (outputType.equals(AlgorithmOutputType.RAW)) {
+                return parseRawOutpout(response);
+            } else {
+                JsonElement json = parseResponseJson(response);
+                return jsonToAlgoResponse(json, outputType);
+            }
         }
     }
 
-    public static AlgoResponse jsonToAlgoResponse(JsonElement json) throws APIException {
+    public static AlgoResponse parseRawOutpout(HttpResponse response) throws APIException {
+        throwIfNotOk(response);
+        try {
+            final HttpEntity entity = response.getEntity();
+            final InputStream is = entity.getContent();
+            String rawOutputString = IOUtils.toString(is, "UTF-8");
+            return new AlgoSuccess(null, null, rawOutputString, null);
+        } catch(IOException ex) {
+            throw new APIException("IOException: " + ex.getMessage());
+        }
+    }
+
+    public static AlgoResponse jsonToAlgoResponse(JsonElement json, AlgorithmOutputType outputType) throws APIException {
         if(json != null && json.isJsonObject()) {
             final JsonObject obj = json.getAsJsonObject();
             if(obj.has("error")) {
@@ -104,14 +126,19 @@ public class HttpClientHelpers {
                     stacktrace = error.get("stacktrace").getAsString();
                 }
                 return new AlgoFailure(new AlgorithmException(msg, null, stacktrace));
-            } else {
+            } else if (AlgorithmOutputType.DEFAULT.equals(outputType)){
                 JsonObject metaJson = obj.getAsJsonObject("metadata");
                 Double duration = metaJson.get("duration").getAsDouble();
                 com.algorithmia.algo.ContentType contentType = com.algorithmia.algo.ContentType.fromString(metaJson.get("content_type").getAsString());
                 JsonElement stdoutJson = metaJson.get("stdout");
                 String stdout = (stdoutJson == null) ? null : stdoutJson.getAsString();
                 Metadata meta = new Metadata(contentType, duration, stdout);
-                return new AlgoSuccess(obj.get("result"), meta);
+                return new AlgoSuccess(obj.get("result"), meta, null, null);
+            } else if (AlgorithmOutputType.VOID.equals(outputType)) {
+                AlgoAsyncResponse asyncResponse = new AlgoAsyncResponse(obj.get("async").getAsString(), obj.get("request_id").getAsString());
+                return new AlgoSuccess(null, null, null, asyncResponse);
+            } else {
+                throw new APIException("Unexpected output type: " + outputType);
             }
         } else {
             throw new APIException("Unexpected API response: " + json);

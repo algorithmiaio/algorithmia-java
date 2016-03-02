@@ -8,6 +8,9 @@ import org.junit.Test;
 import org.junit.Assume;
 import org.junit.Assert;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class AlgorithmTest {
 
     @Test
@@ -45,6 +48,55 @@ public class AlgorithmTest {
         byte[] output = res.as(new TypeToken<byte[]>(){});
         Assert.assertEquals(Base64.encodeBase64String(input),Base64.encodeBase64String(output));
         Assert.assertEquals(ContentType.Binary, res.getMetadata().getContentType());
+    }
+
+    @Test
+    public void algorithmRawOutput() throws Exception {
+        final String key = System.getenv("ALGORITHMIA_API_KEY");
+        Assume.assumeTrue(key != null);
+
+        AlgoResponse res = Algorithmia.client(key).algo("demo/Hello")
+                .setOutputType(Algorithm.AlgorithmOutputType.RAW).pipe("foo");
+        Assert.assertEquals("Hello foo", res.getRawOutput());
+        Assert.assertEquals(null, res.getMetadata());
+    }
+
+    @Test
+    public void algorithmVoidOutput() throws Exception {
+        final String key = System.getenv("ALGORITHMIA_API_KEY");
+        Assume.assumeTrue(key != null);
+
+        AlgoAsyncResponse res = Algorithmia.client(key).algo("demo/Hello")
+                .setOutputType(Algorithm.AlgorithmOutputType.VOID).pipe("foo")
+                .getAsyncResponse();
+        Assert.assertEquals("void", res.getAsyncProtocol());
+        Assert.assertTrue(res.getRequestId() != null);  // request is unpredictable, but should be *something*
+    }
+
+    @Test
+    public void algorithmSetOption() throws Exception {
+        final String key = System.getenv("ALGORITHMIA_API_KEY");
+        Assume.assumeTrue(key != null);
+
+        AlgoResponse res = Algorithmia.client(key).algo("demo/Hello")
+                .setOption("output", "raw").pipe("foo");
+
+        Assert.assertEquals("Hello foo", res.getRawOutput());
+    }
+
+    @Test
+    public void algorithmSetOptions() throws Exception {
+        final String key = System.getenv("ALGORITHMIA_API_KEY");
+        Assume.assumeTrue(key != null);
+
+        Map<String, String> options = new HashMap<String, String>();
+        options.put("output", "raw");
+
+        AlgoResponse res = Algorithmia.client(key).algo("demo/Hello")
+                .setOptions(options).pipe("foo");
+
+        Assert.assertEquals("Hello foo", res.getRawOutput());
+
     }
 
 }

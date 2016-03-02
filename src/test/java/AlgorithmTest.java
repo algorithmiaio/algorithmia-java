@@ -8,6 +8,9 @@ import org.junit.Test;
 import org.junit.Assume;
 import org.junit.Assert;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class AlgorithmTest {
 
     @Test
@@ -68,6 +71,32 @@ public class AlgorithmTest {
                 .getAsyncResponse();
         Assert.assertEquals("void", res.getAsyncProtocol());
         Assert.assertTrue(res.getRequestId() != null);  // request is unpredictable, but should be *something*
+    }
+
+    @Test
+    public void algorithmSetOption() throws Exception {
+        final String key = System.getenv("ALGORITHMIA_API_KEY");
+        Assume.assumeTrue(key != null);
+
+        AlgoResponse res = Algorithmia.client(key).algo("demo/Hello")
+                .setOption("output", "raw").pipe("foo");
+
+        Assert.assertEquals("Hello foo", res.getRawOutput());
+    }
+
+    @Test
+    public void algorithmSetOptions() throws Exception {
+        final String key = System.getenv("ALGORITHMIA_API_KEY");
+        Assume.assumeTrue(key != null);
+
+        Map<String, String> options = new HashMap<String, String>();
+        options.put("output", "raw");
+
+        AlgoResponse res = Algorithmia.client(key).algo("demo/Hello")
+                .setOptions(options).pipe("foo");
+
+        Assert.assertEquals("Hello foo", res.getRawOutput());
+
     }
 
 }

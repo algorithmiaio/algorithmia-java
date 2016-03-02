@@ -19,46 +19,58 @@ import com.google.gson.JsonElement;
  * Represents an Algorithmia algorithm that can be called.
  */
 public final class Algorithm {
-    private AlgorithmRef algoRef;
-    private HttpClient client;
-    private Map<String, String> options = new HashMap<String, String>();
-    private AlgorithmOutputType outputType = AlgorithmOutputType.DEFAULT;
+    private final AlgorithmRef algoRef;
+    private final HttpClient client;
+    private final Map<String, String> options;
+    private final AlgorithmOutputType outputType;
     final static Gson gson = new Gson();
 
     public Algorithm(HttpClient client, AlgorithmRef algoRef) {
-        this.client = client;
-        this.algoRef = algoRef;
+        this(client, algoRef, new HashMap<String, String>());
     }
 
-    public Algorithm setOptions(HashMap<String, String> options) {
-        if (options != null) {
-            for (Map.Entry<String, String> entry : options.entrySet()) {
-                options.put(entry.getKey(), entry.getValue());
-            }
+    public Algorithm(HttpClient client, AlgorithmRef algoRef, Map<String, String> options) {
+        this.client = client;
+        this.algoRef = algoRef;
+        this.options = options;
+        if (options != null && options.containsKey(AlgorithmOptions.OUTPUT.toString())) {
+            this.outputType = AlgorithmOutputType.fromParameter(options.get(AlgorithmOptions.OUTPUT.toString()));
+        } else {
+            this.outputType = AlgorithmOutputType.DEFAULT;
         }
-        return this;
+    }
+
+    public Algorithm setOptions(Map<String, String> options) {
+        if (options != null) {
+            return new Algorithm(client, algoRef, new HashMap<String, String>(options));
+        }
+        return new Algorithm(client, algoRef, new HashMap<String, String>());
     }
 
     public Algorithm setOption(String key, String value) {
-        this.options.put(key, value);
-        return this;
+        Map<String, String> optionsClone = new HashMap<String, String>(options);
+        optionsClone.put(key, value);
+        return new Algorithm(client, algoRef, optionsClone);
     }
 
     public Algorithm setTimeout(Long timeout, TimeUnit unit) {
         Long time = unit.convert(timeout, TimeUnit.SECONDS);
-        this.options.put(AlgorithmOptions.TIMEOUT.toString(), time.toString());
-        return this;
+        Map<String, String> optionsClone = new HashMap<String, String>(options);
+        optionsClone.put(AlgorithmOptions.TIMEOUT.toString(), time.toString());
+        return new Algorithm(client, algoRef, optionsClone);
     }
 
     public Algorithm setStdout(boolean showStdout) {
-        this.options.put(AlgorithmOptions.STDOUT.toString(), Boolean.TRUE.toString());
-        return this;
+        Map<String, String> optionsClone = new HashMap<String, String>(options);
+        optionsClone.put(AlgorithmOptions.STDOUT.toString(), Boolean.toString(showStdout));
+        return new Algorithm(client, algoRef, optionsClone);
     }
 
     public Algorithm setOutputType(AlgorithmOutputType outputType) {
-        this.outputType = outputType;
-        this.options.put(AlgorithmOptions.OUTPUT.toString(), outputType.toString());
-        return this;
+        Map<String, String> optionsClone = new HashMap<String, String>(options);
+        optionsClone.put(AlgorithmOptions.OUTPUT.toString(), outputType.toString());
+
+        return new Algorithm(client, algoRef, optionsClone);
     }
 
     /**
@@ -193,6 +205,15 @@ public final class Algorithm {
 
         public String toString() {
             return this.parameter;
+        }
+
+        public static AlgorithmOutputType fromParameter(String parameter) {
+            for (AlgorithmOutputType outputType : values()) {
+                if (outputType.parameter.equals(parameter)) {
+                    return outputType;
+                }
+            }
+            return null;
         }
     }
 }

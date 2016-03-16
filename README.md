@@ -5,7 +5,7 @@ Java client for accessing Algorithmia's algorithm marketplace and data APIs.
 
 For API documentation, see the [JavaDocs](https://algorithmia.com/docs/lang/java)
 
-[![Build Status](https://api.shippable.com/projects/557f23a8edd7f2c052184a2d/badge/master)](https://app.shippable.com/projects/557f23a8edd7f2c052184a2d)
+[![Run Status](https://api.shippable.com/projects/557f23a8edd7f2c052184a2d/badge?branch=master)](https://app.shippable.com/projects/557f23a8edd7f2c052184a2d)
 
 [![Latest Release](https://img.shields.io/maven-central/v/com.algorithmia/algorithmia-client.svg)](http://repo1.maven.org/maven2/com/algorithmia/algorithmia-client/)
 

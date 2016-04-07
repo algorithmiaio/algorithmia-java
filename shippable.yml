@@ -19,16 +19,13 @@ env:
 
 before_script:
     - mkdir -p shippable/testresults
+    - ln -s ../target/test-reports shippable/testresults
 
 script:
-  - sbt clean compile
+  - sbt compile
   - sbt doc
   - sbt test
-
-after_script:
-  - mv $PWD/target/test-reports/*.xml $PWD/shippable/testresults/
 
 notifications:
   email:
     - devops@algorithmia.io
-

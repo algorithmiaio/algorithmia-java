@@ -3,7 +3,7 @@ algorithmia-java
 
 Java client for accessing Algorithmia's algorithm marketplace and data APIs.
 
-For API documentation, see the [JavaDocs](https://algorithmia.com/docs/lang/java)
+<a href="http://www.javadoc.io/doc/com.algorithmia/algorithmia-client">Algorithmia Client Java Docs <i class="fa fa-external-link"></i></a>
 
 [![Run Status](https://api.shippable.com/projects/557f23a8edd7f2c052184a2d/badge?branch=master)](https://app.shippable.com/projects/557f23a8edd7f2c052184a2d)
 
@@ -31,9 +31,10 @@ Notes:
 - API key may be omitted only when making calls from algorithms running on the Algorithmia cluster
 - Using version range `[,1.1.0)` is recommended as it implies using the latest backward-compatible bugfixes.
 
-# Calling Algorithms
+## Calling Algorithms
 
-Algorithms are called with the `pipe` method:
+Algorithms are called with the `pipe` method using
+any input that can be serialized to JSON, or binary byte data.
 
 ```java
 Algorithm addOne = client.algo("docs/JavaAddOne");
@@ -42,49 +43,60 @@ Integer result = response.as(new TypeToken<Integer>(){});
 Double durationInSeconds = response.getMetadata().duration;
 ```
 
+If you already have serialzied JSON, you can call call `pipeJson` instead:
+
+```java
+Algorithm foo = client.algo("")
+String jsonWords = "[\"transformer\", \"terraforms\", \"retransform\"]"
+AlgoResponse response = addOne.pipeJson(jsonWords)
+```
+
 You can also set options (query parameters in the API spec) on calls.  There are several approaches to do this, and they are all equivalent
 ```java
 // Helper methods for specific parameters in the API spec:
 Algorithm addOne = client.algo("docs/JavaAddOne")
                          .setTimeout(5, TimeUnit.MINUTES)
-                         .setStdout(false)
-                         .setOutputType(AlgorithmOutputType.RAW);
+                         .setStdout(false);
 
-// Or, set query parameter string directly:
-Algorithm addOne = client.algo("docs/JavaAddOne")
-                         .setOption("timeout", "300")
-                         .setOption("stdout","false")
-                         .setOption("output","raw");
-                         
-// Or, pass in a Map of options:
-HashMap<String, String> options = new HashMap<>();
-options.put("timeout", "300");
-options.put("stdout", "false");
-options.put("output", "raw");
-Algorithm addOne = client.algo("docs/JavaAddOne").setOptions(options);
-
-// These are all equivalant and do not impact the way an algorithm is called:
 AlgoResponse response = addOne.pipe(41);
 ```
 
-Algorithms called with anything other than the default AlgorithmOutputType have special responses:
-```java
-// AlgorithmOutputType.RAW - does not contain metadata and result is always a string
-Algorithm rawAddOne = client.algo("docs/JavaAddOne").setOutputType(AlgorithmOutputType.RAW);
-AlgoResponse response = rawAddOne.pipe(41);
-response.getRawOutput(); // "41"
-// Calling any other method on this response object will throw an exception
+### Casting results in Java
 
-// AlgorithmOutputType.VOID - performs an asynchronous request and algorithm output is unaccessible
-Algorithm voidAddOne = client.algo("docs/JavaAddOne").setOutputType(AlgorithmOutputType.VOID);
-AlgoResponse response = voidAddOne.pipe(41);
-AlgoAsyncResponse asyncResponse = response.getAsyncResponse();
-asyncResponse.getAsyncProtocol(); // "void"
-asyncResponse.getRequestId();     // "req-abcd-efgh" 
+
+> For an algorithm that returns a string:
+
+```
+stringResult.as(new TypeToken<String>(){});
 ```
 
+> For an algorithm that returns an array of strings:
 
-# Working with Data
+```
+stringArrayResult.as(new TypeToken<List<String>>(){});
+```
+
+> For an algorithm that returns a custom class, cast the result to that class:
+
+```
+class CustomClass {
+    int maxCount;
+    List<String> items;
+}
+customClassResult.as(new TypeToken<CustomClass>(){});
+```
+
+> For debugging, it is often helpful to get the JSON String representation of the result:
+
+```
+anyResult.asJsonString();
+```
+
+In order to cast the result to a specific type, call `.as()` with a TypeToken.
+On the right pane, you'll find examples of how to do this to return a string, an array of strings, and a custom class.
+
+
+## Working with Data
 
 Manage your data stored within Algorithmia:
 

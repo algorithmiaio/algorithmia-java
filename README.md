@@ -66,19 +66,19 @@ AlgoResponse response = addOne.pipe(41);
 
 > For an algorithm that returns a string:
 
-```
+```java
 stringResult.as(new TypeToken<String>(){});
 ```
 
 > For an algorithm that returns an array of strings:
 
-```
+```java
 stringArrayResult.as(new TypeToken<List<String>>(){});
 ```
 
 > For an algorithm that returns a custom class, cast the result to that class:
 
-```
+```java
 class CustomClass {
     int maxCount;
     List<String> items;
@@ -88,7 +88,7 @@ customClassResult.as(new TypeToken<CustomClass>(){});
 
 > For debugging, it is often helpful to get the JSON String representation of the result:
 
-```
+```java
 anyResult.asJsonString();
 ```
 

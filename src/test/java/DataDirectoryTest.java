@@ -5,11 +5,20 @@ import com.algorithmia.data.*;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.Assume;
 import org.junit.Assert;
 
 public class DataDirectoryTest {
+
+    private String key;
+
+    @Before
+    public void setup() {
+        key = System.getenv("ALGORITHMIA_API_KEY");
+        Assume.assumeNotNull(key);
+    }
 
     @Test
     public void dataDirParent() throws Exception {
@@ -27,9 +36,6 @@ public class DataDirectoryTest {
 
     @Test
     public void dataDirCreate() throws Exception {
-        final String key = System.getenv("ALGORITHMIA_API_KEY");
-        Assume.assumeTrue(key != null);
-
         DataDirectory dir = Algorithmia.client(key).dir("data://.my/javaDataDirCreate");
 
         // Make sure test starts in clean state
@@ -45,9 +51,6 @@ public class DataDirectoryTest {
 
     @Test
     public void dataDirList() throws Exception {
-        final String key = System.getenv("ALGORITHMIA_API_KEY");
-        Assume.assumeTrue(key != null);
-
         DataDirectory dir = Algorithmia.client(key).dir("data://.my/javaDataDirList");
 
         if(dir.exists()) {
@@ -73,9 +76,6 @@ public class DataDirectoryTest {
     }
 
     private void dataDirListIterable(String dirName) throws Exception {
-        final String key = System.getenv("ALGORITHMIA_API_KEY");
-        Assume.assumeTrue(key != null);
-
         DataDirectory dir = Algorithmia.client(key).dir(dirName);
 
         if(dir.exists()) {
@@ -111,9 +111,6 @@ public class DataDirectoryTest {
 
     @Test
     public void dataDirListWithPaging() throws Exception {
-        final String key = System.getenv("ALGORITHMIA_API_KEY");
-        Assume.assumeTrue(key != null);
-
         DataDirectory dir = Algorithmia.client(key).dir("data://.my/javaLargeDataDirList");
         final int NUM_FILES = 1100;
         final String EXTENSION = ".txt";
@@ -153,9 +150,6 @@ public class DataDirectoryTest {
 
     @Test
     public void dataDirListWithPagingIterable() throws Exception {
-        final String key = System.getenv("ALGORITHMIA_API_KEY");
-        Assume.assumeTrue(key != null);
-
         DataDirectory dir = Algorithmia.client(key).dir("data://.my/javaLargeDataDirList");
         final int NUM_FILES = 1100;
         final String EXTENSION = ".txt";
@@ -193,9 +187,6 @@ public class DataDirectoryTest {
 
     @Test
     public void listingEmptyDirectory() throws Exception {
-        final String key = System.getenv("ALGORITHMIA_API_KEY");
-        Assume.assumeTrue(key != null);
-
         DataDirectory dir = Algorithmia.client(key).dir("data://.my/test_empty_dir");
         if (dir.exists())
             dir.delete(true);
@@ -227,9 +218,6 @@ public class DataDirectoryTest {
 
     @Test
     public void dataDirGetPermissions() throws APIException {
-        final String key = System.getenv("ALGORITHMIA_API_KEY");
-        Assume.assumeTrue(key != null);
-
         DataDirectory dir = Algorithmia.client(key).dir("data://.my/javaGetPermissions");
         if (dir.exists()) {
             dir.delete(true);
@@ -240,9 +228,6 @@ public class DataDirectoryTest {
 
     @Test
     public void dataDirCreateWithPermissions() throws APIException {
-        final String key = System.getenv("ALGORITHMIA_API_KEY");
-        Assume.assumeTrue(key != null);
-
         DataDirectory dir = Algorithmia.client(key).dir("data://.my/javaCreateWithPermissions");
         if (dir.exists()) {
             dir.delete(true);
@@ -253,9 +238,6 @@ public class DataDirectoryTest {
 
     @Test
     public void dataDirUpdatePermissions() throws APIException {
-        final String key = System.getenv("ALGORITHMIA_API_KEY");
-        Assume.assumeTrue(key != null);
-
         DataDirectory dir = Algorithmia.client(key).dir("data://.my/javaUpdatePermissions");
         if (dir.exists()) {
             dir.delete(true);

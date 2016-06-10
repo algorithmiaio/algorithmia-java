@@ -4,6 +4,7 @@ import com.algorithmia.TypeToken;
 import com.google.gson.JsonElement;
 
 import org.apache.commons.codec.binary.Base64;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.Assume;
 import org.junit.Assert;
@@ -13,11 +14,16 @@ import java.util.Map;
 
 public class AlgorithmTest {
 
+    private String key;
+
+    @Before
+    public void setup() {
+        key = System.getenv("ALGORITHMIA_API_KEY");
+        Assume.assumeNotNull(key);
+    }
+
     @Test
     public void algorithmPipeJson() throws Exception {
-        final String key = System.getenv("ALGORITHMIA_API_KEY");
-        Assume.assumeTrue(key != null);
-
         AlgoResponse res = Algorithmia.client(key).algo("docs/JavaAddOne").pipe(41);
         Assert.assertEquals("42", res.as(new TypeToken<JsonElement>(){}).toString());
         int result = res.as(new TypeToken<Integer>(){});
@@ -27,9 +33,6 @@ public class AlgorithmTest {
 
     @Test
     public void algorithmPipeText() throws Exception {
-        final String key = System.getenv("ALGORITHMIA_API_KEY");
-        Assume.assumeTrue(key != null);
-
         AlgoResponse res = Algorithmia.client(key).algo("demo/Hello").pipe("foo");
         Assert.assertEquals("\"Hello foo\"", res.as(new TypeToken<JsonElement>(){}).toString());
         Assert.assertEquals("\"Hello foo\"", res.asJsonString());
@@ -40,9 +43,6 @@ public class AlgorithmTest {
 
     @Test
     public void algorithmPipeBinary() throws Exception {
-        final String key = System.getenv("ALGORITHMIA_API_KEY");
-        Assume.assumeTrue(key != null);
-
         byte[] input = new byte[10];
         AlgoResponse res = Algorithmia.client(key).algo("docs/JavaBinaryInAndOut").pipe(input);
         byte[] output = res.as(new TypeToken<byte[]>(){});
@@ -52,9 +52,6 @@ public class AlgorithmTest {
 
     @Test
     public void algorithmRawOutput() throws Exception {
-        final String key = System.getenv("ALGORITHMIA_API_KEY");
-        Assume.assumeTrue(key != null);
-
         AlgoResponse res = Algorithmia.client(key).algo("demo/Hello")
                 .setOutputType(Algorithm.AlgorithmOutputType.RAW).pipe("foo");
         Assert.assertEquals("Hello foo", res.getRawOutput());
@@ -63,9 +60,6 @@ public class AlgorithmTest {
 
     @Test
     public void algorithmVoidOutput() throws Exception {
-        final String key = System.getenv("ALGORITHMIA_API_KEY");
-        Assume.assumeTrue(key != null);
-
         AlgoAsyncResponse res = Algorithmia.client(key).algo("demo/Hello")
                 .setOutputType(Algorithm.AlgorithmOutputType.VOID).pipe("foo")
                 .getAsyncResponse();
@@ -75,9 +69,6 @@ public class AlgorithmTest {
 
     @Test
     public void algorithmSetOption() throws Exception {
-        final String key = System.getenv("ALGORITHMIA_API_KEY");
-        Assume.assumeTrue(key != null);
-
         AlgoResponse res = Algorithmia.client(key).algo("demo/Hello")
                 .setOption("output", "raw").pipe("foo");
 
@@ -86,9 +77,6 @@ public class AlgorithmTest {
 
     @Test
     public void algorithmSetOptions() throws Exception {
-        final String key = System.getenv("ALGORITHMIA_API_KEY");
-        Assume.assumeTrue(key != null);
-
         Map<String, String> options = new HashMap<String, String>();
         options.put("output", "raw");
 

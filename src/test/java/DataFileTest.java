@@ -1,6 +1,7 @@
 import com.algorithmia.Algorithmia;
 import com.algorithmia.data.*;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.Assume;
 import org.junit.Assert;
@@ -10,6 +11,13 @@ import java.io.FileWriter;
 
 public class DataFileTest {
 
+    private String key;
+
+    @Before
+    public void setup() {
+        key = System.getenv("ALGORITHMIA_API_KEY");
+        Assume.assumeNotNull(key);
+    }
 
     @Test
     public void dataFileParent() throws Exception {
@@ -27,9 +35,6 @@ public class DataFileTest {
 
     @Test
     public void dataFileCreate() throws Exception {
-        final String key = System.getenv("ALGORITHMIA_API_KEY");
-        Assume.assumeTrue(key != null);
-
         DataFile file = Algorithmia.client(key).file("data://.my/javaDataFileCreate/foo.txt");
 
 
@@ -51,9 +56,6 @@ public class DataFileTest {
 
     @Test
     public void dataStringUpload() throws Exception {
-        final String key = System.getenv("ALGORITHMIA_API_KEY");
-        Assume.assumeTrue(key != null);
-
         DataFile file = Algorithmia.client(key).file("data://.my/javaDataFileUpload/foo.txt");
 
         // Make sure test starts in clean state
@@ -74,9 +76,6 @@ public class DataFileTest {
 
     @Test
     public void dataFileUpload() throws Exception {
-        final String key = System.getenv("ALGORITHMIA_API_KEY");
-        Assume.assumeTrue(key != null);
-
         DataFile file = Algorithmia.client(key).file("data://.my/javaDataFileUpload/foo.txt");
 
         // Make sure test starts in clean state
@@ -101,9 +100,6 @@ public class DataFileTest {
 
     @Test
     public void dataFileGet() throws Exception {
-        final String key = System.getenv("ALGORITHMIA_API_KEY");
-        Assume.assumeTrue(key != null);
-
         DataFile file = Algorithmia.client(key).file("data://.my/javaDataFileGet/foo.txt");
         String expected = "Simple text file";
 

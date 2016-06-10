@@ -8,6 +8,7 @@ import org.junit.Assert;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.InputStream;
 
 public class DataFileTest {
 
@@ -113,6 +114,99 @@ public class DataFileTest {
 
         Assert.assertEquals(expected, file.getString());
         file.delete();
+    }
+
+    @Test
+    public void putLargeFileGet() throws Exception {
+        DataFile file = Algorithmia.client(key).file("data://.my/largeFiles/3GB_file");
+
+        // Make sure test starts in clean state
+        if(!file.getParent().exists()) {
+            file.getParent().create();
+        }
+
+        if(!file.exists()) {
+            file.put(new File("/tmp/3GB"));
+        }
+    }
+
+    @Test
+    public void putLargeFileInputStreamGet() throws Exception {
+        DataFile file = Algorithmia.client(key).file("data://.my/largeFiles/3GB_input_stream");
+
+        // Make sure test starts in clean state
+        if(!file.getParent().exists()) {
+            file.getParent().create();
+        }
+
+        if(!file.exists()) {
+            file.put(new File("/tmp/3GB"));
+        }
+    }
+
+    class LargeFileStream extends InputStream {
+        public static final long totalSize = 5000000000L;
+
+        private long left;
+        public LargeFileStream() {
+            left = totalSize;
+        }
+
+        @Override
+        public int available() {
+            return (int) left;
+        }
+
+        @Override
+        public void close() {
+            // do nothing
+        }
+
+        @Override
+        public void mark(int readlimit) {
+            throw new IllegalStateException();
+        }
+
+        @Override
+        public boolean markSupported() {
+            return false;
+        }
+
+        @Override
+        public int read() {
+            return 0;
+        }
+
+        @Override
+        public int read(byte[] b) {
+            int result;
+            if (left >= Integer.MAX_VALUE) {
+                result = b.length;
+            } else {
+                result = Math.min(b.length, Math.toIntExact(left));
+            }
+
+            for (int i = 0; i < b.length; i++) {
+                b[i] = 0;
+            }
+
+            return result;
+        }
+
+        @Override
+        public int read(byte[] b, int off, int len) {
+            throw new IllegalStateException();
+        }
+
+        @Override
+        public void reset() {
+            throw new IllegalStateException();
+        }
+
+        @Override
+        public long skip(long n) {
+            throw new IllegalStateException();
+        }
     }
 
     @Test

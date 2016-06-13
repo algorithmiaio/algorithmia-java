@@ -209,7 +209,7 @@ public class HttpClient {
 
             execute(request, consumer);
         } catch (FileNotFoundException e) {
-            throw new APIException("Could not find file");
+            throw new APIException("Could not find destination file: " + destination.getAbsolutePath());
         }
     }
 

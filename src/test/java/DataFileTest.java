@@ -189,6 +189,8 @@ public class DataFileTest {
             lines++;
         }
         Assert.assertEquals(lines, COUNT);
+
+        Assert.assertTrue(largeFile.delete());
     }
 
     @Test

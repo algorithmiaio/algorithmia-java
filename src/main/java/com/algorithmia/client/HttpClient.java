@@ -239,13 +239,6 @@ public class HttpClient {
      */
     static class HttpResponseConsumer extends AsyncByteConsumer<HttpResponse> {
         private HttpResponse response;
-        public HttpResponseConsumer() {
-            super();
-        }
-
-        public HttpResponseConsumer(final int bufSize) {
-            super(bufSize);
-        }
 
         @Override
         protected void onResponseReceived(final HttpResponse response) {

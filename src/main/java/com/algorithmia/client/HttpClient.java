@@ -7,13 +7,17 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
+import org.apache.http.nio.client.methods.AsyncByteConsumer;
 import org.apache.http.nio.protocol.HttpAsyncResponseConsumer;
 import org.apache.http.nio.protocol.BasicAsyncResponseConsumer;
 import org.apache.http.nio.protocol.BasicAsyncRequestProducer;
+import org.apache.http.nio.IOControl;
+import org.apache.http.protocol.HttpContext;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpHost;
 
+import java.nio.ByteBuffer;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -148,7 +152,7 @@ public class HttpClient {
      */
     public HttpResponse head(String url) throws APIException {
         final HttpHead request = new HttpHead(url);
-        return execute(request);
+        return executeHead(request);
     }
 
     public <T> Future<T> head(String url, HttpAsyncResponseConsumer<T> consumer) {
@@ -172,6 +176,12 @@ public class HttpClient {
         return execute(request, new BasicAsyncResponseConsumer());
     }
 
+    private HttpResponse executeHead(HttpUriRequest request) throws APIException {
+        // We don't use the BasicAsyncResponseConsumer because it barfs when the
+        // content length is too long.
+        return execute(request, new HttpResponseConsumer());
+    }
+
     private <T> T execute(HttpUriRequest request, HttpAsyncResponseConsumer<T> consumer) throws APIException {
         try {
             return executeAsync(request, consumer).get();
@@ -193,4 +203,31 @@ public class HttpClient {
         return client.execute(new BasicAsyncRequestProducer(target, request), consumer, null);
     }
 
+    /**
+     *   A consumer that drops the body of a response. It's useful when you just want the HTTP headers.
+     */
+    static class HttpResponseConsumer extends AsyncByteConsumer<HttpResponse> {
+        private HttpResponse response;
+        public HttpResponseConsumer() {
+            super();
+        }
+
+        public HttpResponseConsumer(final int bufSize) {
+            super(bufSize);
+        }
+
+        @Override
+        protected void onResponseReceived(final HttpResponse response) {
+            this.response = response;
+        }
+
+        @Override
+        protected HttpResponse buildResult(final HttpContext context) throws Exception {
+            return this.response;
+        }
+
+        @Override
+        protected void onByteReceived(final ByteBuffer buf, final IOControl ioctrl) {
+        }
+    }
 }

@@ -65,9 +65,10 @@ public class DataFile extends DataObject {
             // prefix must be at least 3 characters
             body = "algodata";
         }
+
         File tempFile = File.createTempFile(body, ext);
-        FileOutputStream outputStream = new FileOutputStream(tempFile);
-        IOUtils.copy(getInputStream(), outputStream);
+        client.getFile(getUrl(), tempFile);
+
         return tempFile;
     }
 

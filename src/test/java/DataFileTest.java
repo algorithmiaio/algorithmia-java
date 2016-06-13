@@ -10,6 +10,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.InputStream;
+import java.io.PrintStream;
+import java.util.Scanner;
 
 public class DataFileTest {
 
@@ -143,6 +145,36 @@ public class DataFileTest {
         if(!file.exists()) {
             file.put(new FileInputStream(new File("/tmp/3GB")));
         }
+    }
+
+    @Test
+    public void getLargeFile() throws Exception {
+        final int COUNT = 1000000;
+        DataFile file = Algorithmia.client(key).file("data://.my/largeFiles/" + COUNT + "Numbers");
+        File largeFile = File.createTempFile("TestGetLargeFile", "Numbers");
+        PrintStream ps = new PrintStream(largeFile);
+        for (int i = 0; i < COUNT; i ++) {
+            ps.println(i);
+        }
+
+        if(!file.getParent().exists()) {
+            file.getParent().create();
+        }
+
+        if(!file.exists()) {
+            file.put(largeFile);
+        }
+
+        File downloaded = file.getFile();
+        Assert.assertEquals(downloaded.length(), largeFile.length());
+
+        Scanner in = new Scanner(downloaded);
+        int lines = 0;
+        while (in.hasNextLine()) {
+            Assert.assertEquals(lines, Integer.parseInt(in.nextLine()));
+            lines++;
+        }
+        Assert.assertEquals(lines, COUNT);
     }
 
     @Test

@@ -2,12 +2,16 @@ package com.algorithmia.client;
 
 import com.algorithmia.APIException;
 import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.*;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.http.nio.client.methods.AsyncByteConsumer;
+import org.apache.http.nio.client.methods.ZeroCopyConsumer;
 import org.apache.http.nio.protocol.HttpAsyncResponseConsumer;
 import org.apache.http.nio.protocol.BasicAsyncResponseConsumer;
 import org.apache.http.nio.protocol.BasicAsyncRequestProducer;
@@ -25,6 +29,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.CancellationException;
 import java.lang.InterruptedException;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import com.google.gson.reflect.TypeToken;
@@ -97,6 +103,11 @@ public class HttpClient {
     public <T> Future<T> get(String url, HttpAsyncResponseConsumer<T> consumer) {
         final HttpGet request = new HttpGet(url);
         return this.executeAsync(request, consumer);
+    }
+
+    public void getFile(String url, File destination) throws APIException {
+        final HttpGet request = new HttpGet(url);
+        this.executeGetFile(request, destination);
     }
 
     /**
@@ -180,6 +191,26 @@ public class HttpClient {
         // We don't use the BasicAsyncResponseConsumer because it barfs when the
         // content length is too long.
         return execute(request, new HttpResponseConsumer());
+    }
+
+    private void executeGetFile(HttpUriRequest request, File destination) throws APIException {
+        // We don't use the BasicAsyncResponseConsumer because it barfs when the
+        // content length is too long.
+        try {
+            ZeroCopyConsumer<File> consumer = new ZeroCopyConsumer<File>(destination) {
+                @Override
+                protected File process(final HttpResponse response, final File file, final ContentType contentType) throws Exception {
+                    if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+                        throw new APIException("Download failed: " + response.getStatusLine());
+                    }
+                    return file;
+                }
+            };
+
+            execute(request, consumer);
+        } catch (FileNotFoundException e) {
+            throw new APIException("Could not find file");
+        }
     }
 
     private <T> T execute(HttpUriRequest request, HttpAsyncResponseConsumer<T> consumer) throws APIException {

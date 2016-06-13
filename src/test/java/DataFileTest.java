@@ -1,6 +1,7 @@
 import com.algorithmia.Algorithmia;
 import com.algorithmia.data.*;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.Assume;
@@ -16,11 +17,24 @@ import java.util.Scanner;
 public class DataFileTest {
 
     private String key;
+    private File largeFile;
 
     @Before
-    public void setup() {
+    public void setup() throws Exception {
         key = System.getenv("ALGORITHMIA_API_KEY");
         Assume.assumeNotNull(key);
+
+        String largeFileName = "/tmp/3GB";
+        largeFile = new File(largeFileName);
+
+        synchronized(this) {
+            if (!largeFile.exists()) {
+                ProcessBuilder procBuilder = new ProcessBuilder("dd", "if=/dev/zero", "of=" + largeFileName, "bs=1G", "count=3");
+                Assert.assertEquals(procBuilder.start().waitFor(), 0);
+            }
+        }
+
+        Assert.assertEquals(largeFile.length(), 3221225472L);
     }
 
     @Test
@@ -129,7 +143,7 @@ public class DataFileTest {
         }
 
         if(!file.exists()) {
-            file.put(new File("/tmp/3GB"));
+            file.put(largeFile);
         }
     }
 
@@ -143,7 +157,7 @@ public class DataFileTest {
         }
 
         if(!file.exists()) {
-            file.put(new FileInputStream(new File("/tmp/3GB")));
+            file.put(new FileInputStream(largeFile));
         }
     }
 

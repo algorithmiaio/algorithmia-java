@@ -2,18 +2,26 @@ package com.algorithmia.client;
 
 import com.algorithmia.APIException;
 import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.*;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
+import org.apache.http.nio.client.methods.AsyncByteConsumer;
+import org.apache.http.nio.client.methods.ZeroCopyConsumer;
 import org.apache.http.nio.protocol.HttpAsyncResponseConsumer;
 import org.apache.http.nio.protocol.BasicAsyncResponseConsumer;
 import org.apache.http.nio.protocol.BasicAsyncRequestProducer;
+import org.apache.http.nio.IOControl;
+import org.apache.http.protocol.HttpContext;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpHost;
 
+import java.nio.ByteBuffer;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -21,6 +29,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.CancellationException;
 import java.lang.InterruptedException;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import com.google.gson.reflect.TypeToken;
@@ -95,6 +105,11 @@ public class HttpClient {
         return this.executeAsync(request, consumer);
     }
 
+    public void getFile(String url, File destination) throws APIException {
+        final HttpGet request = new HttpGet(url);
+        this.executeGetFile(request, destination);
+    }
+
     /**
      * POST requests
      */
@@ -148,7 +163,7 @@ public class HttpClient {
      */
     public HttpResponse head(String url) throws APIException {
         final HttpHead request = new HttpHead(url);
-        return execute(request);
+        return executeHead(request);
     }
 
     public <T> Future<T> head(String url, HttpAsyncResponseConsumer<T> consumer) {
@@ -172,6 +187,32 @@ public class HttpClient {
         return execute(request, new BasicAsyncResponseConsumer());
     }
 
+    private HttpResponse executeHead(HttpUriRequest request) throws APIException {
+        // We don't use the BasicAsyncResponseConsumer because it barfs when the
+        // content length is too long.
+        return execute(request, new HttpResponseConsumer());
+    }
+
+    private void executeGetFile(HttpUriRequest request, File destination) throws APIException {
+        // We don't use the BasicAsyncResponseConsumer because it barfs when the
+        // content length is too long.
+        try {
+            ZeroCopyConsumer<File> consumer = new ZeroCopyConsumer<File>(destination) {
+                @Override
+                protected File process(final HttpResponse response, final File file, final ContentType contentType) throws Exception {
+                    if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+                        throw new APIException("Download failed: " + response.getStatusLine());
+                    }
+                    return file;
+                }
+            };
+
+            execute(request, consumer);
+        } catch (FileNotFoundException e) {
+            throw new APIException("Could not find destination file: " + destination.getAbsolutePath());
+        }
+    }
+
     private <T> T execute(HttpUriRequest request, HttpAsyncResponseConsumer<T> consumer) throws APIException {
         try {
             return executeAsync(request, consumer).get();
@@ -193,4 +234,24 @@ public class HttpClient {
         return client.execute(new BasicAsyncRequestProducer(target, request), consumer, null);
     }
 
+    /**
+     *   A consumer that drops the body of a response. It's useful when you just want the HTTP headers.
+     */
+    static class HttpResponseConsumer extends AsyncByteConsumer<HttpResponse> {
+        private HttpResponse response;
+
+        @Override
+        protected void onResponseReceived(final HttpResponse response) {
+            this.response = response;
+        }
+
+        @Override
+        protected HttpResponse buildResult(final HttpContext context) throws Exception {
+            return this.response;
+        }
+
+        @Override
+        protected void onByteReceived(final ByteBuffer buf, final IOControl ioctrl) {
+        }
+    }
 }

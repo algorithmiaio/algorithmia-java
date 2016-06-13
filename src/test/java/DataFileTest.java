@@ -1,15 +1,41 @@
 import com.algorithmia.Algorithmia;
 import com.algorithmia.data.*;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.Assume;
 import org.junit.Assert;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.util.Scanner;
 
 public class DataFileTest {
 
+    private String key;
+    private File largeFile;
+
+    @Before
+    public void setup() throws Exception {
+        key = System.getenv("ALGORITHMIA_API_KEY");
+        Assume.assumeNotNull(key);
+
+        String largeFileName = "/tmp/3GB";
+        largeFile = new File(largeFileName);
+
+        synchronized(this) {
+            if (!largeFile.exists()) {
+                ProcessBuilder procBuilder = new ProcessBuilder("dd", "if=/dev/zero", "of=" + largeFileName, "bs=1G", "count=3");
+                Assert.assertEquals(procBuilder.start().waitFor(), 0);
+            }
+        }
+
+        Assert.assertEquals(largeFile.length(), 3221225472L);
+    }
 
     @Test
     public void dataFileParent() throws Exception {
@@ -27,9 +53,6 @@ public class DataFileTest {
 
     @Test
     public void dataFileCreate() throws Exception {
-        final String key = System.getenv("ALGORITHMIA_API_KEY");
-        Assume.assumeTrue(key != null);
-
         DataFile file = Algorithmia.client(key).file("data://.my/javaDataFileCreate/foo.txt");
 
 
@@ -51,9 +74,6 @@ public class DataFileTest {
 
     @Test
     public void dataStringUpload() throws Exception {
-        final String key = System.getenv("ALGORITHMIA_API_KEY");
-        Assume.assumeTrue(key != null);
-
         DataFile file = Algorithmia.client(key).file("data://.my/javaDataFileUpload/foo.txt");
 
         // Make sure test starts in clean state
@@ -74,9 +94,6 @@ public class DataFileTest {
 
     @Test
     public void dataFileUpload() throws Exception {
-        final String key = System.getenv("ALGORITHMIA_API_KEY");
-        Assume.assumeTrue(key != null);
-
         DataFile file = Algorithmia.client(key).file("data://.my/javaDataFileUpload/foo.txt");
 
         // Make sure test starts in clean state
@@ -101,9 +118,6 @@ public class DataFileTest {
 
     @Test
     public void dataFileGet() throws Exception {
-        final String key = System.getenv("ALGORITHMIA_API_KEY");
-        Assume.assumeTrue(key != null);
-
         DataFile file = Algorithmia.client(key).file("data://.my/javaDataFileGet/foo.txt");
         String expected = "Simple text file";
 
@@ -117,6 +131,66 @@ public class DataFileTest {
 
         Assert.assertEquals(expected, file.getString());
         file.delete();
+    }
+
+    @Test
+    public void putLargeFileGet() throws Exception {
+        DataFile file = Algorithmia.client(key).file("data://.my/largeFiles/3GB_file");
+
+        // Make sure test starts in clean state
+        if(!file.getParent().exists()) {
+            file.getParent().create();
+        }
+
+        if(!file.exists()) {
+            file.put(largeFile);
+        }
+    }
+
+    @Test
+    public void putLargeFileInputStreamGet() throws Exception {
+        DataFile file = Algorithmia.client(key).file("data://.my/largeFiles/3GB_input_stream");
+
+        // Make sure test starts in clean state
+        if(!file.getParent().exists()) {
+            file.getParent().create();
+        }
+
+        if(!file.exists()) {
+            file.put(new FileInputStream(largeFile));
+        }
+    }
+
+    @Test
+    public void getLargeFile() throws Exception {
+        final int COUNT = 1000000;
+        DataFile file = Algorithmia.client(key).file("data://.my/largeFiles/" + COUNT + "Numbers");
+        File largeFile = File.createTempFile("TestGetLargeFile", "Numbers");
+        PrintStream ps = new PrintStream(largeFile);
+        for (int i = 0; i < COUNT; i ++) {
+            ps.println(i);
+        }
+
+        if(!file.getParent().exists()) {
+            file.getParent().create();
+        }
+
+        if(!file.exists()) {
+            file.put(largeFile);
+        }
+
+        File downloaded = file.getFile();
+        Assert.assertEquals(downloaded.length(), largeFile.length());
+
+        Scanner in = new Scanner(downloaded);
+        int lines = 0;
+        while (in.hasNextLine()) {
+            Assert.assertEquals(lines, Integer.parseInt(in.nextLine()));
+            lines++;
+        }
+        Assert.assertEquals(lines, COUNT);
+
+        Assert.assertTrue(largeFile.delete());
     }
 
     @Test

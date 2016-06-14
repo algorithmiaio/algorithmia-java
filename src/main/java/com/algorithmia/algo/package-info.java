@@ -6,6 +6,6 @@
  * the relevant API object with an instantiated client managed internally
  *
  *
- * @version 1.0.4
+ * @version 1.0.8
  */
 package com.algorithmia.algo;

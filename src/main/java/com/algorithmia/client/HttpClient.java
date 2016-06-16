@@ -174,7 +174,7 @@ public class HttpClient {
     /**
      * PATCH requests
      */
-     public HttpResponse patch(String url, StringEntity entity) throws APIException {
+    public HttpResponse patch(String url, StringEntity entity) throws APIException {
         final HttpPatch request = new HttpPatch(url);
         request.setEntity(entity);
         return this.execute(request);

@@ -61,7 +61,8 @@ public abstract class DataDirectoryGenericTest {
 
     @Test
     public void dataDirList() throws Exception {
-        DataDirectory dir = Algorithmia.client(key).dir(getFullPath("javaDataDirList"));
+        String parentDir = "javaDataDirList";
+        DataDirectory dir = Algorithmia.client(key).dir(getFullPath(parentDir));
 
         if(dir.exists()) {
             dir.delete(true);
@@ -81,8 +82,8 @@ public abstract class DataDirectoryGenericTest {
         }
 
         Assert.assertEquals(2, numFiles);
-        Assert.assertTrue(filesFound.contains(getFullPath("javaDataDirList/foo")));
-        Assert.assertTrue(filesFound.contains(getFullPath("javaDataDirList/foo2")));
+        Assert.assertTrue(filesFound.contains(getJoinedName(parentDir, "foo")));
+        Assert.assertTrue(filesFound.contains(getJoinedName(parentDir, "foo2")));
     }
 
     private String getJoinedName(String one, String two) {

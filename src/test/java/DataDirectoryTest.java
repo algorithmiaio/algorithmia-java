@@ -101,17 +101,17 @@ public class DataDirectoryTest {
 
     @Test
     public void dataDirListIterableWithTrailingSlash() throws Exception {
-        dataDirListIterable("data://.my/javaDataDirList/");
+        dataDirListIterable("data://.my/javaDataDirList1/");
     }
 
     @Test
     public void dataDirListIterableWithoutTrailingSlash() throws Exception {
-        dataDirListIterable("data://.my/javaDataDirList");
+        dataDirListIterable("data://.my/javaDataDirList2");
     }
 
     @Test
     public void dataDirListWithPaging() throws Exception {
-        DataDirectory dir = Algorithmia.client(key).dir("data://.my/javaLargeDataDirList");
+        DataDirectory dir = Algorithmia.client(key).dir("data://.my/javaLargeDataDirList1");
         final int NUM_FILES = 1100;
         final String EXTENSION = ".txt";
 
@@ -150,7 +150,7 @@ public class DataDirectoryTest {
 
     @Test
     public void dataDirListWithPagingIterable() throws Exception {
-        DataDirectory dir = Algorithmia.client(key).dir("data://.my/javaLargeDataDirList");
+        DataDirectory dir = Algorithmia.client(key).dir("data://.my/javaLargeDataDirList2");
         final int NUM_FILES = 1100;
         final String EXTENSION = ".txt";
 

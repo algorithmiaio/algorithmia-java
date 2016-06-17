@@ -44,9 +44,9 @@ public class DataDirectoryTest {
         }
 
         dir.create();
-        Assert.assertEquals(true, dir.exists());
+        Assert.assertTrue(dir.exists());
         dir.delete(false);
-        Assert.assertEquals(false, dir.exists());
+        Assert.assertFalse(dir.exists());
     }
 
     @Test

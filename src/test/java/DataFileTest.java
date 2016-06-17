@@ -67,9 +67,9 @@ public class DataFileTest {
         final File sampleFile = new File(this.getClass().getResource("sample.txt").getFile());
 
         file.put(sampleFile);
-        Assert.assertEquals(true, file.exists());
+        Assert.assertTrue(file.exists());
         file.delete();
-        Assert.assertEquals(false, file.exists());
+        Assert.assertFalse(file.exists());
     }
 
     @Test
@@ -88,7 +88,7 @@ public class DataFileTest {
         String expected = "This is a cloud: ☁"; //Unicode codepoint: U+2601
 
         file.put(expected);
-        Assert.assertEquals(true, file.exists());
+        Assert.assertTrue(file.exists());
         Assert.assertEquals(expected, file.getString());
     }
 
@@ -112,7 +112,7 @@ public class DataFileTest {
         bw.close();
 
         file.put(temp);
-        Assert.assertEquals(true, file.exists());
+        Assert.assertTrue(file.exists());
         Assert.assertEquals(expected, file.getString());
     }
 

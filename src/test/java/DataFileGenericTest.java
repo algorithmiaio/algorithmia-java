@@ -166,8 +166,8 @@ public abstract class DataFileGenericTest {
     public void getLargeFile() throws Exception {
         final int COUNT = 1000000;
         DataFile file = Algorithmia.client(key).file(getFullPath("largeFiles/" + COUNT + "Numbers"));
-        File largeFile = File.createTempFile("TestGetLargeFile", "Numbers");
-        PrintStream ps = new PrintStream(largeFile);
+        File numbersFile = File.createTempFile("TestGetLargeFile", "Numbers");
+        PrintStream ps = new PrintStream(numbersFile);
         for (int i = 0; i < COUNT; i ++) {
             ps.println(i);
         }
@@ -177,11 +177,11 @@ public abstract class DataFileGenericTest {
         }
 
         if(!file.exists()) {
-            file.put(largeFile);
+            file.put(numbersFile);
         }
 
         File downloaded = file.getFile();
-        Assert.assertEquals(downloaded.length(), largeFile.length());
+        Assert.assertEquals(downloaded.length(), numbersFile.length());
 
         Scanner in = new Scanner(downloaded);
         int lines = 0;
@@ -191,7 +191,7 @@ public abstract class DataFileGenericTest {
         }
         Assert.assertEquals(lines, COUNT);
 
-        Assert.assertTrue(largeFile.delete());
+        Assert.assertTrue(numbersFile.delete());
     }
 
     @Test

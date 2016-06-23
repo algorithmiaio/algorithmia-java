@@ -9,6 +9,7 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
+import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.http.nio.client.methods.AsyncByteConsumer;
 import org.apache.http.nio.client.methods.ZeroCopyConsumer;
@@ -25,6 +26,8 @@ import java.nio.ByteBuffer;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.CancellationException;
@@ -43,28 +46,35 @@ public class HttpClient {
 
     private static String userAgent = "algorithmia-java/" + "1.0.8";
 
-    private CloseableHttpAsyncClient client;
+    private static List<CloseableHttpAsyncClient> clients = new LinkedList<CloseableHttpAsyncClient>();
 
-    public HttpClient(Auth auth) {
-        this.auth = auth;
-        initializeClient();
-    }
-
-    private void initializeClient() {
-        // Note: the default client has a low max number of concurrent connections, can create a
-        // custom client with a higher limit if desired, but at least creating multiple Algorithmia clients
-        // will guaranteed increase parallelization
-        client = HttpAsyncClients.createDefault();
-        client.start();
-
+    static {
         Runtime.getRuntime().addShutdownHook(new Thread(){
             @Override
             public void run(){
-                try {
-                    client.close();
-                } catch(IOException e) {}
+                synchronized (clients) {
+                    for (CloseableHttpAsyncClient client : clients) {
+                        try {
+                            client.close();
+                        } catch (IOException e) {}
+                    }
+                }
             }
         });
+    }
+
+    private final CloseableHttpAsyncClient client;
+    public HttpClient(Auth auth, int maxConnections) {
+        this.auth = auth;
+
+        client = HttpAsyncClientBuilder.create()
+            .setMaxConnTotal(maxConnections)
+            .setMaxConnPerRoute(maxConnections).build();
+
+        synchronized (clients) {
+            clients.add(client);
+        }
+        client.start();
     }
 
     /**
@@ -252,6 +262,13 @@ public class HttpClient {
 
         @Override
         protected void onByteReceived(final ByteBuffer buf, final IOControl ioctrl) {
+        }
+    }
+
+    @Override
+    protected void finalize() {
+        synchronized (clients) {
+            clients.remove(client);
         }
     }
 }

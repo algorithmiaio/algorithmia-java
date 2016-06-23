@@ -10,19 +10,13 @@ import com.algorithmia.data.*;
 public final class AlgorithmiaClient {
     private HttpClient client;
     /**
-     * Instantiate Algorithmia client without credentials
-     * This only works for when running the client on top of the Algorithmia platform
+     * Instantiate Algorithmia client with the given auth and max number of connections
+     * @param auth Algorithmia Auth object, a null auth object is valid, though only
+     * correct for within the Algorithmia platform
+     * @param maxConnections
      */
-    protected AlgorithmiaClient() {
-        this.client = new HttpClient(null);
-    }
-
-    /**
-     * Instantiate Algorithmia client with auth
-     * @param auth Algorithmia Auth object
-     */
-    protected AlgorithmiaClient(Auth auth) {
-        this.client = new HttpClient(auth);
+    protected AlgorithmiaClient(Auth auth, int maxConnections) {
+        this.client = new HttpClient(auth, maxConnections);
     }
 
     /**

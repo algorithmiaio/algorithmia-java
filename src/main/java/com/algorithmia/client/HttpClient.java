@@ -44,7 +44,7 @@ public class HttpClient {
 
     final private Auth auth;
 
-    private static String userAgent = "algorithmia-java/" + "1.0.8";
+    private static String userAgent = "algorithmia-java/" + "1.0.9";
 
     private static List<CloseableHttpAsyncClient> clients = new LinkedList<CloseableHttpAsyncClient>();
 

@@ -28,6 +28,7 @@ AlgorithmiaClient client = Algorithmia.client(apiKey);
 ```
 
 Notes:
+
 - API key may be omitted only when making calls from algorithms running on the Algorithmia cluster
 - Using version range `[,1.1.0)` is recommended as it implies using the latest backward-compatible bugfixes.
 

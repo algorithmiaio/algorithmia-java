@@ -9,7 +9,7 @@ Java client for accessing Algorithmia's algorithm marketplace and data APIs.
 
 [![Latest Release](https://img.shields.io/maven-central/v/com.algorithmia/algorithmia-client.svg)](http://repo1.maven.org/maven2/com/algorithmia/algorithmia-client/)
 
-# Getting started
+## Getting started
 
 The Algorithmia java client is published to Maven central and can be added as a dependency via:
 
@@ -31,70 +31,99 @@ Notes:
 - API key may be omitted only when making calls from algorithms running on the Algorithmia cluster
 - Using version range `[,1.1.0)` is recommended as it implies using the latest backward-compatible bugfixes.
 
+Now you are ready to call algorithms.
+
 ## Calling Algorithms
 
-Algorithms are called with the `pipe` method using
-any input that can be serialized to JSON, or binary byte data.
+The following examples of calling algorithms are organized by type of input/output which vary between algorithms.
+
+Note: a single algorithm may have different input and output types, or accept multiple types of input, so consult the algorithm's description for usage examples specific to that algorithm.
+
+### Text input/output
+
+Call an algorithm with text input by simply passing a string into its `pipe` method.
+If the algorithm output is text, call the `asString` method on the response.
 
 ```java
-Algorithm addOne = client.algo("docs/JavaAddOne");
-AlgoResponse response = addOne.pipe(41);
-Integer result = response.as(new TypeToken<Integer>(){});
+Algorithm algo = client.algo("algo://demo/Hello/0.1.1");
+AlgoResponse result = algo.pipe("HAL 9000");
+System.out.println(result.asString());
+// -> Hello HAL 9000
+```
+
+### JSON input/output
+
+Call an algorithm with JSON input by simply passing in a type that can be serialized to JSON,
+including most plain old java objects and collection types.
+If the algorithm output is JSON, call the `as` method on the response with a `TypeToken`
+containing the type that it should be deserialized into:
+
+```java
+Algorithm algo = client.algo("algo://WebPredict/ListAnagrams/0.1.0");
+List<String> words = Arrays.asList(("transformer", "terraforms", "retransform");
+AlgoResponse result = algo.pipe(words);
+// WebPredict/ListAnagrams returns an array of strings, so cast the result:
+List<String> anagrams = result.as(new TypeToken<List<String>>(){});
+// -> List("transformer", "retransform")
+```
+
+Alternatively, you may work with raw JSON input by calling `pipeJson`,
+and raw JSON output by calling `asJsonString` on the response:
+
+```java
+String jsonWords = "[\"transformer\", \"terraforms\", \"retransform\"]"
+AlgoResponse result2 = algo.pipeJson(jsonWords);
+String anagrams = result2.asJsonString();
+// -> "[\"transformer\", \"retransform\"]"
+
 Double durationInSeconds = response.getMetadata().duration;
 ```
 
-If you already have serialzied JSON, you can call call `pipeJson` instead:
+
+### Binary input/output
+
+Call an algorithm with binary input by passing a `byte[]` into the `pipe` method.
+If the algorithm response is binary data, then call the `as` method on the response with a `byte[]` `TypeToken`
+to obtain the raw byte array.
 
 ```java
-Algorithm foo = client.algo("")
-String jsonWords = "[\"transformer\", \"terraforms\", \"retransform\"]"
-AlgoResponse response = addOne.pipeJson(jsonWords)
+byte[] input = Files.readAllBytes(new File("/path/to/bender.jpg").toPath());
+AlgoResponse result = client.algo("opencv/SmartThumbnail/0.1").pipe(input);
+byte[] buffer = result.as(new TypeToken<byte[]>(){});
+// -> [byte array]
 ```
 
-You can also set options (query parameters in the API spec) on calls.  There are several approaches to do this, and they are all equivalent
-```java
-// Helper methods for specific parameters in the API spec:
-Algorithm addOne = client.algo("docs/JavaAddOne")
-                         .setTimeout(5, TimeUnit.MINUTES)
-                         .setStdout(false);
+### Error handling
 
-AlgoResponse response = addOne.pipe(41);
-```
-
-### Casting results in Java
-
-
-> For an algorithm that returns a string:
+API errors will result in the call to `pipe` throwing `APIException`.
+Errors that occur durring algorithm execution will result in `AlgorithmException` when attempting to read the response.
 
 ```java
-stringResult.as(new TypeToken<String>(){});
-```
-
-> For an algorithm that returns an array of strings:
-
-```java
-stringArrayResult.as(new TypeToken<List<String>>(){});
-```
-
-> For an algorithm that returns a custom class, cast the result to that class:
-
-```java
-class CustomClass {
-    int maxCount;
-    List<String> items;
+Algorithm algo = client.algo('util/whoopsWrongAlgo')
+try {
+    AlgoResponse result = algo.pipe('Hello, world!');
+    String output = result.asString();
+} catch (APIException ex) {
+    System.out.println("API Exception: " ex.getMessage());
+} catch (AlgorithmException ex) {
+    System.out.println("Algorithm Exception: " ex.getMessage() + "\n" + ex.stacktrace);
 }
-customClassResult.as(new TypeToken<CustomClass>(){});
 ```
 
-> For debugging, it is often helpful to get the JSON String representation of the result:
+### Request options
+
+The client exposes options that can configure algorithm requests.
+This includes support for changing the timeout or indicating that the API should include stdout in the response.:
 
 ```java
-anyResult.asJsonString();
+Algorithm algo = client.algo("algo://demo/Hello/0.1.1")
+                         .setTimeout(1, TimeUnit.MINUTES)
+                         .setStdout(true);
+AlgoResponse result = algo.pipe("HAL 9000");
+Double stdout = response.getMetadata().stdout;
 ```
 
-In order to cast the result to a specific type, call `.as()` with a TypeToken.
-On the right pane, you'll find examples of how to do this to return a string, an array of strings, and a custom class.
-
+Note: `setStdout(true)` is ignored if you do not have access to the algorithm source.
 
 ## Working with Data
 

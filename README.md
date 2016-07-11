@@ -106,7 +106,8 @@ try {
 } catch (APIException ex) {
     System.out.println("API Exception: " ex.getMessage());
 } catch (AlgorithmException ex) {
-    System.out.println("Algorithm Exception: " ex.getMessage() + "\n" + ex.stacktrace);
+    System.out.println("Algorithm Exception: " ex.getMessage());
+    System.out.println(ex.stacktrace);
 }
 ```
 

@@ -193,7 +193,7 @@ client.dir("data://.my/robots").delete(false);
 
 ### List directory contents
 
-Iterate over the contents of a directory using the iterated returned by calling `files`, or `dirs` on a `DataDirectory` object:
+Iterate over the contents of a directory using the iterator returned by calling `files`, or `dirs` on a `DataDirectory` object:
 
 ```java
 // List top level directories

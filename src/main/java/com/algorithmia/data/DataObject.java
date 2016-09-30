@@ -57,9 +57,9 @@ abstract public class DataObject {
      */
     public String getUrl() {
         try {
-          return AlgorithmiaConf.apiAddress() + "/v1/data/" + URLEncoder.encode(path, "UTF-8");
+            return AlgorithmiaConf.apiAddress() + "/v1/data/" + URLEncoder.encode(path, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-          throw new RuntimeException(e);
+            throw new RuntimeException(e);
         }
     }
 

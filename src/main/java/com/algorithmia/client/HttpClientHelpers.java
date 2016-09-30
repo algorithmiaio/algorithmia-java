@@ -31,6 +31,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 import static com.algorithmia.algo.Algorithm.AlgorithmOutputType;
+
 /**
  * Various HTTP actions, using our HttpClient class, and automatically adding authorization
  */
@@ -95,7 +96,7 @@ public class HttpClientHelpers {
         @Override
         protected AlgoResponse buildResult(HttpContext context) throws APIException {
             if (outputType.equals(AlgorithmOutputType.RAW)) {
-                return parseRawOutpout(response);
+                return parseRawOutput(response);
             } else {
                 JsonElement json = parseResponseJson(response);
                 return jsonToAlgoResponse(json, outputType);
@@ -103,7 +104,7 @@ public class HttpClientHelpers {
         }
     }
 
-    public static AlgoResponse parseRawOutpout(HttpResponse response) throws APIException {
+    private static AlgoResponse parseRawOutput(HttpResponse response) throws APIException {
         throwIfNotOk(response);
         try {
             final HttpEntity entity = response.getEntity();
@@ -126,7 +127,7 @@ public class HttpClientHelpers {
                     stacktrace = error.get("stacktrace").getAsString();
                 }
                 return new AlgoFailure(new AlgorithmException(msg, null, stacktrace));
-            } else if (AlgorithmOutputType.DEFAULT.equals(outputType)){
+            } else if (AlgorithmOutputType.DEFAULT.equals(outputType)) {
                 JsonObject metaJson = obj.getAsJsonObject("metadata");
                 Double duration = metaJson.get("duration").getAsDouble();
                 com.algorithmia.algo.ContentType contentType = com.algorithmia.algo.ContentType.fromString(metaJson.get("content_type").getAsString());

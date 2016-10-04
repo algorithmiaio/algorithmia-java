@@ -59,7 +59,7 @@ public class DataFile extends DataObject {
             ext = "";
         } else {
             body = filename.substring(0, extensionIndex);
-            ext = filename.substring(extensionIndex + 1);
+            ext = filename.substring(extensionIndex);
         }
         if(body.length() < 3) {
             // prefix must be at least 3 characters

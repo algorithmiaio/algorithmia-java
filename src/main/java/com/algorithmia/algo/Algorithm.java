@@ -23,6 +23,7 @@ public final class Algorithm {
     private final HttpClient client;
     private final Map<String, String> options;
     private final AlgorithmOutputType outputType;
+    private static final long DEFAULT_TIMEOUT = 300L;
     final static Gson gson = new Gson();
 
     public Algorithm(HttpClient client, AlgorithmRef algoRef) {
@@ -54,10 +55,19 @@ public final class Algorithm {
     }
 
     public Algorithm setTimeout(Long timeout, TimeUnit unit) {
-        Long time = unit.convert(timeout, TimeUnit.SECONDS);
+        Long time = TimeUnit.SECONDS.convert(timeout, unit);
         Map<String, String> optionsClone = new HashMap<String, String>(options);
         optionsClone.put(AlgorithmOptions.TIMEOUT.toString(), time.toString());
         return new Algorithm(client, algoRef, optionsClone);
+    }
+
+    public Long getTimeout() {
+        String key = AlgorithmOptions.TIMEOUT.toString();
+        if (options.containsKey(key)) {
+            return Long.parseLong(options.get(key));
+        }
+        return DEFAULT_TIMEOUT;
+
     }
 
     public Algorithm setStdout(boolean showStdout) {

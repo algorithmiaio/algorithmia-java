@@ -11,6 +11,7 @@ import org.junit.Assert;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.*;
 
 public class AlgorithmTest {
 
@@ -87,4 +88,25 @@ public class AlgorithmTest {
 
     }
 
+    @Test
+    public void algorithmCheckTimeout() throws Exception {
+        Algorithm algo = Algorithmia.client(key).algo("docs/JavaAddOne");
+
+        // Check default timeout - just for fun. This doesn't have to be specified at all time
+        // but I wanted to make sure this method never throws an exception when the key in the options
+        // is null.
+        Assert.assertEquals((long)300, (long)algo.getTimeout());
+
+        // Check Minute conversion
+        algo = algo.setTimeout(20L, TimeUnit.MINUTES);
+        Assert.assertEquals((long)20 * 60, (long)algo.getTimeout());
+
+        // And seconds just in case
+        algo = algo.setTimeout(30L, TimeUnit.SECONDS);
+        Assert.assertEquals((long)30, (long)algo.getTimeout());
+
+        // And milliseconds
+        algo = algo.setTimeout(5000L, TimeUnit.MILLISECONDS);
+        Assert.assertEquals((long)5, (long)algo.getTimeout());
+    }
 }

@@ -5,6 +5,6 @@
  * com.algorithmia.Algorithmia static class methods return the relevant
  * API object with an instantiated client managed internally
  *
- * @version 1.0.9
+ * @version 1.0.12
  */
 package com.algorithmia.client;

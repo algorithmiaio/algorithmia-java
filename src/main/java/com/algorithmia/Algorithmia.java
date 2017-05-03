@@ -33,7 +33,7 @@ public final class Algorithmia {
      * @return an Algorithmia client
      */
     public static AlgorithmiaClient client(int maxConnections) {
-        return new AlgorithmiaClient(null, maxConnections);
+        return new AlgorithmiaClient(null, null, maxConnections);
     }
 
     /**
@@ -46,11 +46,20 @@ public final class Algorithmia {
      * @return an Algorithmia client
      */
     public static AlgorithmiaClient client(String simpleKey) {
-        if(simpleKey == null) {
-            return getDefaultClient();
-        } else {
-            return new AlgorithmiaClient(new SimpleAuth(simpleKey), DEFAULT_MAX_CONNECTIONS);
-        }
+        return new AlgorithmiaClient(new SimpleAuth(simpleKey), null, DEFAULT_MAX_CONNECTIONS);
+    }
+
+    /**
+     * Builds an Algorithmia client that makes all requests with your API key
+     * If API key is null, the default client is returned, which will
+     * look for ALGORITHMIA_API_KEY environment variable or java property
+     * If no key is found, then requests will be unauthenticated which only works
+     * when making requests from an algorithm running within the Algorithmia cluster
+     * @param simpleKey API Key for simple authentication (prefixed with "sim")
+     * @return an Algorithmia client
+     */
+    public static AlgorithmiaClient client(String simpleKey, String apiAddress) {
+        return new AlgorithmiaClient(new SimpleAuth(simpleKey), apiAddress, DEFAULT_MAX_CONNECTIONS);
     }
 
     /**
@@ -64,13 +73,22 @@ public final class Algorithmia {
      * @return an Algorithmia client
      */
     public static AlgorithmiaClient client(String simpleKey, int maxConnections) {
-        if(simpleKey == null) {
-            return getDefaultClient();
-        } else {
-            return new AlgorithmiaClient(new SimpleAuth(simpleKey), maxConnections);
-        }
+        return new AlgorithmiaClient(new SimpleAuth(simpleKey), null, maxConnections);
     }
 
+    /**
+     * Builds an Algorithmia client that makes all requests with your API key
+     * If API key is null, the default client is returned, which will
+     * look for ALGORITHMIA_API_KEY environment variable or java property
+     * If no key is found, then requests will be unauthenticated which only works
+     * when making requests from an algorithm running within the Algorithmia cluster
+     * @param simpleKey API Key for simple authentication (prefixed with "sim")
+     * @param maxConnections max number of concurrent connections to hold open to Algorithmia
+     * @return an Algorithmia client
+     */
+    public static AlgorithmiaClient client(String simpleKey, String apiAddress, int maxConnections) {
+        return new AlgorithmiaClient(new SimpleAuth(simpleKey), apiAddress, maxConnections);
+    }
 
     /**
      * Initialize an Algorithm object using the default client
@@ -101,7 +119,7 @@ public final class Algorithmia {
 
     private static AlgorithmiaClient getDefaultClient() {
         if(defaultClient == null) {
-            defaultClient = new AlgorithmiaClient(null, DEFAULT_MAX_CONNECTIONS);
+            defaultClient = new AlgorithmiaClient(null, null, DEFAULT_MAX_CONNECTIONS);
         }
         return defaultClient;
     }

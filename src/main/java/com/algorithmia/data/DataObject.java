@@ -52,12 +52,12 @@ abstract public class DataObject {
     abstract public boolean exists() throws APIException;
 
     /**
-     * Resolves this collection into an HTTP url
+     * Resolves this collection into an HTTP url path
      * @return the HTTP url for this collection
      */
     public String getUrl() {
         try {
-            return AlgorithmiaConf.apiAddress() + "/v1/data/" + URLEncoder.encode(path, "UTF-8");
+            return "/v1/data/" + URLEncoder.encode(path, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }

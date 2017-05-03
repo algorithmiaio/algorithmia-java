@@ -1,6 +1,9 @@
 package com.algorithmia.client;
 
+import com.algorithmia.AlgorithmiaConf;
 import com.algorithmia.APIException;
+
+import com.google.gson.reflect.TypeToken;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -21,7 +24,10 @@ import org.apache.http.protocol.HttpContext;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpHost;
-
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.lang.InterruptedException;
 import java.nio.ByteBuffer;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -29,20 +35,14 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.CancellationException;
-import java.lang.InterruptedException;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
-import com.google.gson.reflect.TypeToken;
-
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 public class HttpClient {
 
     final private Auth auth;
+    final private String apiAddress;
 
     private static String userAgent = "algorithmia-java/" + "1.0.12";
 
@@ -64,17 +64,30 @@ public class HttpClient {
     }
 
     private final CloseableHttpAsyncClient client;
-    public HttpClient(Auth auth, int maxConnections) {
+    public HttpClient(Auth auth, String apiAddress, int maxConnections) {
         this.auth = auth;
+        if(apiAddress != null) {
+            this.apiAddress = apiAddress;
+        } else {
+            this.apiAddress = AlgorithmiaConf.apiAddress();
+        }
 
         client = HttpAsyncClientBuilder.create()
             .setMaxConnTotal(maxConnections)
-            .setMaxConnPerRoute(maxConnections).build();
+            .setMaxConnPerRoute(maxConnections)
+            .build();
 
         synchronized (clients) {
             clients.add(client);
         }
         client.start();
+    }
+
+    /**
+     * Constructs the url for a given path
+     */
+    private String getUrl(String path) {
+        return apiAddress + path;
     }
 
     /**
@@ -98,43 +111,43 @@ public class HttpClient {
     * GET requests
     */
 
-    public HttpResponse get(String url) throws APIException {
-        final HttpGet request = new HttpGet(url);
+    public HttpResponse get(String path) throws APIException {
+        final HttpGet request = new HttpGet(getUrl(path));
         return this.execute(request);
     }
 
-    public <T> T get(String url, TypeToken<T> typeToken, Map<String, String> params) throws APIException {
-        final HttpGet request = new HttpGet(url);
+    public <T> T get(String path, TypeToken<T> typeToken, Map<String, String> params) throws APIException {
+        final HttpGet request = new HttpGet(getUrl(path));
         addQueryParameters(request, params);
         return this.execute(request, new HttpClientHelpers.JsonDeserializeResponseHandler<T>(typeToken));
 
     }
 
-    public <T> Future<T> get(String url, HttpAsyncResponseConsumer<T> consumer) {
-        final HttpGet request = new HttpGet(url);
+    public <T> Future<T> get(String path, HttpAsyncResponseConsumer<T> consumer) {
+        final HttpGet request = new HttpGet(getUrl(path));
         return this.executeAsync(request, consumer);
     }
 
-    public void getFile(String url, File destination) throws APIException {
-        final HttpGet request = new HttpGet(url);
+    public void getFile(String path, File destination) throws APIException {
+        final HttpGet request = new HttpGet(getUrl(path));
         this.executeGetFile(request, destination);
     }
 
     /**
      * POST requests
      */
-    public HttpResponse post(String url, HttpEntity data) throws APIException {
-        final HttpPost request = new HttpPost(url);
+    public HttpResponse post(String path, HttpEntity data) throws APIException {
+        final HttpPost request = new HttpPost(getUrl(path));
         request.setEntity(data);
         return this.execute(request);
     }
 
-    public <T> Future<T> post(String url, HttpEntity data, HttpAsyncResponseConsumer<T> consumer) {
-        return post(url, data, consumer, null);
+    public <T> Future<T> post(String path, HttpEntity data, HttpAsyncResponseConsumer<T> consumer) {
+        return post(getUrl(path), data, consumer, null);
     }
 
-    public <T> Future<T> post(String url, HttpEntity data, HttpAsyncResponseConsumer<T> consumer, Map<String, String> parameters) {
-        final HttpPost request = new HttpPost(url);
+    public <T> Future<T> post(String path, HttpEntity data, HttpAsyncResponseConsumer<T> consumer, Map<String, String> parameters) {
+        final HttpPost request = new HttpPost(getUrl(path));
         request.setEntity(data);
         addQueryParameters(request, parameters);
         return this.executeAsync(request, consumer);
@@ -143,14 +156,14 @@ public class HttpClient {
     /**
      * PUT requests
      */
-    public HttpResponse put(String url, HttpEntity data) throws APIException {
-        final HttpPut request = new HttpPut(url);
+    public HttpResponse put(String path, HttpEntity data) throws APIException {
+        final HttpPut request = new HttpPut(getUrl(path));
         request.setEntity(data);
         return this.execute(request);
     }
 
-    public <T> Future<T> put(String url, HttpEntity data, HttpAsyncResponseConsumer<T> consumer) {
-        final HttpPut request = new HttpPut(url);
+    public <T> Future<T> put(String path, HttpEntity data, HttpAsyncResponseConsumer<T> consumer) {
+        final HttpPut request = new HttpPut(getUrl(path));
         request.setEntity(data);
         return this.executeAsync(request, consumer);
     }
@@ -158,34 +171,34 @@ public class HttpClient {
     /**
      * DELETE requests
      */
-    public HttpResponse delete(String url) throws APIException {
-        final HttpDelete request = new HttpDelete(url);
+    public HttpResponse delete(String path) throws APIException {
+        final HttpDelete request = new HttpDelete(getUrl(path));
         return execute(request);
     }
 
-    public <T> Future<T> delete(String url, HttpAsyncResponseConsumer<T> consumer) {
-        final HttpDelete request = new HttpDelete(url);
+    public <T> Future<T> delete(String path, HttpAsyncResponseConsumer<T> consumer) {
+        final HttpDelete request = new HttpDelete(getUrl(path));
         return executeAsync(request, consumer);
     }
 
     /**
      * HEAD requests
      */
-    public HttpResponse head(String url) throws APIException {
-        final HttpHead request = new HttpHead(url);
+    public HttpResponse head(String path) throws APIException {
+        final HttpHead request = new HttpHead(getUrl(path));
         return executeHead(request);
     }
 
-    public <T> Future<T> head(String url, HttpAsyncResponseConsumer<T> consumer) {
-        final HttpHead request = new HttpHead(url);
+    public <T> Future<T> head(String path, HttpAsyncResponseConsumer<T> consumer) {
+        final HttpHead request = new HttpHead(getUrl(path));
         return executeAsync(request, consumer);
     }
 
     /**
      * PATCH requests
      */
-    public HttpResponse patch(String url, StringEntity entity) throws APIException {
-        final HttpPatch request = new HttpPatch(url);
+    public HttpResponse patch(String path, StringEntity entity) throws APIException {
+        final HttpPatch request = new HttpPatch(getUrl(path));
         request.setEntity(entity);
         return this.execute(request);
     }

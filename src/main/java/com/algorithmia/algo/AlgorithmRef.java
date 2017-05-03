@@ -17,11 +17,11 @@ public class AlgorithmRef {
     }
 
     /**
-     * Resolves this file reference into an HTTP url
+     * Resolves this file reference into an HTTP url path
      * @return the HTTP url for this file
      */
     public String getUrl() {
-        return AlgorithmiaConf.apiAddress() + "/v1/algo/" + algoUri;
+        return "/v1/algo/" + algoUri;
     }
 
     @Override

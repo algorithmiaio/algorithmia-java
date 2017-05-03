@@ -61,7 +61,7 @@ public class DataFile extends DataObject {
             body = filename.substring(0, extensionIndex);
             ext = filename.substring(extensionIndex);
         }
-        if(body.length() < 3) {
+        if(body.length() < 3 || body.length() > 127) {
             // prefix must be at least 3 characters
             body = "algodata";
         }

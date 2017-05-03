@@ -15,8 +15,8 @@ public final class AlgorithmiaClient {
      * correct for within the Algorithmia platform
      * @param maxConnections
      */
-    protected AlgorithmiaClient(Auth auth, int maxConnections) {
-        this.client = new HttpClient(auth, maxConnections);
+    protected AlgorithmiaClient(Auth auth, String apiAddress, int maxConnections) {
+        this.client = new HttpClient(auth, apiAddress, maxConnections);
     }
 
     /**

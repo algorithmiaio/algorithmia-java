@@ -3,7 +3,7 @@ name := "algorithmia-client"
 
 organization := "com.algorithmia"
 
-version := "1.0.12"
+version := "1.0.13-SNAPSHOT"
 
 autoScalaLibrary := false
 

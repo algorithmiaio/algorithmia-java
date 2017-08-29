@@ -75,6 +75,7 @@ public class HttpClient {
         client = HttpAsyncClientBuilder.create()
             .setMaxConnTotal(maxConnections)
             .setMaxConnPerRoute(maxConnections)
+            .useSystemProperties()
             .build();
 
         synchronized (clients) {

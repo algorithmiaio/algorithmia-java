@@ -280,9 +280,13 @@ public class HttpClient {
     }
 
     @Override
-    protected void finalize() {
+    protected void finalize() throws IOException {
         synchronized (clients) {
+            client.close();
             clients.remove(client);
         }
+    }
+    public void close() throws IOException {
+        this.finalize();
     }
 }

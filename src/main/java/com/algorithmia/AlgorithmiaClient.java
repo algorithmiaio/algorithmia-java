@@ -4,6 +4,8 @@ import com.algorithmia.algo.*;
 import com.algorithmia.client.*;
 import com.algorithmia.data.*;
 
+import java.io.IOException;
+
 /**
  * Instantiate Algorithmia clients for calling algorithms and accessing data
  */
@@ -44,5 +46,9 @@ public final class AlgorithmiaClient {
      */
     public DataFile file(String path) {
         return new DataFile(client, path);
+    }
+
+    public void close() throws IOException {
+        this.client.close();
     }
 }

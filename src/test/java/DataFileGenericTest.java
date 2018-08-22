@@ -6,12 +6,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.Assume;
 import org.junit.Assert;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.InputStream;
-import java.io.PrintStream;
+
+import java.io.*;
 import java.util.Scanner;
 
 public abstract class DataFileGenericTest {
@@ -30,8 +26,8 @@ public abstract class DataFileGenericTest {
 
         synchronized(this) {
             if (!largeFile.exists()) {
-                ProcessBuilder procBuilder = new ProcessBuilder("dd", "if=/dev/zero", "of=" + largeFileName, "bs=1G", "count=3");
-                Assert.assertEquals(procBuilder.start().waitFor(), 0);
+                RandomAccessFile tempFile = new RandomAccessFile(largeFile, "w");
+                tempFile.setLength(3221225472L);
             }
         }
 

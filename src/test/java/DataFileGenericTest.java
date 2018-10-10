@@ -26,7 +26,7 @@ public abstract class DataFileGenericTest {
 
         synchronized(this) {
             if (!largeFile.exists()) {
-                RandomAccessFile tempFile = new RandomAccessFile(largeFile, "w");
+                RandomAccessFile tempFile = new RandomAccessFile(largeFile, "rw");
                 tempFile.setLength(3221225472L);
             }
         }

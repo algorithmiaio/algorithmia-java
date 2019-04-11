@@ -72,7 +72,7 @@ Alternatively, you may work with raw JSON input by calling `pipeJson`,
 and raw JSON output by calling `asJsonString` on the response:
 
 ```java
-String jsonWords = "[\"transformer\", \"terraforms\", \"retransform\"]"
+String jsonWords = "[\"transformer\", \"terraforms\", \"retransform\"]";
 AlgoResponse result2 = algo.pipeJson(jsonWords);
 String anagrams = result2.asJsonString();
 // -> "[\"transformer\", \"retransform\"]"
@@ -199,13 +199,13 @@ Iterate over the contents of a directory using the iterator returned by calling 
 // List top level directories
 DataDirectory myRoot = client.dir("data://.my");
 for(DataDirectory dir : myRoot.dirs()) {
-    System.out.println("Directory " + dir.toString() + " at URL " + dir.url());
+    System.out.println("Directory " + dir + " at URL " + dir.url());
 }
 
 // List files in the 'robots' directory
 DataDirectory robots = client.dir("data://.my/robots");
 for(DataFile file : robots.files()) {
-    System.out.println("File " + file.toString() + " at URL: " + file.url());
+    System.out.println("File " + file + " at URL: " + file.url());
 }
 ```
 

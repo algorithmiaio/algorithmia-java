@@ -10,9 +10,9 @@ autoScalaLibrary := false
 // More compiler warnings
 scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature", "-Xlint")
 
-javacOptions ++= Seq("-source", "1.6", "-target", "1.6")
+javacOptions ++= Seq("-source", "8", "-target", "8")
 
-javacOptions in doc := Seq("-source", "1.6")
+javacOptions in doc := Seq("-source", "8")
 
 libraryDependencies ++= Seq(
   "com.google.code.gson" % "gson" % "2.6.2",

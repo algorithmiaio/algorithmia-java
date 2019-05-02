@@ -4,14 +4,14 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import org.apache.commons.codec.binary.Base64;
 
-public class Response<T> {
+class Response<T> {
     private MetaData metaData;
     private T result;
     public class MetaData{
         private String content_type;
         MetaData(String contentType){this.content_type = contentType;}
     }
-    public Response(Object rawData){
+    Response(Object rawData){
         String contentType;
         T data;
         if(rawData == null){
@@ -34,7 +34,7 @@ public class Response<T> {
         metaData = new MetaData(contentType);
         result = data;
     }
-    public String getJsonOutput(){
+    String getJsonOutput(){
         Gson gson = new Gson();
         JsonObject node = new JsonObject();
         JsonObject metaData = new JsonObject();

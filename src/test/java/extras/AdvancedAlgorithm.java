@@ -1,3 +1,5 @@
+package extras;
+
 import java.util.HashMap;
 
 class AdvancedInput{
@@ -5,13 +7,8 @@ class AdvancedInput{
     Integer age;
 }
 
-class BasicAlgorithm{
-    String Foo(String input) throws Exception {
-        return "Hello " + input;
-    }
-}
 
-class AdvancedAlgorithm {
+public class AdvancedAlgorithm {
     String Apply(AdvancedInput input, HashMap<String, String> context) throws Exception {
         if (context.containsKey("local_file")) {
             return "Hello " + input.name + " you are " + input.age +

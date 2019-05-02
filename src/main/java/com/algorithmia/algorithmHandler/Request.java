@@ -1,6 +1,6 @@
 package com.algorithmia.algorithmHandler;
 
-public class Request<T>{
+class Request<T>{
     public String content_type;
     public T data;
 
@@ -14,7 +14,7 @@ public class Request<T>{
         }
     }
 
-    public Request(String content_type, Object data) throws Exception{
+    Request(String content_type, Object data) throws Exception{
         T formatted = CheckCompatability(data);
 
         this.content_type = content_type;

@@ -1,5 +1,7 @@
 package com.algorithmia.algorithmHandler;
 
+import java.io.IOException;
+
 public class AlgorithmHandler<INPUT, STATE, OUTPUT> {
 
     @FunctionalInterface
@@ -66,7 +68,7 @@ public class AlgorithmHandler<INPUT, STATE, OUTPUT> {
 
         loadFunc = func;
     }
-    public void run() throws java.io.FileNotFoundException{
+    public void run() throws IOException {
         RequestHandler<INPUT> in = new RequestHandler<>();
         ResponseHandler out = new ResponseHandler();
         try {

@@ -1,20 +1,20 @@
+package AlgorithmHandler;
 
-import com.algorithmia.algorithmHandler.*;
+import AlgorithmHandler.algorithms.AdvancedAlgorithm;
+import com.algorithmia.algorithmHandler.AlgorithmHandler;
 import com.google.gson.JsonObject;
-import extras.AlgorithmHandlerTestBase;
-import extras.BasicAlgorithm;
-import org.junit.Test;
 import org.junit.Assert;
+import org.junit.Test;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class SimpleAlgorithmHandlerTest extends AlgorithmHandlerTestBase {
+public class AdvancedAlgorithmTest extends AlgorithmHandlerTestBase {
 
-    /// TEXT hello world
     @Test
-    public void SimpleAlgoRequest()throws Exception{
+    public void RunAlgorithm()throws Exception{
 
         JsonObject expectedResponse = new JsonObject();
         JsonObject metadata = new JsonObject();
@@ -22,9 +22,9 @@ public class SimpleAlgorithmHandlerTest extends AlgorithmHandlerTestBase {
         expectedResponse.add("metadata", metadata);
         expectedResponse.addProperty("result", "Hello james");
 
-        BasicAlgorithm algo = new BasicAlgorithm();
-        AlgorithmHandler handler = new AlgorithmHandler<>(algo::Foo);
-        InputStream fakeIn = new ByteArrayInputStream("{\"content_type\":\"text\", \"data\":\"james\"}".getBytes());
+        AdvancedAlgorithm algo = new AdvancedAlgorithm();
+        AlgorithmHandler handler = new AlgorithmHandler<>(algo::Apply, algo::DownloadModel);
+        InputStream fakeIn = new ByteArrayInputStream("{\"content_type\":\"json\", \"data\":{\"name\":\"james\", \"age\":25}}".getBytes());
 
         System.setIn(fakeIn);
         handler.run();

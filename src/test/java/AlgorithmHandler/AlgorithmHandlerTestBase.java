@@ -1,4 +1,4 @@
-package extras;
+package AlgorithmHandler;
 
 import com.google.gson.JsonParser;
 import org.junit.After;

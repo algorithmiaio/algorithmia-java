@@ -1,52 +1,58 @@
 package com.algorithmia.algorithmHandler;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import java.util.Scanner;
+
+import com.algorithmia.TypeToken;
+import com.google.gson.*;
 import org.apache.commons.codec.binary.Base64;
 
 
-final class RequestHandler<INPUT>
+class RequestHandler<ALGO_INPUT>
 {
 
     private Scanner input;
     private JsonParser parser;
+    private Gson gson;
+    private Class<ALGO_INPUT> inputClass;
 
-    RequestHandler(){
+    RequestHandler(Class<ALGO_INPUT> inputClass){
         this.input = new Scanner(System.in);
         this.parser = new JsonParser();
+        this.gson = new Gson();
+        this.inputClass = inputClass;
     }
 
-    private Request<INPUT> CreateRequest(String contentType, JsonElement data) throws Exception {
-        if (contentType.equals("json")) {
-            if (data.isJsonArray()) {
-                JsonArray array = data.getAsJsonArray();
-                return new Request<>(contentType, array);
-            }else if(data.isJsonPrimitive() || data.isJsonNull()){
-                Object[] inputs = {data};
-                return new Request<>(contentType, inputs);
-            } else {
-                return new Request<>(contentType, data);
+
+    private  ALGO_INPUT ProcessRequest(Request request) throws Exception{
+
+        try{
+            return gson.fromJson(request.data, inputClass);
+        } catch (Exception a) {
+            try{
+            return (ALGO_INPUT) request.data;
+        } catch (Exception b) {
+                try {
+                    return (ALGO_INPUT) Base64.decodeBase64(request.data.getAsString());
+                } catch (Exception c) {
+                    try {
+                        return (ALGO_INPUT) request.data.getAsString();
+                    } catch (Exception l){
+                        throw new Exception("We tried all matches, input doesn't satisfy any acceptable type");
+                    }
+                }
             }
-        } else if (contentType.equals("text")) {
-            return new Request<>(contentType, data.getAsString());
-        } else if (contentType.equals("binary")) {
-            byte[] bytes = Base64.decodeBase64(data.getAsString());
-            return new Request<>(contentType, bytes);
-        } else {
-            throw new Exception("recieved an invalid content_type.");
         }
     }
 
-    Request<INPUT> GetNextRequest() throws Exception{
+
+     ALGO_INPUT GetNextRequest() throws Exception{
         if(input.hasNextLine()){
             String line = input.nextLine();
             JsonObject json = parser.parse(line).getAsJsonObject();
             String contentType = json.get("content_type").getAsString();
             JsonElement data = json.get("data");
-            return CreateRequest(contentType, data);
+            Request request = new Request(contentType, data);
+            ALGO_INPUT result = ProcessRequest(request);
+            return result;
         }
         else {
             return null;

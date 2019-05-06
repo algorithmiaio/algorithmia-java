@@ -11,7 +11,7 @@ public class AdvancedAlgorithm {
     }
 
     public String Apply(AlgoInput input, HashMap<String, String> context) throws Exception {
-        if (context.containsKey("local_file")) {
+        if (context != null && context.containsKey("local_file")) {
             return "Hello " + input.name + " you are " + input.age +
                     " years old, and your model file is downloaded here " + context.get("local_file");
         }

@@ -1,8 +1,10 @@
 package com.algorithmia.algorithmHandler;
 
 import java.io.IOException;
+import java.io.Serializable;
+import java.lang.reflect.Type;
 
-public class AlgorithmHandler<INPUT, STATE, OUTPUT> {
+public class AlgorithmHandler<INPUT, STATE, OUTPUT extends  Serializable> {
 
     @FunctionalInterface
     public interface BifunctionWithException<INPUT, STATE, OUTPUT> {
@@ -22,7 +24,8 @@ public class AlgorithmHandler<INPUT, STATE, OUTPUT> {
 
     private BifunctionWithException<INPUT, STATE, OUTPUT> applyWState;
     private FunctionWithException<INPUT, OUTPUT> apply;
-    private SupplierWithException<STATE> loadFunc;
+    private Class<INPUT> inputClass;
+    private SupplierWithException<STATE> loadFunc = ()-> {return null;};
     private STATE state;
 
 
@@ -33,43 +36,46 @@ public class AlgorithmHandler<INPUT, STATE, OUTPUT> {
     }
 
     private void ExecuteWithoutState(RequestHandler<INPUT> in, ResponseHandler out) throws Throwable {
-        Request<INPUT> req = in.GetNextRequest();
+        INPUT req = in.GetNextRequest();
         while(req != null){
-            OUTPUT output = this.apply.apply(req.data);
+            OUTPUT output = this.apply.apply(req);
             out.writeToPipe(output);
             req = in.GetNextRequest();
         }
     }
 
     private void ExecuteWithState(RequestHandler<INPUT> in, ResponseHandler out) throws Throwable{
-        Request<INPUT> req = in.GetNextRequest();
+        INPUT req = in.GetNextRequest();
         while (req != null) {
-            OUTPUT output = this.applyWState.apply(req.data, state);
+            OUTPUT output = this.applyWState.apply(req, state);
             out.writeToPipe(output);
             req = in.GetNextRequest();
         }
     }
 
 
-    public AlgorithmHandler(BifunctionWithException<INPUT, STATE, OUTPUT> applyWState, SupplierWithException<STATE> loadFunc){
+    public AlgorithmHandler(BifunctionWithException<INPUT, STATE, OUTPUT> applyWState, SupplierWithException<STATE> loadFunc, Class<INPUT> inputClass){
         this.applyWState = applyWState;
         this.loadFunc = loadFunc;
+        this.inputClass = inputClass;
     }
 
-    public AlgorithmHandler(BifunctionWithException<INPUT, STATE, OUTPUT> applyWState){
+    public AlgorithmHandler(BifunctionWithException<INPUT, STATE, OUTPUT> applyWState, Class<INPUT> inputClass){
         this.applyWState = applyWState;
+        this.inputClass = inputClass;
     }
 
-    public AlgorithmHandler(FunctionWithException<INPUT, OUTPUT> apply){
+    public AlgorithmHandler(FunctionWithException<INPUT, OUTPUT> apply, Class<INPUT> inputClass){
         this.apply = apply;
+        this.inputClass = inputClass;
     }
+
 
     public void setLoad(SupplierWithException<STATE> func){
-
         loadFunc = func;
     }
     public void run() throws IOException {
-        RequestHandler<INPUT> in = new RequestHandler<>();
+        RequestHandler<INPUT> in = new RequestHandler<>(this.inputClass);
         ResponseHandler out = new ResponseHandler();
         try {
 

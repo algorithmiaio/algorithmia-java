@@ -23,7 +23,7 @@ public class BasicTest extends AlgorithmHandlerTestBase {
         expectedResponse.addProperty("result", "Hello james");
 
         BasicAlgorithm algo = new BasicAlgorithm();
-        AlgorithmHandler handler = new AlgorithmHandler<>(algo::Foo);
+        AlgorithmHandler handler = new AlgorithmHandler<>(algo::Foo, String.class);
         InputStream fakeIn = new ByteArrayInputStream("{\"content_type\":\"text\", \"data\":\"james\"}".getBytes());
 
         System.setIn(fakeIn);

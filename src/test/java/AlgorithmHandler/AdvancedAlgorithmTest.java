@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+
 public class AdvancedAlgorithmTest extends AlgorithmHandlerTestBase {
 
     @Test
@@ -20,15 +21,14 @@ public class AdvancedAlgorithmTest extends AlgorithmHandlerTestBase {
         JsonObject metadata = new JsonObject();
         metadata.addProperty("content_type", "text");
         expectedResponse.add("metadata", metadata);
-        expectedResponse.addProperty("result", "Hello james");
+        expectedResponse.addProperty("result", "Hello james you are 25 years old, and your model file is downloaded here /tmp/somefile");
 
         AdvancedAlgorithm algo = new AdvancedAlgorithm();
-        AlgorithmHandler handler = new AlgorithmHandler<>(algo::Apply, algo::DownloadModel);
+        AlgorithmHandler handler = new AlgorithmHandler<>(algo::Apply, algo::DownloadModel, AdvancedAlgorithm.AlgoInput.class);
         InputStream fakeIn = new ByteArrayInputStream("{\"content_type\":\"json\", \"data\":{\"name\":\"james\", \"age\":25}}".getBytes());
 
         System.setIn(fakeIn);
         handler.run();
-
 
         byte[] fifoBytes = Files.readAllBytes(Paths.get(FIFOPIPE));
         String rawData = new String(fifoBytes);

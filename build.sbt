@@ -14,13 +14,6 @@ javacOptions ++= Seq("-source", "8", "-target", "8")
 
 javacOptions in doc := Seq("-source", "8")
 
-//projectDependencies ++= Seq(
-//"org.scalatest" %% "scalatest" % "2.2.2" % Test,
-//"junit" % "junit" % "4.11" % Test,
-//crossPaths := false,
-//"com.novocode" % "junit-interface" % "0.11" % Test
-//)
-
 libraryDependencies ++= Seq(
   "com.google.code.gson" % "gson" % "2.6.2",
   "org.apache.httpcomponents" % "httpasyncclient" % "4.1.1",

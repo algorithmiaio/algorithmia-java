@@ -23,7 +23,7 @@ public class PrimitiveInputTest extends AlgorithmHandlerTestBase {
         expectedResponse.addProperty("result", "Hello, the number is 32.5");
 
         BasicAlgorithmInteger algo = new BasicAlgorithmInteger();
-        AlgorithmHandler handler = new AlgorithmHandler<>(algo::Foo);
+        AlgorithmHandler handler = new AlgorithmHandler<>(algo::Foo, Float.class);
         InputStream fakeIn = new ByteArrayInputStream("{\"content_type\":\"json\", \"data\":32.5}".getBytes());
 
         System.setIn(fakeIn);

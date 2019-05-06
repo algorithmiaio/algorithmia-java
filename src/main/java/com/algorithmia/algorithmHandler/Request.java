@@ -1,23 +1,14 @@
 package com.algorithmia.algorithmHandler;
 
-class Request<T>{
+import com.google.gson.JsonElement;
+
+class Request{
     public String content_type;
-    public T data;
+    public JsonElement data;
 
-    private T CheckCompatability(Object req) throws Exception{
-        T type = null;
-        try{
-            T algoInput = (T)req;
-            return algoInput;
-        } catch (Exception e) {
-            throw new Exception("request " + req.getClass() + " is not valid for apply of type " + type.getClass());
-        }
-    }
-
-    Request(String content_type, Object data) throws Exception{
-        T formatted = CheckCompatability(data);
+    Request(String content_type, JsonElement data){
 
         this.content_type = content_type;
-        this.data = formatted;
+        this.data = data;
     }
 }

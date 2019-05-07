@@ -1,4 +1,5 @@
 package com.algorithmia.algorithmHandler;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 
@@ -8,9 +9,13 @@ final class ResponseHandler {
 
     private PrintStream output;
 
-    ResponseHandler()throws java.io.IOException{
-        FileOutputStream fileOutputStream = new FileOutputStream(this.FIFOPATH, true);
-        output = new PrintStream(fileOutputStream, true);
+    ResponseHandler(){
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(this.FIFOPATH, true);
+            output = new PrintStream(fileOutputStream, true);
+        } catch(FileNotFoundException e){
+            throw new RuntimeException(e);
+        }
     }
 
     <OUTPUT> void writeToPipe(OUTPUT outputObject) {

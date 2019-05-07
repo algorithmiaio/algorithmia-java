@@ -75,7 +75,7 @@ public class AlgorithmHandler<INPUT, STATE, OUTPUT extends  Serializable> {
     public void setLoad(SupplierWithException<STATE> func){
         loadFunc = func;
     }
-    public void run() throws IOException {
+    public void run() {
         RequestHandler<INPUT> in = new RequestHandler<>(this.inputClass);
         ResponseHandler out = new ResponseHandler();
         try {

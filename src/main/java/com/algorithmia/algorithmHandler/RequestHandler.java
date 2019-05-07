@@ -20,7 +20,7 @@ class RequestHandler<ALGO_INPUT>
     }
 
 
-    private  ALGO_INPUT ProcessRequest(Request request) throws Exception{
+    private  ALGO_INPUT ProcessRequest(Request request){
         try {
             if (inputClass == byte[].class) {
                 return (ALGO_INPUT) Base64.decodeBase64((request.data.getAsString()));
@@ -35,12 +35,12 @@ class RequestHandler<ALGO_INPUT>
             }
         }
         catch (Exception e) {
-            throw new Exception("unable to parse input into type " + inputClass.getName() + " , with input " + request.data.getAsString());
+            throw new RuntimeException("unable to parse input into type " + inputClass.getName() + " , with input " + request.data.getAsString());
         }
     }
 
 
-     Optional<ALGO_INPUT> GetNextRequest() throws Exception{
+     Optional<ALGO_INPUT> GetNextRequest(){
         String line = null;
         try {
             ALGO_INPUT result;
@@ -56,7 +56,7 @@ class RequestHandler<ALGO_INPUT>
                 return Optional.empty();
             }
         } catch (JsonSyntaxException e){
-            throw new Exception("unable to parse the request" + line  + "as valid json");
+            throw new RuntimeException("unable to parse the request" + line  + "as valid json");
         }
     }
 }

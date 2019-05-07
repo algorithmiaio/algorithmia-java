@@ -1,8 +1,6 @@
 package com.algorithmia.algorithmHandler;
 
-import java.io.IOException;
 import java.io.Serializable;
-import java.lang.reflect.Type;
 import java.util.Optional;
 
 public class AlgorithmHandler<INPUT, STATE, OUTPUT extends  Serializable> {

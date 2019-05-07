@@ -23,7 +23,7 @@ class RequestHandler<ALGO_INPUT> {
     }
 
 
-    private ALGO_INPUT ProcessRequest(Request request) throws RuntimeException {
+    private ALGO_INPUT ProcessRequest(Request request) {
         try {
             if (inputClass == byte[].class) {
                 return (ALGO_INPUT) Base64.decodeBase64((request.data.getAsString()));
@@ -44,7 +44,7 @@ class RequestHandler<ALGO_INPUT> {
     }
 
 
-    Optional<ALGO_INPUT> GetNextRequest() throws RuntimeException{
+    Optional<ALGO_INPUT> GetNextRequest(){
         String line = null;
         try {
             ALGO_INPUT result;

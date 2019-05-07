@@ -6,7 +6,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
 
-class SerializableException<T extends Throwable> {
+class SerializableException<T extends RuntimeException> {
     String message;
     String stackTrace;
     String errorType;

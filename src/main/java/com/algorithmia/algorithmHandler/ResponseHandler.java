@@ -26,7 +26,7 @@ final class ResponseHandler {
         this.output.flush();
     }
 
-    <ERRORTYPE extends Throwable> void writeErrorToPipe(ERRORTYPE e) {
+    <ERRORTYPE extends RuntimeException> void writeErrorToPipe(ERRORTYPE e) {
         SerializableException<ERRORTYPE> exception = new SerializableException<>(e);
         String serialized = exception.getJsonOutput();
         this.output.println(serialized);

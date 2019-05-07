@@ -34,9 +34,7 @@ public class AdvancedTypeFailure extends AlgorithmHandlerTestBase {
         String outputObj = "Hello james you are 25 years old, and your model file is downloaded here /tmp/somefile";
         JsonObject expectedResponse = new JsonObject();
         JsonObject metadata = new JsonObject();
-        metadata.addProperty("content_type", "text");
-        expectedResponse.add("metadata", metadata);
-        expectedResponse.addProperty("result", outputObj);
+        expectedResponse.addProperty("message", "Missing required field in JSON input: name");
         return expectedResponse;
     }
 
@@ -53,7 +51,7 @@ public class AdvancedTypeFailure extends AlgorithmHandlerTestBase {
         byte[] fifoBytes = Files.readAllBytes(Paths.get(FIFOPIPE));
         String rawData = new String(fifoBytes);
         JsonObject actualResponse = parser.parse(rawData).getAsJsonObject();
-        Assert.assertEquals(expectedResponse, actualResponse);
+        Assert.assertEquals(expectedResponse.get("message"), actualResponse.get("message"));
 
     }
 

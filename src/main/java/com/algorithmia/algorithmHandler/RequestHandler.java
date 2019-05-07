@@ -1,4 +1,5 @@
 package com.algorithmia.algorithmHandler;
+import java.util.Optional;
 import java.util.Scanner;
 
 import com.algorithmia.TypeToken;
@@ -9,15 +10,12 @@ import org.apache.commons.codec.binary.Base64;
 class RequestHandler<ALGO_INPUT>
 {
 
-    private Scanner input;
-    private JsonParser parser;
-    private Gson gson;
+    private Scanner input = new Scanner(System.in);
+    private JsonParser parser = new JsonParser();
+    private Gson gson = new Gson();
     private Class<ALGO_INPUT> inputClass;
 
     RequestHandler(Class<ALGO_INPUT> inputClass){
-        this.input = new Scanner(System.in);
-        this.parser = new JsonParser();
-        this.gson = new Gson();
         this.inputClass = inputClass;
     }
 
@@ -39,23 +37,23 @@ class RequestHandler<ALGO_INPUT>
         catch (Exception e) {
             throw new Exception("unable to parse input into type " + inputClass.getName() + " , with input " + request.data.getAsString());
         }
-
     }
 
 
-     ALGO_INPUT GetNextRequest() throws Exception{
+     Optional<ALGO_INPUT> GetNextRequest() throws Exception{
         String line = null;
         try {
+            ALGO_INPUT result;
             if (input.hasNextLine()) {
                 line = input.nextLine();
                 JsonObject json = parser.parse(line).getAsJsonObject();
                 String contentType = json.get("content_type").getAsString();
                 JsonElement data = json.get("data");
                 Request request = new Request(contentType, data);
-                ALGO_INPUT result = ProcessRequest(request);
-                return result;
+                result = ProcessRequest(request);
+                return Optional.of(result);
             } else {
-                return null;
+                return Optional.empty();
             }
         } catch (JsonSyntaxException e){
             throw new Exception("unable to parse the request" + line  + "as valid json");

@@ -3,6 +3,7 @@ package com.algorithmia.algorithmHandler;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Type;
+import java.util.Optional;
 
 public class AlgorithmHandler<INPUT, STATE, OUTPUT extends  Serializable> {
 
@@ -36,18 +37,18 @@ public class AlgorithmHandler<INPUT, STATE, OUTPUT extends  Serializable> {
     }
 
     private void ExecuteWithoutState(RequestHandler<INPUT> in, ResponseHandler out) throws Throwable {
-        INPUT req = in.GetNextRequest();
-        while(req != null){
-            OUTPUT output = this.apply.apply(req);
+        Optional<INPUT> req = in.GetNextRequest();
+        while(req.isPresent()){
+            OUTPUT output = this.apply.apply(req.get());
             out.writeToPipe(output);
             req = in.GetNextRequest();
         }
     }
 
     private void ExecuteWithState(RequestHandler<INPUT> in, ResponseHandler out) throws Throwable{
-        INPUT req = in.GetNextRequest();
-        while (req != null) {
-            OUTPUT output = this.applyWState.apply(req, state);
+        Optional<INPUT> req = in.GetNextRequest();
+        while(req.isPresent()){
+            OUTPUT output = this.applyWState.apply(req.get(), state);
             out.writeToPipe(output);
             req = in.GetNextRequest();
         }
@@ -79,7 +80,7 @@ public class AlgorithmHandler<INPUT, STATE, OUTPUT extends  Serializable> {
         ResponseHandler out = new ResponseHandler();
         try {
 
-            if(this.applyWState != null && this.loadFunc != null) {
+            if(this.applyWState != null) {
                 Load();
                 ExecuteWithState(in, out);
             } else {

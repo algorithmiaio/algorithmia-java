@@ -23,39 +23,42 @@ class RequestHandler<ALGO_INPUT>
 
 
     private  ALGO_INPUT ProcessRequest(Request request) throws Exception{
-
-        try{
-            return gson.fromJson(request.data, inputClass);
-        } catch (Exception a) {
-            try{
-            return (ALGO_INPUT) request.data;
-        } catch (Exception b) {
-                try {
-                    return (ALGO_INPUT) Base64.decodeBase64(request.data.getAsString());
-                } catch (Exception c) {
-                    try {
-                        return (ALGO_INPUT) request.data.getAsString();
-                    } catch (Exception l){
-                        throw new Exception("We tried all matches, input doesn't satisfy any acceptable type");
-                    }
-                }
+        try {
+            if (inputClass == byte[].class) {
+                return (ALGO_INPUT) Base64.decodeBase64((request.data.getAsString()));
+            } else if (inputClass == JsonElement.class) {
+                return (ALGO_INPUT) inputClass;
+            } else if (inputClass == String.class) {
+                return (ALGO_INPUT) request.data.getAsString();
+            } else if (inputClass == Number.class) {
+                return (ALGO_INPUT) request.data.getAsNumber();
+            } else {
+                return gson.fromJson(request.data, inputClass);
             }
         }
+        catch (Exception e) {
+            throw new Exception("unable to parse input into type " + inputClass.getName() + " , with input " + request.data.getAsString());
+        }
+
     }
 
 
      ALGO_INPUT GetNextRequest() throws Exception{
-        if(input.hasNextLine()){
-            String line = input.nextLine();
-            JsonObject json = parser.parse(line).getAsJsonObject();
-            String contentType = json.get("content_type").getAsString();
-            JsonElement data = json.get("data");
-            Request request = new Request(contentType, data);
-            ALGO_INPUT result = ProcessRequest(request);
-            return result;
-        }
-        else {
-            return null;
+        String line = null;
+        try {
+            if (input.hasNextLine()) {
+                line = input.nextLine();
+                JsonObject json = parser.parse(line).getAsJsonObject();
+                String contentType = json.get("content_type").getAsString();
+                JsonElement data = json.get("data");
+                Request request = new Request(contentType, data);
+                ALGO_INPUT result = ProcessRequest(request);
+                return result;
+            } else {
+                return null;
+            }
+        } catch (JsonSyntaxException e){
+            throw new Exception("unable to parse the request" + line  + "as valid json");
         }
     }
 }

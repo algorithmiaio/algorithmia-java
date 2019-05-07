@@ -1,6 +1,7 @@
 package AlgorithmHandler;
 
 import com.algorithmia.algorithmHandler.*;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import AlgorithmHandler.algorithms.BasicAlgorithm;
 import org.junit.Test;
@@ -12,23 +13,39 @@ import java.nio.file.Paths;
 
 public class BasicTest extends AlgorithmHandlerTestBase {
 
-    /// TEXT hello world
-    @Test
-    public void RunAlgorithm()throws Exception{
+    private BasicAlgorithm algo = new BasicAlgorithm();
+    private Gson gson = new Gson();
+    private JsonObject request = PrepareInput();
+    private JsonObject expectedResponse = PrepareOutput();
 
+    JsonObject PrepareInput(){
+        String inputObj = "james";
+        JsonObject object = new JsonObject();
+        object.addProperty("content_type", "text");
+        object.add("data", gson.toJsonTree(inputObj));
+
+        return object;
+    }
+
+    JsonObject PrepareOutput(){
         JsonObject expectedResponse = new JsonObject();
         JsonObject metadata = new JsonObject();
         metadata.addProperty("content_type", "text");
         expectedResponse.add("metadata", metadata);
         expectedResponse.addProperty("result", "Hello james");
+        return expectedResponse;
+    }
 
-        BasicAlgorithm algo = new BasicAlgorithm();
+
+    /// TEXT hello world
+    @Test
+    public void RunAlgorithm()throws Exception{
+
         AlgorithmHandler handler = new AlgorithmHandler<>(algo::Foo, String.class);
-        InputStream fakeIn = new ByteArrayInputStream("{\"content_type\":\"text\", \"data\":\"james\"}".getBytes());
+        InputStream fakeIn = new ByteArrayInputStream(request.toString().getBytes());
 
         System.setIn(fakeIn);
         handler.run();
-
 
         byte[] fifoBytes = Files.readAllBytes(Paths.get(FIFOPIPE));
         String rawData = new String(fifoBytes);

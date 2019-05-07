@@ -3,11 +3,15 @@ package AlgorithmHandler.algorithms;
 import java.util.HashMap;
 
 
-public class AdvancedAlgorithm {
+public class AdvancedAlgorithmOne {
 
     public class AlgoInput {
         String name;
         Integer age;
+        public AlgoInput(String name, Integer age){
+            this.name = name;
+            this.age = age;
+        }
     }
 
     public String Apply(AlgoInput input, HashMap<String, String> context) throws Exception {

@@ -6,11 +6,12 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
 
-class SerializableException<T extends  Throwable> {
+class SerializableException<T extends Throwable> {
     String message;
     String stackTrace;
     String errorType;
-    SerializableException(T e){
+
+    SerializableException(T e) {
 
         StringWriter sw = new StringWriter();
         e.printStackTrace(new PrintWriter(sw));
@@ -20,7 +21,7 @@ class SerializableException<T extends  Throwable> {
         errorType = e.getClass().toString();
     }
 
-    String getJsonOutput(){
+    String getJsonOutput() {
         JsonObject node = new JsonObject();
         node.addProperty("message", this.message);
         node.addProperty("stack_trace", this.stackTrace);

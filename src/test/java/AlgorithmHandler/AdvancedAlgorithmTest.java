@@ -20,7 +20,7 @@ public class AdvancedAlgorithmTest extends AlgorithmHandlerTestBase {
     private JsonObject request = PrepareInput();
     private JsonObject expectedResponse = PrepareOutput();
 
-    JsonObject PrepareInput(){
+    JsonObject PrepareInput() {
         AdvancedAlgorithmOne.AlgoInput inputObj = algo.new AlgoInput("james", 25);
         JsonObject object = new JsonObject();
         object.addProperty("content_type", "json");
@@ -28,7 +28,7 @@ public class AdvancedAlgorithmTest extends AlgorithmHandlerTestBase {
         return object;
     }
 
-    JsonObject PrepareOutput(){
+    JsonObject PrepareOutput() {
         String outputObj = "Hello james you are 25 years old, and your model file is downloaded here /tmp/somefile";
         JsonObject expectedResponse = new JsonObject();
         JsonObject metadata = new JsonObject();
@@ -39,9 +39,8 @@ public class AdvancedAlgorithmTest extends AlgorithmHandlerTestBase {
     }
 
 
-
     @Test
-    public void RunAlgorithm()throws Exception{
+    public void RunAlgorithm() throws Exception {
 
         AlgorithmHandler handler = new AlgorithmHandler<>(algo::Apply, algo::DownloadModel, AdvancedAlgorithmOne.AlgoInput.class);
         InputStream fakeIn = new ByteArrayInputStream(request.toString().getBytes());
@@ -51,7 +50,7 @@ public class AdvancedAlgorithmTest extends AlgorithmHandlerTestBase {
 
         byte[] fifoBytes = Files.readAllBytes(Paths.get(FIFOPIPE));
         String rawData = new String(fifoBytes);
-        JsonObject actualResponse  = parser.parse(rawData).getAsJsonObject();
+        JsonObject actualResponse = parser.parse(rawData).getAsJsonObject();
         Assert.assertEquals(expectedResponse, actualResponse);
 
     }

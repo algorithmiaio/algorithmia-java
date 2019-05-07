@@ -19,13 +19,13 @@ abstract class AlgorithmHandlerTestBase {
 
     @Before
     public void IntializePipe() throws IOException, InterruptedException {
-        Process p = Runtime.getRuntime().exec("touch  "+ FIFOPIPE);
+        Process p = Runtime.getRuntime().exec("touch  " + FIFOPIPE);
         p.waitFor();
         System.out.println("fifo pipe made.");
     }
 
     @After
-    public void TeardownPipe(){
+    public void TeardownPipe() {
         File pipe = new File(FIFOPIPE);
         pipe.delete();
     }

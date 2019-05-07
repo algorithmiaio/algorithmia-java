@@ -9,34 +9,37 @@ class Response<T> {
     private T result;
     private Gson gson = new Gson();
 
-    public class MetaData{
+    public class MetaData {
         private String content_type;
-        MetaData(String contentType){this.content_type = contentType;}
+
+        MetaData(String contentType) {
+            this.content_type = contentType;
+        }
     }
-    Response(Object rawData){
+
+    Response(Object rawData) {
         String contentType;
         T data;
-        if(rawData == null){
+        if (rawData == null) {
             contentType = "json";
             data = null;
-        }
-        else if(rawData instanceof String){
+        } else if (rawData instanceof String) {
             contentType = "text";
-            data = (T)rawData;
-        }
-        else if (rawData instanceof byte[]){
+            data = (T) rawData;
+        } else if (rawData instanceof byte[]) {
             contentType = "binary";
-            data = (T)Base64.encodeBase64String((byte[])rawData);
+            data = (T) Base64.encodeBase64String((byte[]) rawData);
 
         } else {
             contentType = "json";
-            data = (T)rawData;
+            data = (T) rawData;
         }
 
         metaData = new MetaData(contentType);
         result = data;
     }
-    String getJsonOutput(){
+
+    String getJsonOutput() {
         JsonObject node = new JsonObject();
         JsonObject metaData = new JsonObject();
         metaData.addProperty("content_type", this.metaData.content_type);

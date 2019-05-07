@@ -8,7 +8,8 @@ public class AdvancedAlgorithmOne {
     public class AlgoInput {
         String name;
         Integer age;
-        public AlgoInput(String name, Integer age){
+
+        public AlgoInput(String name, Integer age) {
             this.name = name;
             this.age = age;
         }

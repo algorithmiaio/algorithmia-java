@@ -20,7 +20,7 @@ public class PrimitiveInputTest extends AlgorithmHandlerTestBase {
     private JsonObject request = PrepareInput();
     private JsonObject expectedResponse = PrepareOutput();
 
-    JsonObject PrepareInput(){
+    JsonObject PrepareInput() {
         Float inputObj = 32.5f;
         JsonObject object = new JsonObject();
         object.addProperty("content_type", "json");
@@ -28,7 +28,7 @@ public class PrimitiveInputTest extends AlgorithmHandlerTestBase {
         return object;
     }
 
-    JsonObject PrepareOutput(){
+    JsonObject PrepareOutput() {
         JsonObject expectedResponse = new JsonObject();
         JsonObject metadata = new JsonObject();
         metadata.addProperty("content_type", "text");
@@ -39,7 +39,7 @@ public class PrimitiveInputTest extends AlgorithmHandlerTestBase {
 
 
     @Test
-    public void RunAlgorithm()throws Exception{
+    public void RunAlgorithm() throws Exception {
 
         AlgorithmHandler handler = new AlgorithmHandler<>(algo::Foo, Float.class);
         InputStream fakeIn = new ByteArrayInputStream(request.toString().getBytes());
@@ -49,7 +49,7 @@ public class PrimitiveInputTest extends AlgorithmHandlerTestBase {
 
         byte[] fifoBytes = Files.readAllBytes(Paths.get(FIFOPIPE));
         String rawData = new String(fifoBytes);
-        JsonObject actualResponse  = parser.parse(rawData).getAsJsonObject();
+        JsonObject actualResponse = parser.parse(rawData).getAsJsonObject();
         Assert.assertEquals(expectedResponse, actualResponse);
 
     }

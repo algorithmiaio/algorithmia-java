@@ -21,7 +21,7 @@ public class AdvancedAlgorithmMatrixTest extends AlgorithmHandlerTestBase {
     private JsonObject expectedResponse = PrepareOutput();
 
 
-    JsonObject PrepareInput(){
+    JsonObject PrepareInput() {
         AdvancedAlgorithmTwo.AlgoInput inputObj = algo.new AlgoInput(new Float[]{0.25f, 0.25f, 0.25f}, new Float[]{0.25f, 0.25f, 0.25f});
         gson.toJsonTree(inputObj);
         JsonObject object = new JsonObject();
@@ -30,7 +30,7 @@ public class AdvancedAlgorithmMatrixTest extends AlgorithmHandlerTestBase {
         return object;
     }
 
-    JsonObject PrepareOutput(){
+    JsonObject PrepareOutput() {
         AdvancedAlgorithmTwo.AlgoOutput outputObj = algo.new AlgoOutput(new Float[]{0.5f, 0.5f, 0.5f});
         JsonObject expectedResponse = new JsonObject();
         JsonObject metadata = new JsonObject();
@@ -41,7 +41,7 @@ public class AdvancedAlgorithmMatrixTest extends AlgorithmHandlerTestBase {
     }
 
     @Test
-    public void RunAlgorithm()throws Exception{
+    public void RunAlgorithm() throws Exception {
         AlgorithmHandler handler = new AlgorithmHandler<>(algo::matrixElmWiseAddition, AdvancedAlgorithmTwo.AlgoInput.class);
 
         InputStream fakeIn = new ByteArrayInputStream(request.toString().getBytes());
@@ -51,7 +51,7 @@ public class AdvancedAlgorithmMatrixTest extends AlgorithmHandlerTestBase {
 
         byte[] fifoBytes = Files.readAllBytes(Paths.get(FIFOPIPE));
         String rawData = new String(fifoBytes);
-        JsonObject actualResponse  = parser.parse(rawData).getAsJsonObject();
+        JsonObject actualResponse = parser.parse(rawData).getAsJsonObject();
         Assert.assertEquals(expectedResponse, actualResponse);
 
     }

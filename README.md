@@ -17,7 +17,7 @@ The Algorithmia java client is published to Maven central and can be added as a 
 <dependency>
   <groupId>com.algorithmia</groupId>
   <artifactId>algorithmia-client</artifactId>
-  <version>[,1.1.0)</version>
+  <version>[2.0.0,3)</version>
 </dependency>
 ```
 
@@ -30,7 +30,7 @@ AlgorithmiaClient client = Algorithmia.client(apiKey);
 Notes:
 
 - API key may be omitted only when making calls from algorithms running on the Algorithmia cluster
-- Using version range `[,1.1.0)` is recommended as it implies using the latest backward-compatible bugfixes.
+- Using version range `[2.0.0,3)` is recommended as it implies using the latest backward-compatible bugfixes.
 
 Now you are ready to call algorithms.
 

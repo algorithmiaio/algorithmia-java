@@ -3,10 +3,10 @@ package com.algorithmia.algorithmHandler;
 import java.io.Serializable;
 import java.util.Optional;
 
-public class AlgorithmHandler<INPUT, STATE, OUTPUT extends Serializable> {
+public class AlgorithmHandler<INPUT, OUTPUT extends Serializable, STATE> {
 
     @FunctionalInterface
-    public interface BifunctionWithException<INPUT, STATE, OUTPUT> {
+    public interface BifunctionWithException<INPUT, OUTPUT, STATE> {
         OUTPUT apply(INPUT t, STATE j) throws Throwable;
     }
 
@@ -21,7 +21,7 @@ public class AlgorithmHandler<INPUT, STATE, OUTPUT extends Serializable> {
     }
 
 
-    private Optional<BifunctionWithException<INPUT, STATE, OUTPUT>> applyWState = Optional.empty();
+    private Optional<BifunctionWithException<INPUT, OUTPUT, STATE>> applyWState = Optional.empty();
     private Optional<FunctionWithException<INPUT, OUTPUT>> apply = Optional.empty();
     private Class<INPUT> inputClass;
     private Optional<SupplierWithException<STATE>> loadFunc = Optional.empty();
@@ -53,7 +53,7 @@ public class AlgorithmHandler<INPUT, STATE, OUTPUT extends Serializable> {
         }
     }
 
-    private void ExecuteWithState(RequestHandler<INPUT> in, ResponseHandler out, BifunctionWithException<INPUT, STATE, OUTPUT> func) {
+    private void ExecuteWithState(RequestHandler<INPUT> in, ResponseHandler out, BifunctionWithException<INPUT, OUTPUT, STATE> func) {
         try {
             Optional<INPUT> req = in.GetNextRequest();
             while (req.isPresent()) {
@@ -78,13 +78,13 @@ public class AlgorithmHandler<INPUT, STATE, OUTPUT extends Serializable> {
     }
 
 
-    public AlgorithmHandler(BifunctionWithException<INPUT, STATE, OUTPUT> applyWState, SupplierWithException<STATE> loadFunc, Class<INPUT> inputClass) {
+    public AlgorithmHandler(BifunctionWithException<INPUT, OUTPUT, STATE> applyWState, SupplierWithException<STATE> loadFunc, Class<INPUT> inputClass) {
         this.applyWState = Optional.of(applyWState);
         this.loadFunc = Optional.of(loadFunc);
         this.inputClass = inputClass;
     }
 
-    public AlgorithmHandler(BifunctionWithException<INPUT, STATE, OUTPUT> applyWState, Class<INPUT> inputClass) {
+    public AlgorithmHandler(BifunctionWithException<INPUT, OUTPUT, STATE> applyWState, Class<INPUT> inputClass) {
         this.applyWState = Optional.of(applyWState);
         this.inputClass = inputClass;
     }

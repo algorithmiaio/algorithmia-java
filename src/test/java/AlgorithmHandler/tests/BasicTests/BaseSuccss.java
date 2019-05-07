@@ -1,5 +1,6 @@
-package AlgorithmHandler;
+package AlgorithmHandler.tests.BasicTests;
 
+import AlgorithmHandler.tests.AlgorithmHandlerTestBase;
 import com.algorithmia.algorithmHandler.*;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -11,14 +12,14 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class BasicTest extends AlgorithmHandlerTestBase {
+public class BaseSuccss extends AlgorithmHandlerTestBase {
 
     private BasicAlgorithm algo = new BasicAlgorithm();
     private Gson gson = new Gson();
-    private JsonObject request = PrepareInput();
-    private JsonObject expectedResponse = PrepareOutput();
+    private JsonObject request = GenerateInput();
+    private JsonObject expectedResponse = GenerateOutput();
 
-    JsonObject PrepareInput() {
+    public JsonObject GenerateInput() {
         String inputObj = "james";
         JsonObject object = new JsonObject();
         object.addProperty("content_type", "text");
@@ -27,7 +28,7 @@ public class BasicTest extends AlgorithmHandlerTestBase {
         return object;
     }
 
-    JsonObject PrepareOutput() {
+    public JsonObject GenerateOutput() {
         JsonObject expectedResponse = new JsonObject();
         JsonObject metadata = new JsonObject();
         metadata.addProperty("content_type", "text");

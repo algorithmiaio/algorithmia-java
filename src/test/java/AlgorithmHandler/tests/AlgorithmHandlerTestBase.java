@@ -1,4 +1,4 @@
-package AlgorithmHandler;
+package AlgorithmHandler.tests;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -8,14 +8,15 @@ import org.junit.Before;
 import java.io.File;
 import java.io.IOException;
 
-abstract class AlgorithmHandlerTestBase {
+public abstract class AlgorithmHandlerTestBase {
 
     protected String FIFOPIPE = "/tmp/algoout";
+
     protected JsonParser parser = new JsonParser();
 
-    abstract JsonObject PrepareInput();
+    public abstract JsonObject GenerateInput();
 
-    abstract JsonObject PrepareOutput();
+    public abstract JsonObject GenerateOutput();
 
     @Before
     public void IntializePipe() throws IOException, InterruptedException {

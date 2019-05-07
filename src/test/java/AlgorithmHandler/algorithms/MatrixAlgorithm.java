@@ -3,7 +3,7 @@ package AlgorithmHandler.algorithms;
 import java.io.Serializable;
 import java.util.Arrays;
 
-public class AdvancedAlgorithmTwo {
+public class MatrixAlgorithm {
 
     public class TwoWideMatrix {
         Float[] top;
@@ -56,7 +56,7 @@ public class AdvancedAlgorithmTwo {
         }
     }
 
-    public AlgoOutput matrixElmWiseAddition(AlgoInput input) throws Exception {
+    public AlgoOutput matrixElmWiseAddition(AlgoInput input) throws RuntimeException {
         if (input.matrix.dimCheck()) {
             Float[] sums = new Float[input.matrix.getWidth()];
             Float[] arrayA = input.matrix.top;
@@ -65,6 +65,6 @@ public class AdvancedAlgorithmTwo {
                 sums[i] = arrayA[i] + arrayB[i];
             }
             return new AlgoOutput(sums);
-        } else throw new Exception("matrix dimension are not the same shape.");
+        } else throw new RuntimeException("matrix dimension are not the same shape.");
     }
 }

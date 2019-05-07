@@ -1,6 +1,8 @@
-package AlgorithmHandler;
+package AlgorithmHandler.tests.AdvancedTests;
 
-import AlgorithmHandler.algorithms.BasicAlgorithmInteger;
+import AlgorithmHandler.algorithms.LoadingAlgorithm;
+import AlgorithmHandler.algorithms.MatrixAlgorithm;
+import AlgorithmHandler.tests.AlgorithmHandlerTestBase;
 import com.algorithmia.algorithmHandler.AlgorithmHandler;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -12,28 +14,29 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class PrimitiveInputTest extends AlgorithmHandlerTestBase {
-    /// TEXT hello world
+public class AdvancedTypeFailure extends AlgorithmHandlerTestBase {
 
-    private BasicAlgorithmInteger algo = new BasicAlgorithmInteger();
+    private LoadingAlgorithm algo = new LoadingAlgorithm();
     private Gson gson = new Gson();
-    private JsonObject request = PrepareInput();
-    private JsonObject expectedResponse = PrepareOutput();
+    private JsonObject request = GenerateInput();
+    private JsonObject expectedResponse = GenerateOutput();
 
-    JsonObject PrepareInput() {
-        Float inputObj = 32.5f;
+    public JsonObject GenerateInput() {
+        MatrixAlgorithm tmp = new MatrixAlgorithm();
+        MatrixAlgorithm.AlgoInput inputObj = tmp.new AlgoInput(new Float[]{0.25f, 0.15f}, new Float[]{0.12f, -0.15f});
         JsonObject object = new JsonObject();
         object.addProperty("content_type", "json");
         object.add("data", gson.toJsonTree(inputObj));
         return object;
     }
 
-    JsonObject PrepareOutput() {
+    public JsonObject GenerateOutput() {
+        String outputObj = "Hello james you are 25 years old, and your model file is downloaded here /tmp/somefile";
         JsonObject expectedResponse = new JsonObject();
         JsonObject metadata = new JsonObject();
         metadata.addProperty("content_type", "text");
         expectedResponse.add("metadata", metadata);
-        expectedResponse.addProperty("result", "Hello, the number is 32.5");
+        expectedResponse.addProperty("result", outputObj);
         return expectedResponse;
     }
 
@@ -41,7 +44,7 @@ public class PrimitiveInputTest extends AlgorithmHandlerTestBase {
     @Test
     public void RunAlgorithm() throws Exception {
 
-        AlgorithmHandler handler = new AlgorithmHandler<>(algo::Foo, Float.class);
+        AlgorithmHandler handler = new AlgorithmHandler<>(algo::Apply, algo::DownloadModel, LoadingAlgorithm.AlgoInput.class);
         InputStream fakeIn = new ByteArrayInputStream(request.toString().getBytes());
 
         System.setIn(fakeIn);
@@ -53,4 +56,5 @@ public class PrimitiveInputTest extends AlgorithmHandlerTestBase {
         Assert.assertEquals(expectedResponse, actualResponse);
 
     }
+
 }

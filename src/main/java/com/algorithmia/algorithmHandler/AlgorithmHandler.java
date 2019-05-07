@@ -3,21 +3,23 @@ package com.algorithmia.algorithmHandler;
 import java.io.Serializable;
 import java.util.Optional;
 
+
+
 public class AlgorithmHandler<INPUT, OUTPUT extends Serializable, STATE> {
 
     @FunctionalInterface
     public interface BifunctionWithException<INPUT, OUTPUT, STATE> {
-        OUTPUT apply(INPUT t, STATE j) throws Throwable;
+        OUTPUT apply(INPUT t, STATE j) throws RuntimeException;
     }
 
     @FunctionalInterface
     public interface FunctionWithException<INPUT, OUTPUT> {
-        OUTPUT apply(INPUT t) throws Throwable;
+        OUTPUT apply(INPUT t) throws RuntimeException;
     }
 
     @FunctionalInterface
     public interface SupplierWithException<STATE> {
-        STATE apply() throws Throwable;
+        STATE apply() throws RuntimeException;
     }
 
 
@@ -29,41 +31,29 @@ public class AlgorithmHandler<INPUT, OUTPUT extends Serializable, STATE> {
 
 
     private void Load() {
-        try {
             if (this.loadFunc.isPresent()) {
                 state = this.loadFunc.get().apply();
                 System.out.println("PIPE_INIT_COMPLETE");
                 System.out.flush();
             }
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
-        }
     }
 
-    private void ExecuteWithoutState(RequestHandler<INPUT> in, ResponseHandler out, FunctionWithException<INPUT, OUTPUT> func) {
-        try {
+    private void ExecuteWithoutState(RequestHandler<INPUT> in, ResponseHandler out, FunctionWithException<INPUT, OUTPUT> func)  {
             Optional<INPUT> req = in.GetNextRequest();
             while (req.isPresent()) {
                 OUTPUT output = func.apply(req.get());
                 out.writeToPipe(output);
                 req = in.GetNextRequest();
             }
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private void ExecuteWithState(RequestHandler<INPUT> in, ResponseHandler out, BifunctionWithException<INPUT, OUTPUT, STATE> func) {
-        try {
             Optional<INPUT> req = in.GetNextRequest();
             while (req.isPresent()) {
                 OUTPUT output = func.apply(req.get(), state);
                 out.writeToPipe(output);
                 req = in.GetNextRequest();
             }
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private void Execute(RequestHandler<INPUT> in, ResponseHandler out) {

@@ -1,6 +1,7 @@
-package AlgorithmHandler;
+package AlgorithmHandler.tests.BasicTests;
 
-import AlgorithmHandler.algorithms.AdvancedAlgorithmTwo;
+import AlgorithmHandler.algorithms.PrimitiveTypeAlgorithm;
+import AlgorithmHandler.tests.AlgorithmHandlerTestBase;
 import com.algorithmia.algorithmHandler.AlgorithmHandler;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -12,38 +13,36 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+public class PrimitiveInputSuccess extends AlgorithmHandlerTestBase {
+    /// TEXT hello world
 
-public class AdvancedAlgorithmMatrixTest extends AlgorithmHandlerTestBase {
-
-    private AdvancedAlgorithmTwo algo = new AdvancedAlgorithmTwo();
+    private PrimitiveTypeAlgorithm algo = new PrimitiveTypeAlgorithm();
     private Gson gson = new Gson();
-    private JsonObject request = PrepareInput();
-    private JsonObject expectedResponse = PrepareOutput();
+    private JsonObject request = GenerateInput();
+    private JsonObject expectedResponse = GenerateOutput();
 
-
-    JsonObject PrepareInput() {
-        AdvancedAlgorithmTwo.AlgoInput inputObj = algo.new AlgoInput(new Float[]{0.25f, 0.25f, 0.25f}, new Float[]{0.25f, 0.25f, 0.25f});
-        gson.toJsonTree(inputObj);
+    public JsonObject GenerateInput() {
+        Float inputObj = 32.5f;
         JsonObject object = new JsonObject();
         object.addProperty("content_type", "json");
         object.add("data", gson.toJsonTree(inputObj));
         return object;
     }
 
-    JsonObject PrepareOutput() {
-        AdvancedAlgorithmTwo.AlgoOutput outputObj = algo.new AlgoOutput(new Float[]{0.5f, 0.5f, 0.5f});
+    public JsonObject GenerateOutput() {
         JsonObject expectedResponse = new JsonObject();
         JsonObject metadata = new JsonObject();
-        metadata.addProperty("content_type", "json");
+        metadata.addProperty("content_type", "text");
         expectedResponse.add("metadata", metadata);
-        expectedResponse.add("result", gson.toJsonTree(outputObj));
+        expectedResponse.addProperty("result", "Hello, the number is 32.5");
         return expectedResponse;
     }
 
+
     @Test
     public void RunAlgorithm() throws Exception {
-        AlgorithmHandler handler = new AlgorithmHandler<>(algo::matrixElmWiseAddition, AdvancedAlgorithmTwo.AlgoInput.class);
 
+        AlgorithmHandler handler = new AlgorithmHandler<>(algo::Foo, Float.class);
         InputStream fakeIn = new ByteArrayInputStream(request.toString().getBytes());
 
         System.setIn(fakeIn);

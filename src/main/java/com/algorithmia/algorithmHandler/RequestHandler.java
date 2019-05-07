@@ -44,7 +44,7 @@ class RequestHandler<ALGO_INPUT> {
     }
 
 
-    Optional<ALGO_INPUT> GetNextRequest(){
+    Optional<ALGO_INPUT> GetNextRequest() {
         String line = null;
         try {
             ALGO_INPUT result;

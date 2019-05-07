@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.Optional;
 
 
-
 public class AlgorithmHandler<INPUT, OUTPUT extends Serializable, STATE> {
 
     @FunctionalInterface
@@ -31,29 +30,29 @@ public class AlgorithmHandler<INPUT, OUTPUT extends Serializable, STATE> {
 
 
     private void Load() {
-            if (this.loadFunc.isPresent()) {
-                state = this.loadFunc.get().apply();
-                System.out.println("PIPE_INIT_COMPLETE");
-                System.out.flush();
-            }
+        if (this.loadFunc.isPresent()) {
+            state = this.loadFunc.get().apply();
+            System.out.println("PIPE_INIT_COMPLETE");
+            System.out.flush();
+        }
     }
 
-    private void ExecuteWithoutState(RequestHandler<INPUT> in, ResponseHandler out, FunctionWithException<INPUT, OUTPUT> func)  {
-            Optional<INPUT> req = in.GetNextRequest();
-            while (req.isPresent()) {
-                OUTPUT output = func.apply(req.get());
-                out.writeToPipe(output);
-                req = in.GetNextRequest();
-            }
+    private void ExecuteWithoutState(RequestHandler<INPUT> in, ResponseHandler out, FunctionWithException<INPUT, OUTPUT> func) {
+        Optional<INPUT> req = in.GetNextRequest();
+        while (req.isPresent()) {
+            OUTPUT output = func.apply(req.get());
+            out.writeToPipe(output);
+            req = in.GetNextRequest();
+        }
     }
 
     private void ExecuteWithState(RequestHandler<INPUT> in, ResponseHandler out, BifunctionWithException<INPUT, OUTPUT, STATE> func) {
-            Optional<INPUT> req = in.GetNextRequest();
-            while (req.isPresent()) {
-                OUTPUT output = func.apply(req.get(), state);
-                out.writeToPipe(output);
-                req = in.GetNextRequest();
-            }
+        Optional<INPUT> req = in.GetNextRequest();
+        while (req.isPresent()) {
+            OUTPUT output = func.apply(req.get(), state);
+            out.writeToPipe(output);
+            req = in.GetNextRequest();
+        }
     }
 
     private void Execute(RequestHandler<INPUT> in, ResponseHandler out) {

@@ -7,6 +7,8 @@ import org.apache.commons.codec.binary.Base64;
 class Response<T> {
     private MetaData metaData;
     private T result;
+    private Gson gson = new Gson();
+
     public class MetaData{
         private String content_type;
         MetaData(String contentType){this.content_type = contentType;}
@@ -35,7 +37,6 @@ class Response<T> {
         result = data;
     }
     String getJsonOutput(){
-        Gson gson = new Gson();
         JsonObject node = new JsonObject();
         JsonObject metaData = new JsonObject();
         metaData.addProperty("content_type", this.metaData.content_type);

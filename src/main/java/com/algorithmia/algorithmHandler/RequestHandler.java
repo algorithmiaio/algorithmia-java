@@ -24,19 +24,19 @@ class RequestHandler<ALGO_INPUT> {
 
 
     private ALGO_INPUT ProcessRequest(Request request) {
-        try {
+        try{
             if (inputClass == byte[].class) {
-                return (ALGO_INPUT) Base64.decodeBase64((request.data.getAsString()));
+                return inputClass.cast(Base64.decodeBase64((request.data.getAsString())));
             } else if (inputClass == JsonElement.class) {
-                return (ALGO_INPUT) inputClass;
+                return inputClass.cast(request.data);
             } else if (inputClass == String.class) {
-                return (ALGO_INPUT) request.data.getAsString();
+                return inputClass.cast(request.data.getAsString());
             } else if (inputClass == Number.class) {
-                return (ALGO_INPUT) request.data.getAsNumber();
+                return inputClass.cast(request.data.getAsNumber());
             } else {
                 return gson.fromJson(request.data, inputClass);
             }
-        } catch (ClassCastException e) {
+        } catch(ClassCastException | IllegalStateException ex){
             String className = inputClass.getName();
             String req = request.data.toString();
             throw new RuntimeException("unable to parse input into type " + className + " , with input " + req);

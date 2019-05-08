@@ -67,7 +67,8 @@ public class AlgorithmHandler<INPUT, OUTPUT, STATE> {
             Method[] methods = this.algorithmClass.getMethods();
             for(Method method: methods){
                 if(method.getName().equals(methodName.get())){
-                    return (Class<INPUT>) method.getParameterTypes()[0];
+                    Class<?>[] parameters = method.getParameterTypes();
+                    return (Class<INPUT>) parameters[0];
                 }
             }
             throw new RuntimeException("Unable to find the method reference called " + methodName.get() +" in the provided class.");

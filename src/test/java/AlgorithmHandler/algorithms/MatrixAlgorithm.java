@@ -1,6 +1,5 @@
 package AlgorithmHandler.algorithms;
 
-import java.io.Serializable;
 import java.util.Arrays;
 
 public class MatrixAlgorithm {
@@ -48,7 +47,7 @@ public class MatrixAlgorithm {
         }
     }
 
-    public class AlgoOutput implements Serializable {
+    public class AlgoOutput {
         Float[] sums;
 
         public AlgoOutput(Float[] sums) {

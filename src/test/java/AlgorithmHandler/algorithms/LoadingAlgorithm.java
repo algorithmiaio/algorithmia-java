@@ -8,8 +8,10 @@ import java.util.HashMap;
 public class LoadingAlgorithm {
 
     public class AlgoInput {
-        @Required String name;
-        @Required Integer age;
+        @Required
+        String name;
+        @Required
+        Integer age;
 
         public AlgoInput(String name, Integer age) {
             this.name = name;

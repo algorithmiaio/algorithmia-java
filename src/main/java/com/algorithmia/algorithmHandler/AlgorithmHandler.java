@@ -54,24 +54,23 @@ public class AlgorithmHandler<INPUT, OUTPUT, STATE> {
         }
     }
 
-    private Class<INPUT> GetInputClass(){
+    private Class<INPUT> GetInputClass() {
         Optional<String> methodName;
-        if(this.applyWState.isPresent()){
+        if (this.applyWState.isPresent()) {
             methodName = ReflectionHelper.getMethodName(this.applyWState.get());
-        } else{
+        } else {
             methodName = ReflectionHelper.getMethodName(this.apply.get());
         }
-        if(methodName.isPresent()){
+        if (methodName.isPresent()) {
             Method[] methods = this.algorithmClass.getMethods();
-            for(Method method: methods){
-                if(method.getName().equals(methodName.get())){
+            for (Method method : methods) {
+                if (method.getName().equals(methodName.get())) {
                     Class<?>[] parameters = method.getParameterTypes();
                     return (Class<INPUT>) parameters[0];
                 }
             }
-            throw new RuntimeException("Unable to find the method reference called " + methodName.get() +" in the provided class.");
-        }
-        else {
+            throw new RuntimeException("Unable to find the method reference called " + methodName.get() + " in the provided class.");
+        } else {
             throw new RuntimeException("Unable to find the originating definition for method reference");
         }
     }
@@ -96,7 +95,6 @@ public class AlgorithmHandler<INPUT, OUTPUT, STATE> {
     public void setLoad(Supplier<STATE> func) {
         loadFunc = Optional.of(func);
     }
-
 
 
     public void run() {

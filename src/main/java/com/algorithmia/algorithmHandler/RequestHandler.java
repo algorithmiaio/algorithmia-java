@@ -24,7 +24,7 @@ class RequestHandler<ALGO_INPUT> {
 
 
     private ALGO_INPUT ProcessRequest(Request request) {
-        try{
+        try {
             if (inputClass == byte[].class) {
                 return inputClass.cast(Base64.decodeBase64((request.data.getAsString())));
             } else if (inputClass == JsonElement.class) {
@@ -36,7 +36,7 @@ class RequestHandler<ALGO_INPUT> {
             } else {
                 return gson.fromJson(request.data, inputClass);
             }
-        } catch(ClassCastException | IllegalStateException ex){
+        } catch (ClassCastException | IllegalStateException ex) {
             String className = inputClass.getName();
             String req = request.data.toString();
             throw new RuntimeException("unable to parse input into type " + className + " , with input " + req);

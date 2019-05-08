@@ -21,21 +21,21 @@ public class ReturnTypeFailure extends AlgorithmHandlerTestBase {
     private JsonObject expectedResponse = GenerateOutput();
 
 
-    public JsonObject GenerateInput(){
+    public JsonObject GenerateInput() {
         JsonObject object = new JsonObject();
         object.addProperty("content_type", "text");
         object.addProperty("data", "/tmp/somefile.txt");
         return object;
     }
 
-    public JsonObject GenerateOutput(){
+    public JsonObject GenerateOutput() {
         JsonObject expectedResponse = new JsonObject();
         expectedResponse.addProperty("message", "your output type was not successfully serializable.");
         return expectedResponse;
     }
 
     @Test
-    public void runAlgorithm() throws Exception{
+    public void runAlgorithm() throws Exception {
 
         AlgorithmHandler handler = new AlgorithmHandler<>(algo.getClass(), algo::foo);
         InputStream fakeIn = new ByteArrayInputStream(request.toString().getBytes());

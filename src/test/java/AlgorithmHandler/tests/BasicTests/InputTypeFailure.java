@@ -21,7 +21,7 @@ public class InputTypeFailure extends AlgorithmHandlerTestBase {
     private JsonObject expectedResponse = GenerateOutput();
 
 
-    public JsonObject GenerateInput(){
+    public JsonObject GenerateInput() {
         Float[] inputObj = new Float[]{0.25f, 0.15f};
         JsonObject object = new JsonObject();
         object.addProperty("content_type", "json");
@@ -30,7 +30,7 @@ public class InputTypeFailure extends AlgorithmHandlerTestBase {
         return object;
     }
 
-    public JsonObject GenerateOutput(){
+    public JsonObject GenerateOutput() {
         JsonObject expectedResponse = new JsonObject();
         expectedResponse.addProperty("message", "unable to parse input into type java.lang.String , with input [0.25,0.15]");
         expectedResponse.addProperty("error_type", "class java.lang.RuntimeException");

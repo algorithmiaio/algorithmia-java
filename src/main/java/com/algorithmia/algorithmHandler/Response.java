@@ -40,7 +40,7 @@ class Response {
 
             metaData = new MetaData(contentType);
             result = jsonData;
-        } catch(StackOverflowError e){
+        } catch (StackOverflowError e) {
             throw new RuntimeException("your output type was not successfully serializable.", e);
         }
     }

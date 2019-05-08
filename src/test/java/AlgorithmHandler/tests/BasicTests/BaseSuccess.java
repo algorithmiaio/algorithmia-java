@@ -1,50 +1,48 @@
-package AlgorithmHandler.tests.AdvancedTests;
+package AlgorithmHandler.tests.BasicTests;
 
-import AlgorithmHandler.algorithms.MatrixAlgorithm;
 import AlgorithmHandler.tests.AlgorithmHandlerTestBase;
-import com.algorithmia.algorithmHandler.AlgorithmHandler;
+import com.algorithmia.algorithmHandler.*;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import org.junit.Assert;
+import AlgorithmHandler.algorithms.BasicAlgorithm;
 import org.junit.Test;
+import org.junit.Assert;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+public class BaseSuccess extends AlgorithmHandlerTestBase {
 
-public class AdvancedAlgorithmMatrixTest extends AlgorithmHandlerTestBase {
-
-    private MatrixAlgorithm algo = new MatrixAlgorithm();
+    private BasicAlgorithm algo = new BasicAlgorithm();
     private Gson gson = new Gson();
     private JsonObject request = GenerateInput();
     private JsonObject expectedResponse = GenerateOutput();
 
-
     public JsonObject GenerateInput() {
-        MatrixAlgorithm.AlgoInput inputObj = algo.new AlgoInput(new Float[]{0.25f, 0.25f, 0.25f}, new Float[]{0.25f, 0.25f, 0.25f});
-        gson.toJsonTree(inputObj);
+        String inputObj = "james";
         JsonObject object = new JsonObject();
-        object.addProperty("content_type", "json");
+        object.addProperty("content_type", "text");
         object.add("data", gson.toJsonTree(inputObj));
+
         return object;
     }
 
     public JsonObject GenerateOutput() {
-        MatrixAlgorithm.AlgoOutput outputObj = algo.new AlgoOutput(new Float[]{0.5f, 0.5f, 0.5f});
         JsonObject expectedResponse = new JsonObject();
         JsonObject metadata = new JsonObject();
-        metadata.addProperty("content_type", "json");
+        metadata.addProperty("content_type", "text");
         expectedResponse.add("metadata", metadata);
-        expectedResponse.add("result", gson.toJsonTree(outputObj));
+        expectedResponse.addProperty("result", "Hello james");
         return expectedResponse;
     }
 
+
+    /// TEXT hello world
     @Test
     public void RunAlgorithm() throws Exception {
-        AlgorithmHandler handler = new AlgorithmHandler<>(algo.getClass(), algo::matrixElmWiseAddition);
 
+        AlgorithmHandler handler = new AlgorithmHandler<>(algo.getClass(), algo::Foo);
         InputStream fakeIn = new ByteArrayInputStream(request.toString().getBytes());
 
         System.setIn(fakeIn);

@@ -13,7 +13,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class BaseTypeFailure extends AlgorithmHandlerTestBase {
+public class InputTypeFailure extends AlgorithmHandlerTestBase {
 
     private BasicAlgorithm algo = new BasicAlgorithm();
     private Gson gson = new Gson();

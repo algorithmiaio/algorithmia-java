@@ -14,7 +14,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class AdvancedTypeFailure extends AlgorithmHandlerTestBase {
+public class InputTypeFailure extends AlgorithmHandlerTestBase {
 
     private LoadingAlgorithm algo = new LoadingAlgorithm();
     private Gson gson = new Gson();

@@ -1,6 +1,6 @@
 package AlgorithmHandler.tests.AdvancedTests;
 
-import AlgorithmHandler.algorithms.LoadingAlgorithm;
+import AlgorithmHandler.algorithms.MatrixAlgorithm;
 import AlgorithmHandler.tests.AlgorithmHandlerTestBase;
 import com.algorithmia.algorithmHandler.AlgorithmHandler;
 import com.google.gson.Gson;
@@ -14,15 +14,17 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 
-public class AdvancedAlgorithmTest extends AlgorithmHandlerTestBase {
+public class MatrixSuccess extends AlgorithmHandlerTestBase {
 
-    private LoadingAlgorithm algo = new LoadingAlgorithm();
+    private MatrixAlgorithm algo = new MatrixAlgorithm();
     private Gson gson = new Gson();
     private JsonObject request = GenerateInput();
     private JsonObject expectedResponse = GenerateOutput();
 
+
     public JsonObject GenerateInput() {
-        LoadingAlgorithm.AlgoInput inputObj = algo.new AlgoInput("james", 25);
+        MatrixAlgorithm.AlgoInput inputObj = algo.new AlgoInput(new Float[]{0.25f, 0.25f, 0.25f}, new Float[]{0.25f, 0.25f, 0.25f});
+        gson.toJsonTree(inputObj);
         JsonObject object = new JsonObject();
         object.addProperty("content_type", "json");
         object.add("data", gson.toJsonTree(inputObj));
@@ -30,20 +32,19 @@ public class AdvancedAlgorithmTest extends AlgorithmHandlerTestBase {
     }
 
     public JsonObject GenerateOutput() {
-        String outputObj = "Hello james you are 25 years old, and your model file is downloaded here /tmp/somefile";
+        MatrixAlgorithm.AlgoOutput outputObj = algo.new AlgoOutput(new Float[]{0.5f, 0.5f, 0.5f});
         JsonObject expectedResponse = new JsonObject();
         JsonObject metadata = new JsonObject();
-        metadata.addProperty("content_type", "text");
+        metadata.addProperty("content_type", "json");
         expectedResponse.add("metadata", metadata);
-        expectedResponse.addProperty("result", outputObj);
+        expectedResponse.add("result", gson.toJsonTree(outputObj));
         return expectedResponse;
     }
 
-
     @Test
     public void RunAlgorithm() throws Exception {
+        AlgorithmHandler handler = new AlgorithmHandler<>(algo.getClass(), algo::matrixElmWiseAddition);
 
-        AlgorithmHandler handler = new AlgorithmHandler<>(algo.getClass(), algo::Apply, algo::DownloadModel);
         InputStream fakeIn = new ByteArrayInputStream(request.toString().getBytes());
 
         System.setIn(fakeIn);

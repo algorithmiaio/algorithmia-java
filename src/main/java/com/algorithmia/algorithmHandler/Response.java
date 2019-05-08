@@ -19,7 +19,7 @@ class Response {
     }
 
 
-    Response(Object data) {
+    <OUTPUT> Response(OUTPUT data) {
         String contentType;
         JsonElement jsonData;
         try {

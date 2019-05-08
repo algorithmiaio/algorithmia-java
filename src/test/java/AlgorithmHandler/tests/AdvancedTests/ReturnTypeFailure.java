@@ -13,11 +13,10 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class AdvancedReturnType extends AlgorithmHandlerTestBase {
+public class ReturnTypeFailure extends AlgorithmHandlerTestBase {
 
 
     private FileHandleAlgorithm algo = new FileHandleAlgorithm();
-    private Gson gson = new Gson();
     private JsonObject request = GenerateInput();
     private JsonObject expectedResponse = GenerateOutput();
 

@@ -42,7 +42,7 @@ public class BaseSuccss extends AlgorithmHandlerTestBase {
     @Test
     public void RunAlgorithm() throws Exception {
 
-        AlgorithmHandler handler = new AlgorithmHandler<>(algo::Foo, String.class);
+        AlgorithmHandler handler = new AlgorithmHandler<>(algo.getClass(), algo::Foo);
         InputStream fakeIn = new ByteArrayInputStream(request.toString().getBytes());
 
         System.setIn(fakeIn);

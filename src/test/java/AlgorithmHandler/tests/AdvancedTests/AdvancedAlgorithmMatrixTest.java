@@ -43,7 +43,7 @@ public class AdvancedAlgorithmMatrixTest extends AlgorithmHandlerTestBase {
 
     @Test
     public void RunAlgorithm() throws Exception {
-        AlgorithmHandler handler = new AlgorithmHandler<>(algo::matrixElmWiseAddition, MatrixAlgorithm.AlgoInput.class);
+        AlgorithmHandler handler = new AlgorithmHandler<>(algo.getClass(), algo::matrixElmWiseAddition);
 
         InputStream fakeIn = new ByteArrayInputStream(request.toString().getBytes());
 

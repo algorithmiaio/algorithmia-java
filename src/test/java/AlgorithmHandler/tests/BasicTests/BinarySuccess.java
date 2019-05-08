@@ -43,7 +43,7 @@ public class BinarySuccess extends AlgorithmHandlerTestBase {
 
     @Test
     public void runAlgorithm() throws Exception {
-        AlgorithmHandler handler = new AlgorithmHandler<>(algo::foo, byte[].class);
+        AlgorithmHandler handler = new AlgorithmHandler<>(algo.getClass(), algo::foo);
         InputStream fakeIn = new ByteArrayInputStream(request.toString().getBytes());
         System.setIn(fakeIn);
         handler.run();

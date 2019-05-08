@@ -42,7 +42,7 @@ public class AdvancedTypeFailure extends AlgorithmHandlerTestBase {
     @Test
     public void RunAlgorithm() throws Exception {
 
-        AlgorithmHandler handler = new AlgorithmHandler<>(algo::Apply, algo::DownloadModel, LoadingAlgorithm.AlgoInput.class);
+        AlgorithmHandler handler = new AlgorithmHandler<>(algo.getClass(), algo::Apply, algo::DownloadModel);
         InputStream fakeIn = new ByteArrayInputStream(request.toString().getBytes());
 
         System.setIn(fakeIn);

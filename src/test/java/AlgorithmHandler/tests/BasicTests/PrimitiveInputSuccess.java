@@ -42,7 +42,7 @@ public class PrimitiveInputSuccess extends AlgorithmHandlerTestBase {
     @Test
     public void RunAlgorithm() throws Exception {
 
-        AlgorithmHandler handler = new AlgorithmHandler<>(algo::Foo, Float.class);
+        AlgorithmHandler handler = new AlgorithmHandler<>(algo.getClass(), algo::Foo);
         InputStream fakeIn = new ByteArrayInputStream(request.toString().getBytes());
 
         System.setIn(fakeIn);

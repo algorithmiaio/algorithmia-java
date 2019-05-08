@@ -1,43 +1,33 @@
 package com.algorithmia.algorithmHandler;
 
-import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 
-public class AlgorithmHandler<INPUT, OUTPUT extends Serializable, STATE> {
-
-    @FunctionalInterface
-    public interface BifunctionWithException<INPUT, OUTPUT, STATE> {
-        OUTPUT apply(INPUT t, STATE j) throws RuntimeException;
-    }
-
-    @FunctionalInterface
-    public interface FunctionWithException<INPUT, OUTPUT> {
-        OUTPUT apply(INPUT t) throws RuntimeException;
-    }
-
-    @FunctionalInterface
-    public interface SupplierWithException<STATE> {
-        STATE apply() throws RuntimeException;
-    }
+public class AlgorithmHandler<INPUT, OUTPUT, STATE> {
 
 
-    private Optional<BifunctionWithException<INPUT, OUTPUT, STATE>> applyWState = Optional.empty();
-    private Optional<FunctionWithException<INPUT, OUTPUT>> apply = Optional.empty();
+
+    private Optional<ReflectionHelper.DebuggableBifunction<INPUT, STATE, OUTPUT>> applyWState = Optional.empty();
+    private Optional<ReflectionHelper.DebuggableFunction<INPUT, OUTPUT>> apply = Optional.empty();
     private Class<INPUT> inputClass;
-    private Optional<SupplierWithException<STATE>> loadFunc = Optional.empty();
+    private Class algorithmClass;
+    private Optional<Supplier<STATE>> loadFunc = Optional.empty();
     private STATE state;
 
 
     private void Load() {
         if (this.loadFunc.isPresent()) {
-            state = this.loadFunc.get().apply();
+            state = this.loadFunc.get().get();
             System.out.println("PIPE_INIT_COMPLETE");
             System.out.flush();
         }
     }
 
-    private void ExecuteWithoutState(RequestHandler<INPUT> in, ResponseHandler out, FunctionWithException<INPUT, OUTPUT> func) {
+    private void ExecuteWithoutState(RequestHandler<INPUT> in, ResponseHandler out, Function<INPUT, OUTPUT> func) {
         Optional<INPUT> req = in.GetNextRequest();
         while (req.isPresent()) {
             OUTPUT output = func.apply(req.get());
@@ -46,7 +36,7 @@ public class AlgorithmHandler<INPUT, OUTPUT extends Serializable, STATE> {
         }
     }
 
-    private void ExecuteWithState(RequestHandler<INPUT> in, ResponseHandler out, BifunctionWithException<INPUT, OUTPUT, STATE> func) {
+    private void ExecuteWithState(RequestHandler<INPUT> in, ResponseHandler out, BiFunction<INPUT, STATE, OUTPUT> func) {
         Optional<INPUT> req = in.GetNextRequest();
         while (req.isPresent()) {
             OUTPUT output = func.apply(req.get(), state);
@@ -62,33 +52,56 @@ public class AlgorithmHandler<INPUT, OUTPUT extends Serializable, STATE> {
         } else if (this.apply.isPresent()) {
             ExecuteWithoutState(in, out, this.apply.get());
         } else {
-            throw new RuntimeException("If using an apply function with state, a load function must be defined as well.");
+            throw new RuntimeException("If using an load function with state, a load function must be defined as well.");
         }
     }
 
+    private Class<INPUT> GetInputClass(){
+        Optional<String> methodName;
+        if(this.applyWState.isPresent()){
+            methodName = ReflectionHelper.getMethodName(this.applyWState.get());
+        } else{
+            methodName = ReflectionHelper.getMethodName(this.apply.get());
+        }
+        if(methodName.isPresent()){
+            Method[] methods = this.algorithmClass.getMethods();
+            for(Method method: methods){
+                if(method.getName().equals(methodName.get())){
+                    return (Class<INPUT>) method.getParameterTypes()[0];
+                }
+            }
+            throw new RuntimeException("Unable to find the method reference called " + methodName.get() +" in the provided class.");
+        }
+        else {
+            throw new RuntimeException("Unable to find the originating definition for method reference");
+        }
+    }
 
-    public AlgorithmHandler(BifunctionWithException<INPUT, OUTPUT, STATE> applyWState, SupplierWithException<STATE> loadFunc, Class<INPUT> inputClass) {
+    public AlgorithmHandler(Class algorithmClass, ReflectionHelper.DebuggableBifunction<INPUT, STATE, OUTPUT> applyWState, Supplier<STATE> loadFunc) {
         this.applyWState = Optional.of(applyWState);
         this.loadFunc = Optional.of(loadFunc);
-        this.inputClass = inputClass;
+        this.algorithmClass = algorithmClass;
     }
 
-    public AlgorithmHandler(BifunctionWithException<INPUT, OUTPUT, STATE> applyWState, Class<INPUT> inputClass) {
+    public AlgorithmHandler(Class algorithmClass, ReflectionHelper.DebuggableBifunction<INPUT, STATE, OUTPUT> applyWState) {
         this.applyWState = Optional.of(applyWState);
-        this.inputClass = inputClass;
+        this.algorithmClass = algorithmClass;
     }
 
-    public AlgorithmHandler(FunctionWithException<INPUT, OUTPUT> apply, Class<INPUT> inputClass) {
+    public AlgorithmHandler(Class algorithmClass, ReflectionHelper.DebuggableFunction<INPUT, OUTPUT> apply) {
         this.apply = Optional.of(apply);
-        this.inputClass = inputClass;
+        this.algorithmClass = algorithmClass;
     }
 
 
-    public void setLoad(SupplierWithException<STATE> func) {
+    public void setLoad(Supplier<STATE> func) {
         loadFunc = Optional.of(func);
     }
 
+
+
     public void run() {
+        this.inputClass = GetInputClass();
         RequestHandler<INPUT> in = new RequestHandler<>(this.inputClass);
         ResponseHandler out = new ResponseHandler();
         try {

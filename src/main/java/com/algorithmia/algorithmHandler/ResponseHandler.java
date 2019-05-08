@@ -20,7 +20,7 @@ final class ResponseHandler {
     }
 
     <OUTPUT> void writeToPipe(OUTPUT outputObject) {
-        Response<OUTPUT> response = new Response<>(outputObject);
+        Response response = new Response(outputObject);
         String serialized = response.getJsonOutput();
         this.output.println(serialized);
         this.output.flush();

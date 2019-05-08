@@ -1,12 +1,13 @@
 package com.algorithmia.algorithmHandler;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.commons.codec.binary.Base64;
 
-class Response<T> {
+class Response {
     private MetaData metaData;
-    private T result;
+    private JsonElement result;
     private Gson gson = new Gson();
 
     public class MetaData {
@@ -17,26 +18,31 @@ class Response<T> {
         }
     }
 
-    Response(Object rawData) {
+
+    Response(Object data) {
         String contentType;
-        T data;
-        if (rawData == null) {
-            contentType = "json";
-            data = null;
-        } else if (rawData instanceof String) {
-            contentType = "text";
-            data = (T) rawData;
-        } else if (rawData instanceof byte[]) {
-            contentType = "binary";
-            data = (T) Base64.encodeBase64String((byte[]) rawData);
+        JsonElement jsonData;
+        try {
+            if (data.getClass() == null) {
+                contentType = "json";
+                jsonData = null;
+            } else if (data.getClass() == String.class) {
+                contentType = "text";
+                jsonData = gson.toJsonTree(data);
+            } else if (data.getClass() == byte.class) {
+                contentType = "binary";
+                jsonData = gson.toJsonTree(Base64.encodeBase64String((byte[]) data));
 
-        } else {
-            contentType = "json";
-            data = (T) rawData;
+            } else {
+                contentType = "json";
+                jsonData = gson.toJsonTree(data);
+            }
+
+            metaData = new MetaData(contentType);
+            result = jsonData;
+        } catch(StackOverflowError e){
+            throw new RuntimeException("your output type was not successfully serializable.", e);
         }
-
-        metaData = new MetaData(contentType);
-        result = data;
     }
 
     String getJsonOutput() {

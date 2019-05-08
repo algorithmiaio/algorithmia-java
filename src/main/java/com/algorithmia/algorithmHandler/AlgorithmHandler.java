@@ -13,9 +13,9 @@ public class AlgorithmHandler<INPUT, OUTPUT, STATE> {
 
     private Optional<ReflectionHelper.DebuggableBifunction<INPUT, STATE, OUTPUT>> applyWState = Optional.empty();
     private Optional<ReflectionHelper.DebuggableFunction<INPUT, OUTPUT>> apply = Optional.empty();
-    private Class<INPUT> inputClass;
-    private Class algorithmClass;
     private Optional<Supplier<STATE>> loadFunc = Optional.empty();
+
+    private Class algorithmClass;
     private STATE state;
 
 
@@ -102,8 +102,8 @@ public class AlgorithmHandler<INPUT, OUTPUT, STATE> {
 
 
     public void run() {
-        this.inputClass = GetInputClass();
-        RequestHandler<INPUT> in = new RequestHandler<>(this.inputClass);
+        Class<INPUT> inputClass = GetInputClass();
+        RequestHandler<INPUT> in = new RequestHandler<>(inputClass);
         ResponseHandler out = new ResponseHandler();
         try {
             Execute(in, out);

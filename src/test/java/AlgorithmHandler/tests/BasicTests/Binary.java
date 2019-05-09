@@ -1,6 +1,6 @@
-package AlgorithmHandler.tests.AdvancedTests;
+package AlgorithmHandler.tests.BasicTests;
 
-import AlgorithmHandler.algorithms.MatrixAlgorithm;
+import AlgorithmHandler.algorithms.BinaryAlgorithm;
 import AlgorithmHandler.tests.AlgorithmHandlerTestBase;
 import com.algorithmia.algorithmHandler.AlgorithmHandler;
 import com.google.gson.Gson;
@@ -13,40 +13,38 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import org.apache.commons.codec.binary.Base64;
 
-public class MatrixSuccess extends AlgorithmHandlerTestBase {
+public class Binary extends AlgorithmHandlerTestBase {
 
-    private MatrixAlgorithm algo = new MatrixAlgorithm();
+    private BinaryAlgorithm algo = new BinaryAlgorithm();
     private Gson gson = new Gson();
     private JsonObject request = GenerateInput();
     private JsonObject expectedResponse = GenerateOutput();
 
-
     public JsonObject GenerateInput() {
-        MatrixAlgorithm.AlgoInput inputObj = algo.new AlgoInput(new Float[]{0.25f, 0.25f, 0.25f}, new Float[]{0.25f, 0.25f, 0.25f});
-        gson.toJsonTree(inputObj);
+        byte[] inputObj = ("This is a test").getBytes();
         JsonObject object = new JsonObject();
-        object.addProperty("content_type", "json");
-        object.add("data", gson.toJsonTree(inputObj));
+        object.addProperty("content_type", "binary");
+        object.add("data", gson.toJsonTree(Base64.encodeBase64String(inputObj)));
         return object;
     }
 
     public JsonObject GenerateOutput() {
-        MatrixAlgorithm.AlgoOutput outputObj = algo.new AlgoOutput(new Float[]{0.5f, 0.5f, 0.5f});
+        String outputObj = "This is a test";
         JsonObject expectedResponse = new JsonObject();
         JsonObject metadata = new JsonObject();
-        metadata.addProperty("content_type", "json");
+        metadata.addProperty("content_type", "text");
         expectedResponse.add("metadata", metadata);
-        expectedResponse.add("result", gson.toJsonTree(outputObj));
+        expectedResponse.addProperty("result", outputObj);
         return expectedResponse;
     }
 
+
     @Test
-    public void RunAlgorithm() throws Exception {
-        AlgorithmHandler handler = new AlgorithmHandler<>(algo.getClass(), algo::matrixElmWiseAddition);
-
+    public void runAlgorithm() throws Exception {
+        AlgorithmHandler handler = new AlgorithmHandler<>(algo.getClass(), algo::foo);
         InputStream fakeIn = new ByteArrayInputStream(request.toString().getBytes());
-
         System.setIn(fakeIn);
         handler.run();
 
@@ -54,6 +52,5 @@ public class MatrixSuccess extends AlgorithmHandlerTestBase {
         String rawData = new String(fifoBytes);
         JsonObject actualResponse = parser.parse(rawData).getAsJsonObject();
         Assert.assertEquals(expectedResponse, actualResponse);
-
     }
 }

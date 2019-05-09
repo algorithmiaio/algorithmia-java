@@ -1,6 +1,6 @@
-package AlgorithmHandler.tests.BasicTests;
+package AlgorithmHandler.tests.AdvancedTests;
 
-import AlgorithmHandler.algorithms.PrimitiveTypeAlgorithm;
+import AlgorithmHandler.algorithms.ThrowsExceptionAlgorithm;
 import AlgorithmHandler.tests.AlgorithmHandlerTestBase;
 import com.algorithmia.algorithmHandler.AlgorithmHandler;
 import com.google.gson.Gson;
@@ -13,36 +13,33 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class PrimitiveInputSuccess extends AlgorithmHandlerTestBase {
-    /// TEXT hello world
+public class AlgorithmException extends AlgorithmHandlerTestBase {
 
-    private PrimitiveTypeAlgorithm algo = new PrimitiveTypeAlgorithm();
+
+    private ThrowsExceptionAlgorithm algo = new ThrowsExceptionAlgorithm();
     private Gson gson = new Gson();
     private JsonObject request = GenerateInput();
     private JsonObject expectedResponse = GenerateOutput();
 
+
     public JsonObject GenerateInput() {
-        Float inputObj = 32.5f;
+        String inputObj = "hello world";
         JsonObject object = new JsonObject();
-        object.addProperty("content_type", "json");
+        object.addProperty("content_type", "text");
         object.add("data", gson.toJsonTree(inputObj));
         return object;
     }
 
     public JsonObject GenerateOutput() {
         JsonObject expectedResponse = new JsonObject();
-        JsonObject metadata = new JsonObject();
-        metadata.addProperty("content_type", "text");
-        expectedResponse.add("metadata", metadata);
-        expectedResponse.addProperty("result", "Hello, the number is 32.5");
+        expectedResponse.addProperty("message", "This is an exception.");
         return expectedResponse;
     }
-
 
     @Test
     public void RunAlgorithm() throws Exception {
 
-        AlgorithmHandler handler = new AlgorithmHandler<>(algo.getClass(), algo::Foo);
+        AlgorithmHandler handler = new AlgorithmHandler<>(algo.getClass(), algo::foo);
         InputStream fakeIn = new ByteArrayInputStream(request.toString().getBytes());
 
         System.setIn(fakeIn);
@@ -51,7 +48,8 @@ public class PrimitiveInputSuccess extends AlgorithmHandlerTestBase {
         byte[] fifoBytes = Files.readAllBytes(Paths.get(FIFOPIPE));
         String rawData = new String(fifoBytes);
         JsonObject actualResponse = parser.parse(rawData).getAsJsonObject();
-        Assert.assertEquals(expectedResponse, actualResponse);
+        Assert.assertEquals(expectedResponse.get("message"), actualResponse.get("message"));
 
     }
+
 }

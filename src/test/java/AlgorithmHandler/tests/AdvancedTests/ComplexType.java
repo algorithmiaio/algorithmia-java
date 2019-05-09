@@ -14,7 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 
-public class AdvancedSuccess extends AlgorithmHandlerTestBase {
+public class ComplexType extends AlgorithmHandlerTestBase {
 
     private LoadingAlgorithm algo = new LoadingAlgorithm();
     private Gson gson = new Gson();
@@ -41,7 +41,7 @@ public class AdvancedSuccess extends AlgorithmHandlerTestBase {
 
 
     @Test
-    public void RunAlgorithm() throws Exception {
+    public void runAlgorithm() throws Exception {
 
         AlgorithmHandler handler = new AlgorithmHandler<>(algo.getClass(), algo::Apply, algo::DownloadModel);
         InputStream fakeIn = new ByteArrayInputStream(request.toString().getBytes());

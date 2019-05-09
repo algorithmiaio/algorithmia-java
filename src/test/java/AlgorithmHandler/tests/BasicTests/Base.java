@@ -1,30 +1,28 @@
 package AlgorithmHandler.tests.BasicTests;
 
-import AlgorithmHandler.algorithms.BasicAlgorithm;
 import AlgorithmHandler.tests.AlgorithmHandlerTestBase;
-import com.algorithmia.algorithmHandler.AlgorithmHandler;
+import com.algorithmia.algorithmHandler.*;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import org.junit.Assert;
+import AlgorithmHandler.algorithms.BasicAlgorithm;
 import org.junit.Test;
+import org.junit.Assert;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class InputTypeFailure extends AlgorithmHandlerTestBase {
+public class Base extends AlgorithmHandlerTestBase {
 
     private BasicAlgorithm algo = new BasicAlgorithm();
     private Gson gson = new Gson();
     private JsonObject request = GenerateInput();
     private JsonObject expectedResponse = GenerateOutput();
 
-
     public JsonObject GenerateInput() {
-        Float[] inputObj = new Float[]{0.25f, 0.15f};
+        String inputObj = "james";
         JsonObject object = new JsonObject();
-        object.addProperty("content_type", "json");
+        object.addProperty("content_type", "text");
         object.add("data", gson.toJsonTree(inputObj));
 
         return object;
@@ -32,23 +30,28 @@ public class InputTypeFailure extends AlgorithmHandlerTestBase {
 
     public JsonObject GenerateOutput() {
         JsonObject expectedResponse = new JsonObject();
-        expectedResponse.addProperty("message", "unable to parse input into type java.lang.String , with input [0.25,0.15]");
-        expectedResponse.addProperty("error_type", "class java.lang.RuntimeException");
+        JsonObject metadata = new JsonObject();
+        metadata.addProperty("content_type", "text");
+        expectedResponse.add("metadata", metadata);
+        expectedResponse.addProperty("result", "Hello james");
         return expectedResponse;
     }
 
+
+    /// TEXT hello world
     @Test
-    public void runAlgorithm() throws Exception {
+    public void RunAlgorithm() throws Exception {
+
         AlgorithmHandler handler = new AlgorithmHandler<>(algo.getClass(), algo::Foo);
         InputStream fakeIn = new ByteArrayInputStream(request.toString().getBytes());
+
         System.setIn(fakeIn);
         handler.run();
 
         byte[] fifoBytes = Files.readAllBytes(Paths.get(FIFOPIPE));
         String rawData = new String(fifoBytes);
         JsonObject actualResponse = parser.parse(rawData).getAsJsonObject();
-        Assert.assertEquals(expectedResponse.get("message"), actualResponse.get("message"));
+        Assert.assertEquals(expectedResponse, actualResponse);
+
     }
-
-
 }

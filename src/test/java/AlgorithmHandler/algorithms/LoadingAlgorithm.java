@@ -24,7 +24,7 @@ public class LoadingAlgorithm {
             return "Hello " + input.name + " you are " + input.age +
                     " years old, and your model file is downloaded here " + context.get("local_file");
         }
-        return "hello " + input.name + " you are " + input.age + " years old";
+        throw new RuntimeException("We need to run DownloadModel before Apply.");
     }
 
     public HashMap<String, String> DownloadModel() throws RuntimeException {

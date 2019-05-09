@@ -1,6 +1,6 @@
-package AlgorithmHandler.tests.BasicTests;
+package AlgorithmHandler.tests.AdvancedTests;
 
-import AlgorithmHandler.algorithms.BinaryAlgorithm;
+import AlgorithmHandler.algorithms.LoadingAlgorithm;
 import AlgorithmHandler.tests.AlgorithmHandlerTestBase;
 import com.algorithmia.algorithmHandler.AlgorithmHandler;
 import com.google.gson.Gson;
@@ -13,44 +13,43 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import org.apache.commons.codec.binary.Base64;
+public class AdvancedWithoutLoad extends AlgorithmHandlerTestBase {
 
-public class BinarySuccess extends AlgorithmHandlerTestBase {
 
-    private BinaryAlgorithm algo = new BinaryAlgorithm();
+    private LoadingAlgorithm algo = new LoadingAlgorithm();
     private Gson gson = new Gson();
     private JsonObject request = GenerateInput();
     private JsonObject expectedResponse = GenerateOutput();
 
+
     public JsonObject GenerateInput() {
-        byte[] inputObj = ("This is a test").getBytes();
+        LoadingAlgorithm.AlgoInput inputObj = algo.new AlgoInput("james", 25);
         JsonObject object = new JsonObject();
-        object.addProperty("content_type", "binary");
-        object.add("data", gson.toJsonTree(Base64.encodeBase64String(inputObj)));
+        object.addProperty("content_type", "json");
+        object.add("data", gson.toJsonTree(inputObj));
         return object;
     }
 
     public JsonObject GenerateOutput() {
-        String outputObj = "This is a test";
         JsonObject expectedResponse = new JsonObject();
-        JsonObject metadata = new JsonObject();
-        metadata.addProperty("content_type", "text");
-        expectedResponse.add("metadata", metadata);
-        expectedResponse.addProperty("result", outputObj);
+        expectedResponse.addProperty("message", "If using an load function with state, a load function must be defined as well.");
         return expectedResponse;
     }
 
-
     @Test
     public void runAlgorithm() throws Exception {
-        AlgorithmHandler handler = new AlgorithmHandler<>(algo.getClass(), algo::foo);
+
+        AlgorithmHandler handler = new AlgorithmHandler<>(algo.getClass(), algo::Apply);
         InputStream fakeIn = new ByteArrayInputStream(request.toString().getBytes());
+
         System.setIn(fakeIn);
         handler.run();
 
         byte[] fifoBytes = Files.readAllBytes(Paths.get(FIFOPIPE));
         String rawData = new String(fifoBytes);
         JsonObject actualResponse = parser.parse(rawData).getAsJsonObject();
-        Assert.assertEquals(expectedResponse, actualResponse);
+        Assert.assertEquals(expectedResponse.get("message"), actualResponse.get("message"));
+
     }
+
 }

@@ -3,7 +3,10 @@ package com.algorithmia.algorithmHandler;
 
 //taken from https://stackoverflow.com/questions/14242236/let-gson-throw-exceptions-on-wrong-types/29024682
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;

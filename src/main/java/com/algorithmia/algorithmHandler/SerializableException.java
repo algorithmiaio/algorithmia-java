@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Arrays;
 
 class SerializableException<T extends RuntimeException> {
     String message;

@@ -10,15 +10,6 @@ class Response {
     private JsonElement result;
     private Gson gson = new Gson();
 
-    public class MetaData {
-        private String content_type;
-
-        MetaData(String contentType) {
-            this.content_type = contentType;
-        }
-    }
-
-
     <OUTPUT> Response(OUTPUT data) {
         String contentType;
         JsonElement jsonData;
@@ -52,5 +43,13 @@ class Response {
         node.add("metadata", metaData);
         node.add("result", gson.toJsonTree(this.result));
         return node.toString();
+    }
+
+    public class MetaData {
+        private String content_type;
+
+        MetaData(String contentType) {
+            this.content_type = contentType;
+        }
     }
 }

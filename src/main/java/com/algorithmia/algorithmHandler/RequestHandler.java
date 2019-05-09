@@ -1,10 +1,9 @@
 package com.algorithmia.algorithmHandler;
 
-import java.util.Optional;
-import java.util.Scanner;
-
 import com.google.gson.*;
 import org.apache.commons.codec.binary.Base64;
+
+import java.util.Scanner;
 
 
 class RequestHandler<ALGO_INPUT> {
@@ -44,7 +43,7 @@ class RequestHandler<ALGO_INPUT> {
     }
 
 
-    Optional<ALGO_INPUT> GetNextRequest() {
+    ALGO_INPUT GetNextRequest() {
         String line = null;
         try {
             ALGO_INPUT result;
@@ -55,9 +54,9 @@ class RequestHandler<ALGO_INPUT> {
                 JsonElement data = json.get("data");
                 Request request = new Request(contentType, data);
                 result = ProcessRequest(request);
-                return Optional.of(result);
+                return result;
             } else {
-                return Optional.empty();
+                return null;
             }
         } catch (JsonSyntaxException e) {
             throw new RuntimeException("unable to parse the request" + line + "as valid json");

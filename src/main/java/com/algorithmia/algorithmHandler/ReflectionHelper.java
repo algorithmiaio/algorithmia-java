@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Optional;
+
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -23,18 +23,18 @@ public class ReflectionHelper {
             BiFunction<T1, T2, R> {
     }
 
-    public static <T, R> Optional<String> getMethodName(
+    public static <T, R> String getMethodName(
             DebuggableFunction<T, R> methodReference) {
-        Optional<SerializedLambda> lambda = getLambda(methodReference);
-        return lambda.map(l -> l.getImplMethodName());
+        SerializedLambda lambda = getLambda(methodReference);
+        return lambda.getImplMethodName();
     }
 
-    public static <T1, T2, R> Optional<String> getMethodName(DebuggableBifunction<T1, T2, R> methodReference) {
-        Optional<SerializedLambda> lambda = getLambda(methodReference);
-        return lambda.map(l -> l.getImplMethodName());
+    public static <T1, T2, R> String getMethodName(DebuggableBifunction<T1, T2, R> methodReference) {
+        SerializedLambda lambda = getLambda(methodReference);
+        return lambda.getImplMethodName();
     }
 
-    private static Optional<SerializedLambda> getLambda(Serializable lambda) {
+    private static SerializedLambda getLambda(Serializable lambda) {
         for (Class<?> cl = lambda.getClass(); cl != null; cl = cl.getSuperclass()) {
             try {
                 Method m = cl.getDeclaredMethod("writeReplace");
@@ -44,14 +44,14 @@ public class ReflectionHelper {
                     break; // custom interface implementation
                 }
                 SerializedLambda l = (SerializedLambda) replacement;
-                return Optional.of(l);
+                return l;
             } catch (NoSuchMethodException e) {
                 // do nothing
             } catch (IllegalAccessException | InvocationTargetException e) {
-                break;
+                throw new RuntimeException("The writeReplace method implemented by your algorithm class is incompatible with this framework", e);
             }
         }
 
-        return Optional.empty();
+        throw new RuntimeException("We were unable to find a Serializable form of your method reference. Please ensure that you're using a compatible version of java.");
     }
 }

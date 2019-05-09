@@ -55,24 +55,20 @@ public class AlgorithmHandler<INPUT, OUTPUT, STATE> {
     }
 
     private Class<INPUT> GetInputClass() {
-        Optional<String> methodName;
+        String methodName;
         if (this.applyWState.isPresent()) {
             methodName = ReflectionHelper.getMethodName(this.applyWState.get());
         } else {
             methodName = ReflectionHelper.getMethodName(this.apply.get());
         }
-        if (methodName.isPresent()) {
-            Method[] methods = this.algorithmClass.getMethods();
-            for (Method method : methods) {
-                if (method.getName().equals(methodName.get())) {
-                    Class<?>[] parameters = method.getParameterTypes();
-                    return (Class<INPUT>) parameters[0];
-                }
+        Method[] methods = this.algorithmClass.getMethods();
+        for (Method method : methods) {
+            if (method.getName().equals(methodName)) {
+                Class<?>[] parameters = method.getParameterTypes();
+                return (Class<INPUT>) parameters[0];
             }
-            throw new RuntimeException("Unable to find the method reference called " + methodName.get() + " in the provided class.");
-        } else {
-            throw new RuntimeException("Unable to find the originating definition for method reference");
         }
+        throw new RuntimeException("Unable to find the method reference called " + methodName + " in the provided class.");
     }
 
     public AlgorithmHandler(Class algorithmClass, ReflectionHelper.DebuggableBifunction<INPUT, STATE, OUTPUT> applyWState, Supplier<STATE> loadFunc) {

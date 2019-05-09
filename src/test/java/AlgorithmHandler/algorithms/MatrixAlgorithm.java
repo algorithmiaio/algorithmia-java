@@ -1,12 +1,17 @@
 package AlgorithmHandler.algorithms;
 
+import com.algorithmia.algorithmHandler.Required;
+
 import java.util.Arrays;
 
 public class MatrixAlgorithm {
 
     public class TwoWideMatrix {
+        @Required
         Float[] top;
+        @Required
         Float[] bottom;
+        @Required
         int width;
 
         Boolean dimCheck() {

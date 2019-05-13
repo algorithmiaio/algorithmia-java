@@ -76,7 +76,7 @@ public class AlgorithmHandler<INPUT, OUTPUT, STATE> {
         } else if (this.apply != null) {
             methodName = ReflectionHelper.getMethodName(this.apply);
         } else {
-            throw new RuntimeException("Either Apply(T t) or Apply(T t S s) must be provided to the constructor.");
+            throw new RuntimeException("Either Apply(INPUT t) or Apply(INPUT t STATE s) must be defined.");
         }
         Method[] methods = this.algorithmClass.getMethods();
         for (Method method : methods) {

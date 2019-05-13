@@ -12,24 +12,28 @@ public class Handler<INPUT, OUTPUT, STATE> {
     private ReflectionHelper.DebuggableFunction<INPUT, OUTPUT> apply;
     private Supplier<STATE> loadFunc;
 
-    private Class algorithmClass;
     private STATE state;
+    private RequestHandler<INPUT> in;
+    private ResponseHandler out = new ResponseHandler();
 
 
     public Handler(Class algorithmClass, ReflectionHelper.DebuggableBifunction<INPUT, STATE, OUTPUT> applyWState, Supplier<STATE> loadFunc) {
         this.applyWState = applyWState;
         this.loadFunc = loadFunc;
-        this.algorithmClass = algorithmClass;
+        Class<INPUT> inputClass = getInputClass(algorithmClass);
+        this.in = new RequestHandler<>(inputClass);
     }
 
     public Handler(Class algorithmClass, ReflectionHelper.DebuggableBifunction<INPUT, STATE, OUTPUT> applyWState) {
         this.applyWState = applyWState;
-        this.algorithmClass = algorithmClass;
+        Class<INPUT> inputClass = getInputClass(algorithmClass);
+        this.in = new RequestHandler<>(inputClass);
     }
 
     public Handler(Class algorithmClass, ReflectionHelper.DebuggableFunction<INPUT, OUTPUT> apply) {
         this.apply = apply;
-        this.algorithmClass = algorithmClass;
+        Class<INPUT> inputClass = getInputClass(algorithmClass);
+        this.in = new RequestHandler<>(inputClass);
     }
 
     private void load() {
@@ -40,7 +44,7 @@ public class Handler<INPUT, OUTPUT, STATE> {
         }
     }
 
-    private void executeWithoutState(RequestHandler<INPUT> in, ResponseHandler out, Function<INPUT, OUTPUT> func) {
+    private void executeWithoutState(Function<INPUT, OUTPUT> func) {
         INPUT req = in.getNextRequest();
         while (req != null) {
             OUTPUT output = func.apply(req);
@@ -49,7 +53,7 @@ public class Handler<INPUT, OUTPUT, STATE> {
         }
     }
 
-    private void executeWithState(RequestHandler<INPUT> in, ResponseHandler out, BiFunction<INPUT, STATE, OUTPUT> func) {
+    private void executeWithState(BiFunction<INPUT, STATE, OUTPUT> func) {
         INPUT req = in.getNextRequest();
         while (req != null) {
             OUTPUT output = func.apply(req, state);
@@ -58,18 +62,18 @@ public class Handler<INPUT, OUTPUT, STATE> {
         }
     }
 
-    private void execute(RequestHandler<INPUT> in, ResponseHandler out) {
+    private void execute() {
         if (this.applyWState != null && this.loadFunc != null) {
             load();
-            executeWithState(in, out, this.applyWState);
+            executeWithState( this.applyWState);
         } else if (this.apply != null) {
-            executeWithoutState(in, out, this.apply);
+            executeWithoutState(this.apply);
         } else {
             throw new RuntimeException("If using an load function with state, a load function must be defined as well.");
         }
     }
 
-    private Class<INPUT> getInputClass() {
+    private Class<INPUT> getInputClass(Class algoClass) {
         String methodName;
         if (this.applyWState != null) {
             methodName = ReflectionHelper.getMethodName(this.applyWState);
@@ -78,7 +82,7 @@ public class Handler<INPUT, OUTPUT, STATE> {
         } else {
             throw new RuntimeException("Either Apply(INPUT t) or Apply(INPUT t STATE s) must be defined.");
         }
-        Method[] methods = this.algorithmClass.getMethods();
+        Method[] methods = algoClass.getMethods();
         for (Method method : methods) {
             if (method.getName().equals(methodName)) {
                 Class<?>[] parameters = method.getParameterTypes();
@@ -92,13 +96,9 @@ public class Handler<INPUT, OUTPUT, STATE> {
         loadFunc = func;
     }
 
-
     public void serve() {
-        Class<INPUT> inputClass = getInputClass();
-        RequestHandler<INPUT> in = new RequestHandler<>(inputClass);
-        ResponseHandler out = new ResponseHandler();
         try {
-            execute(in, out);
+            execute();
         } catch (RuntimeException e) {
             out.writeErrorToPipe(e);
         }

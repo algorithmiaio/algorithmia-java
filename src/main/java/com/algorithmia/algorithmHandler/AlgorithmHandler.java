@@ -32,7 +32,7 @@ public class AlgorithmHandler<INPUT, OUTPUT, STATE> {
         this.algorithmClass = algorithmClass;
     }
 
-    private void Load() {
+    private void load() {
         if (this.loadFunc != null) {
             state = this.loadFunc.get();
             System.out.println("PIPE_INIT_COMPLETE");
@@ -40,36 +40,36 @@ public class AlgorithmHandler<INPUT, OUTPUT, STATE> {
         }
     }
 
-    private void ExecuteWithoutState(RequestHandler<INPUT> in, ResponseHandler out, Function<INPUT, OUTPUT> func) {
-        INPUT req = in.GetNextRequest();
+    private void executeWithoutState(RequestHandler<INPUT> in, ResponseHandler out, Function<INPUT, OUTPUT> func) {
+        INPUT req = in.getNextRequest();
         while (req != null) {
             OUTPUT output = func.apply(req);
             out.writeToPipe(output);
-            req = in.GetNextRequest();
+            req = in.getNextRequest();
         }
     }
 
-    private void ExecuteWithState(RequestHandler<INPUT> in, ResponseHandler out, BiFunction<INPUT, STATE, OUTPUT> func) {
-        INPUT req = in.GetNextRequest();
+    private void executeWithState(RequestHandler<INPUT> in, ResponseHandler out, BiFunction<INPUT, STATE, OUTPUT> func) {
+        INPUT req = in.getNextRequest();
         while (req != null) {
             OUTPUT output = func.apply(req, state);
             out.writeToPipe(output);
-            req = in.GetNextRequest();
+            req = in.getNextRequest();
         }
     }
 
-    private void Execute(RequestHandler<INPUT> in, ResponseHandler out) {
+    private void execute(RequestHandler<INPUT> in, ResponseHandler out) {
         if (this.applyWState != null && this.loadFunc != null) {
-            Load();
-            ExecuteWithState(in, out, this.applyWState);
+            load();
+            executeWithState(in, out, this.applyWState);
         } else if (this.apply != null) {
-            ExecuteWithoutState(in, out, this.apply);
+            executeWithoutState(in, out, this.apply);
         } else {
             throw new RuntimeException("If using an load function with state, a load function must be defined as well.");
         }
     }
 
-    private Class<INPUT> GetInputClass() {
+    private Class<INPUT> getInputClass() {
         String methodName;
         if (this.applyWState != null) {
             methodName = ReflectionHelper.getMethodName(this.applyWState);
@@ -94,11 +94,11 @@ public class AlgorithmHandler<INPUT, OUTPUT, STATE> {
 
 
     public void run() {
-        Class<INPUT> inputClass = GetInputClass();
+        Class<INPUT> inputClass = getInputClass();
         RequestHandler<INPUT> in = new RequestHandler<>(inputClass);
         ResponseHandler out = new ResponseHandler();
         try {
-            Execute(in, out);
+            execute(in, out);
         } catch (RuntimeException e) {
             out.writeErrorToPipe(e);
         }

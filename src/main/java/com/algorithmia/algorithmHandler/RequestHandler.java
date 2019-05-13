@@ -22,7 +22,7 @@ class RequestHandler<ALGO_INPUT> {
     }
 
 
-    private ALGO_INPUT ProcessRequest(Request request) {
+    private ALGO_INPUT processRequest(Request request) {
         try {
             if (inputClass == byte[].class) {
                 return inputClass.cast(Base64.decodeBase64((request.data.getAsString())));
@@ -43,7 +43,7 @@ class RequestHandler<ALGO_INPUT> {
     }
 
 
-    ALGO_INPUT GetNextRequest() {
+    ALGO_INPUT getNextRequest() {
         String line = null;
         try {
             ALGO_INPUT result;
@@ -53,7 +53,7 @@ class RequestHandler<ALGO_INPUT> {
                 String contentType = json.get("content_type").getAsString();
                 JsonElement data = json.get("data");
                 Request request = new Request(contentType, data);
-                result = ProcessRequest(request);
+                result = processRequest(request);
                 return result;
             } else {
                 return null;

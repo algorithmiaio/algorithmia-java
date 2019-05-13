@@ -1,6 +1,6 @@
 package AlgorithmHandler.algorithms;
 
-import com.algorithmia.algorithmHandler.Required;
+import com.algorithmia.algorithm.Required;
 
 import java.util.Arrays;
 

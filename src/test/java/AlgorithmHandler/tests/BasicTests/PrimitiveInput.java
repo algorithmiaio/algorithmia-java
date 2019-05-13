@@ -1,8 +1,8 @@
 package AlgorithmHandler.tests.BasicTests;
 
 import AlgorithmHandler.algorithms.PrimitiveTypeAlgorithm;
-import AlgorithmHandler.tests.AlgorithmHandlerTestBase;
-import com.algorithmia.algorithmHandler.AlgorithmHandler;
+import AlgorithmHandler.tests.HandlerTestBase;
+import com.algorithmia.algorithm.Handler;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import org.junit.Assert;
@@ -13,7 +13,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class PrimitiveInput extends AlgorithmHandlerTestBase {
+public class PrimitiveInput extends HandlerTestBase {
     /// TEXT hello world
 
     private PrimitiveTypeAlgorithm algo = new PrimitiveTypeAlgorithm();
@@ -42,7 +42,7 @@ public class PrimitiveInput extends AlgorithmHandlerTestBase {
     @Test
     public void runAlgorithm() throws Exception {
 
-        AlgorithmHandler handler = new AlgorithmHandler<>(algo.getClass(), algo::Foo);
+        Handler handler = new Handler<>(algo.getClass(), algo::Foo);
         InputStream fakeIn = new ByteArrayInputStream(request.toString().getBytes());
 
         System.setIn(fakeIn);

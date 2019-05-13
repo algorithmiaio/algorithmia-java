@@ -1,8 +1,8 @@
 package AlgorithmHandler.tests.BasicTests;
 
 import AlgorithmHandler.algorithms.BinaryAlgorithm;
-import AlgorithmHandler.tests.AlgorithmHandlerTestBase;
-import com.algorithmia.algorithmHandler.AlgorithmHandler;
+import AlgorithmHandler.tests.HandlerTestBase;
+import com.algorithmia.algorithm.Handler;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import org.junit.Assert;
@@ -15,7 +15,7 @@ import java.nio.file.Paths;
 
 import org.apache.commons.codec.binary.Base64;
 
-public class Binary extends AlgorithmHandlerTestBase {
+public class Binary extends HandlerTestBase {
 
     private BinaryAlgorithm algo = new BinaryAlgorithm();
     private Gson gson = new Gson();
@@ -43,7 +43,7 @@ public class Binary extends AlgorithmHandlerTestBase {
 
     @Test
     public void runAlgorithm() throws Exception {
-        AlgorithmHandler handler = new AlgorithmHandler<>(algo.getClass(), algo::foo);
+        Handler handler = new Handler<>(algo.getClass(), algo::foo);
         InputStream fakeIn = new ByteArrayInputStream(request.toString().getBytes());
         System.setIn(fakeIn);
         handler.serve();

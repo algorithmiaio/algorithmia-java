@@ -1,8 +1,8 @@
 package AlgorithmHandler.tests.AdvancedTests;
 
 import AlgorithmHandler.algorithms.FileHandleAlgorithm;
-import AlgorithmHandler.tests.AlgorithmHandlerTestBase;
-import com.algorithmia.algorithmHandler.AlgorithmHandler;
+import AlgorithmHandler.tests.HandlerTestBase;
+import com.algorithmia.algorithm.Handler;
 import com.google.gson.JsonObject;
 import org.junit.Assert;
 import org.junit.Test;
@@ -12,7 +12,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class ReturnTypeFailure extends AlgorithmHandlerTestBase {
+public class ReturnTypeFailure extends HandlerTestBase {
 
 
     private FileHandleAlgorithm algo = new FileHandleAlgorithm();
@@ -36,7 +36,7 @@ public class ReturnTypeFailure extends AlgorithmHandlerTestBase {
     @Test
     public void runAlgorithm() throws Exception {
 
-        AlgorithmHandler handler = new AlgorithmHandler<>(algo.getClass(), algo::foo);
+        Handler handler = new Handler<>(algo.getClass(), algo::foo);
         InputStream fakeIn = new ByteArrayInputStream(request.toString().getBytes());
 
         System.setIn(fakeIn);

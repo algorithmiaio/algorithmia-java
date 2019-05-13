@@ -1,4 +1,4 @@
-package com.algorithmia.algorithmHandler;
+package com.algorithmia.algorithm;
 
 import java.lang.reflect.Method;
 import java.util.function.BiFunction;
@@ -6,7 +6,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 
-public class AlgorithmHandler<INPUT, OUTPUT, STATE> {
+public class Handler<INPUT, OUTPUT, STATE> {
 
     private ReflectionHelper.DebuggableBifunction<INPUT, STATE, OUTPUT> applyWState;
     private ReflectionHelper.DebuggableFunction<INPUT, OUTPUT> apply;
@@ -16,18 +16,18 @@ public class AlgorithmHandler<INPUT, OUTPUT, STATE> {
     private STATE state;
 
 
-    public AlgorithmHandler(Class algorithmClass, ReflectionHelper.DebuggableBifunction<INPUT, STATE, OUTPUT> applyWState, Supplier<STATE> loadFunc) {
+    public Handler(Class algorithmClass, ReflectionHelper.DebuggableBifunction<INPUT, STATE, OUTPUT> applyWState, Supplier<STATE> loadFunc) {
         this.applyWState = applyWState;
         this.loadFunc = loadFunc;
         this.algorithmClass = algorithmClass;
     }
 
-    public AlgorithmHandler(Class algorithmClass, ReflectionHelper.DebuggableBifunction<INPUT, STATE, OUTPUT> applyWState) {
+    public Handler(Class algorithmClass, ReflectionHelper.DebuggableBifunction<INPUT, STATE, OUTPUT> applyWState) {
         this.applyWState = applyWState;
         this.algorithmClass = algorithmClass;
     }
 
-    public AlgorithmHandler(Class algorithmClass, ReflectionHelper.DebuggableFunction<INPUT, OUTPUT> apply) {
+    public Handler(Class algorithmClass, ReflectionHelper.DebuggableFunction<INPUT, OUTPUT> apply) {
         this.apply = apply;
         this.algorithmClass = algorithmClass;
     }

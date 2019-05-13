@@ -1,7 +1,7 @@
 package AlgorithmHandler.tests.BasicTests;
 
-import AlgorithmHandler.tests.AlgorithmHandlerTestBase;
-import com.algorithmia.algorithmHandler.*;
+import AlgorithmHandler.tests.HandlerTestBase;
+import com.algorithmia.algorithm.*;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import AlgorithmHandler.algorithms.BasicAlgorithm;
@@ -12,7 +12,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class Base extends AlgorithmHandlerTestBase {
+public class Base extends HandlerTestBase {
 
     private BasicAlgorithm algo = new BasicAlgorithm();
     private Gson gson = new Gson();
@@ -42,7 +42,7 @@ public class Base extends AlgorithmHandlerTestBase {
     @Test
     public void RunAlgorithm() throws Exception {
 
-        AlgorithmHandler handler = new AlgorithmHandler<>(algo.getClass(), algo::Foo);
+        Handler handler = new Handler<>(algo.getClass(), algo::Foo);
         InputStream fakeIn = new ByteArrayInputStream(request.toString().getBytes());
 
         System.setIn(fakeIn);

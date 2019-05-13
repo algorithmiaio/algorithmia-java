@@ -1,4 +1,4 @@
-package com.algorithmia.algorithmHandler;
+package com.algorithmia.algorithm;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;

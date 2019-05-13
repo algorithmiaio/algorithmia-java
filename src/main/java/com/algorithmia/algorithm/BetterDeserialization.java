@@ -1,4 +1,4 @@
-package com.algorithmia.algorithmHandler;
+package com.algorithmia.algorithm;
 
 
 //taken from https://stackoverflow.com/questions/14242236/let-gson-throw-exceptions-on-wrong-types/29024682

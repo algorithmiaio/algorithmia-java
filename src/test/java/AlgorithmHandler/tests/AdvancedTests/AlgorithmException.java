@@ -1,8 +1,8 @@
 package AlgorithmHandler.tests.AdvancedTests;
 
 import AlgorithmHandler.algorithms.ThrowsExceptionAlgorithm;
-import AlgorithmHandler.tests.AlgorithmHandlerTestBase;
-import com.algorithmia.algorithmHandler.AlgorithmHandler;
+import AlgorithmHandler.tests.HandlerTestBase;
+import com.algorithmia.algorithm.Handler;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import org.junit.Assert;
@@ -13,7 +13,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class AlgorithmException extends AlgorithmHandlerTestBase {
+public class AlgorithmException extends HandlerTestBase {
 
 
     private ThrowsExceptionAlgorithm algo = new ThrowsExceptionAlgorithm();
@@ -39,7 +39,7 @@ public class AlgorithmException extends AlgorithmHandlerTestBase {
     @Test
     public void RunAlgorithm() throws Exception {
 
-        AlgorithmHandler handler = new AlgorithmHandler<>(algo.getClass(), algo::foo);
+        Handler handler = new Handler<>(algo.getClass(), algo::foo);
         InputStream fakeIn = new ByteArrayInputStream(request.toString().getBytes());
 
         System.setIn(fakeIn);

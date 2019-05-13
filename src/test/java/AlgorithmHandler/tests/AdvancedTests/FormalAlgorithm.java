@@ -1,8 +1,8 @@
 package AlgorithmHandler.tests.AdvancedTests;
 
 import AlgorithmHandler.algorithms.MatrixAlgorithm;
-import AlgorithmHandler.tests.AlgorithmHandlerTestBase;
-import com.algorithmia.algorithmHandler.AlgorithmHandler;
+import AlgorithmHandler.tests.HandlerTestBase;
+import com.algorithmia.algorithm.Handler;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import org.junit.Assert;
@@ -14,7 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 
-public class FormalAlgorithm extends AlgorithmHandlerTestBase {
+public class FormalAlgorithm extends HandlerTestBase {
 
     private MatrixAlgorithm algo = new MatrixAlgorithm();
     private Gson gson = new Gson();
@@ -43,7 +43,7 @@ public class FormalAlgorithm extends AlgorithmHandlerTestBase {
 
     @Test
     public void RunAlgorithm() throws Exception {
-        AlgorithmHandler handler = new AlgorithmHandler<>(algo.getClass(), algo::matrixElmWiseAddition);
+        Handler handler = new Handler<>(algo.getClass(), algo::matrixElmWiseAddition);
 
         InputStream fakeIn = new ByteArrayInputStream(request.toString().getBytes());
 

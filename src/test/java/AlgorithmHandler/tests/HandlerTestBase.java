@@ -8,7 +8,7 @@ import org.junit.Before;
 import java.io.File;
 import java.io.IOException;
 
-public abstract class AlgorithmHandlerTestBase {
+public abstract class HandlerTestBase {
 
     protected String FIFOPIPE = "/tmp/algoout";
 

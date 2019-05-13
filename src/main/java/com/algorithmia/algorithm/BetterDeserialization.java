@@ -2,7 +2,7 @@ package com.algorithmia.algorithm;
 
 
 //taken from https://stackoverflow.com/questions/14242236/let-gson-throw-exceptions-on-wrong-types/29024682
-
+// Helper class to enable the @Required annotation to function properly.
 import com.google.gson.Gson;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;

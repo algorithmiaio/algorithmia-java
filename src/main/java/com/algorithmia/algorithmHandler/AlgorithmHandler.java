@@ -93,7 +93,7 @@ public class AlgorithmHandler<INPUT, OUTPUT, STATE> {
     }
 
 
-    public void run() {
+    public void serve() {
         Class<INPUT> inputClass = getInputClass();
         RequestHandler<INPUT> in = new RequestHandler<>(inputClass);
         ResponseHandler out = new ResponseHandler();

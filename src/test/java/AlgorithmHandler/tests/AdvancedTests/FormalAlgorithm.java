@@ -48,7 +48,7 @@ public class FormalAlgorithm extends AlgorithmHandlerTestBase {
         InputStream fakeIn = new ByteArrayInputStream(request.toString().getBytes());
 
         System.setIn(fakeIn);
-        handler.run();
+        handler.serve();
 
         byte[] fifoBytes = Files.readAllBytes(Paths.get(FIFOPIPE));
         String rawData = new String(fifoBytes);

@@ -3,7 +3,6 @@ package AlgorithmHandler.tests.AdvancedTests;
 import AlgorithmHandler.algorithms.FileHandleAlgorithm;
 import AlgorithmHandler.tests.AlgorithmHandlerTestBase;
 import com.algorithmia.algorithmHandler.AlgorithmHandler;
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import org.junit.Assert;
 import org.junit.Test;
@@ -41,7 +40,7 @@ public class ReturnTypeFailure extends AlgorithmHandlerTestBase {
         InputStream fakeIn = new ByteArrayInputStream(request.toString().getBytes());
 
         System.setIn(fakeIn);
-        handler.run();
+        handler.serve();
 
         byte[] fifoBytes = Files.readAllBytes(Paths.get(FIFOPIPE));
         String rawData = new String(fifoBytes);

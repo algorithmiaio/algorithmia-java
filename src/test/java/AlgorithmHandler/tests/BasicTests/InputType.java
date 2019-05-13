@@ -42,7 +42,7 @@ public class InputType extends AlgorithmHandlerTestBase {
         AlgorithmHandler handler = new AlgorithmHandler<>(algo.getClass(), algo::Foo);
         InputStream fakeIn = new ByteArrayInputStream(request.toString().getBytes());
         System.setIn(fakeIn);
-        handler.run();
+        handler.serve();
 
         byte[] fifoBytes = Files.readAllBytes(Paths.get(FIFOPIPE));
         String rawData = new String(fifoBytes);

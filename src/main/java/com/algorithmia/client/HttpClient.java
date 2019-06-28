@@ -254,7 +254,8 @@ public class HttpClient {
             this.auth.authenticateRequest(request);
         }
         request.addHeader("User-Agent", HttpClient.userAgent);
-        HttpHost target = new HttpHost(request.getURI().getHost(), request.getURI().getPort());
+        final URI uri = request.getURI();
+        final HttpHost target = new HttpHost(uri.getHost(), uri.getPort(), uri.getScheme());
         return client.execute(new BasicAsyncRequestProducer(target, request), consumer, null);
     }
 

@@ -1,0 +1,16 @@
+stages:
+  - test
+
+variables:
+  PROJECT_NAME: algorithmia-java
+  DOCKER_HOST: tcp://docker:2375/
+  DOCKER_DRIVER: overlay2
+  RUNNING_ON_BUILD_SERVER: "true"
+
+test:unit-code-coverage:
+  stage: test
+  image: algorithmiahq/sbt-builder:8u212_0.13.18_2.11.12
+  script:
+  - sbt compile
+  - sbt doc
+  - sbt test

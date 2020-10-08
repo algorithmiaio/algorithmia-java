@@ -108,10 +108,9 @@ public class HttpClient {
         }
     }
 
-    /*
+    /**
     * GET requests
     */
-
     public HttpResponse get(String path) throws APIException {
         final HttpGet request = new HttpGet(getUrl(path));
         return this.execute(request);
@@ -121,7 +120,6 @@ public class HttpClient {
         final HttpGet request = new HttpGet(getUrl(path));
         addQueryParameters(request, params);
         return this.execute(request, new HttpClientHelpers.JsonDeserializeResponseHandler<T>(typeToken));
-
     }
 
     public <T> Future<T> get(String path, HttpAsyncResponseConsumer<T> consumer) {

@@ -5,8 +5,9 @@
 
 ## Ignore all dotfiles
 .*
-## except for .gitignore
+## except for .gitignore and .gitlab-ci.yml
 !.gitignore
+!.gitlab-ci.yml
 
 # .classpath
 # .target

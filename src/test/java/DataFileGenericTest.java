@@ -20,17 +20,21 @@ public abstract class DataFileGenericTest {
     public void setup() throws Exception {
         key = System.getenv("ALGORITHMIA_API_KEY");
         Assume.assumeNotNull(key);
-
-        String largeFileName = "/tmp/3GB";
+        String osName = System.getProperty("os.name");
+        String largeFileName;
+        String userProfile = System.getenv("USERPROFILE");
+        if (osName.contains("Win")) {
+            largeFileName = userProfile + "\\AppData\\Local\\3GB";
+        } else {
+            largeFileName = "/tmp/3GB";
+        }
         largeFile = new File(largeFileName);
-
         synchronized(this) {
             if (!largeFile.exists()) {
                 RandomAccessFile tempFile = new RandomAccessFile(largeFile, "rw");
                 tempFile.setLength(3221225472L);
             }
         }
-
         Assert.assertEquals(largeFile.length(), 3221225472L);
     }
 
@@ -133,7 +137,7 @@ public abstract class DataFileGenericTest {
     @Test
     public void putLargeFileGet() throws Exception {
         DataFile file = Algorithmia.client(key).file(getFullPath("largeFiles/3GB_file"));
-
+        
         // Make sure test starts in clean state
         if(!file.getParent().exists()) {
             file.getParent().create();

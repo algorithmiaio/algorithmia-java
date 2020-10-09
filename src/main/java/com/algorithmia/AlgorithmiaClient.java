@@ -5,6 +5,7 @@ import com.algorithmia.client.*;
 import com.algorithmia.data.*;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Instantiate Algorithmia clients for calling algorithms and accessing data
@@ -30,6 +31,11 @@ public final class AlgorithmiaClient {
         return new Algorithm(client, new AlgorithmRef(algoUri));
     }
 
+    //get goes here -> from algo, instantiate client, client.get???
+    public InputStream getAlgorithm(String userName, String algoUri) throws IOException {
+        return this.client.getAlgorithm(userName, algoUri);
+    }
+    
     /**
      * Initialize a DataDirectory object from this client
      * @param path to a data directory, e.g., data://.my/foo

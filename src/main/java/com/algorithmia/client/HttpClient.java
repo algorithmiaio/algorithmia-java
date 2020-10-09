@@ -4,7 +4,6 @@ import com.algorithmia.AlgorithmiaConf;
 import com.algorithmia.APIException;
 
 import com.google.gson.reflect.TypeToken;
-import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.*;
@@ -13,7 +12,6 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
-import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.http.nio.client.methods.AsyncByteConsumer;
 import org.apache.http.nio.client.methods.ZeroCopyConsumer;
 import org.apache.http.nio.protocol.HttpAsyncResponseConsumer;
@@ -22,16 +20,15 @@ import org.apache.http.nio.protocol.BasicAsyncRequestProducer;
 import org.apache.http.nio.IOControl;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
 import org.apache.http.HttpHost;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.InterruptedException;
 import java.nio.ByteBuffer;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -111,7 +108,6 @@ public class HttpClient {
     /*
     * GET requests
     */
-
     public HttpResponse get(String path) throws APIException {
         final HttpGet request = new HttpGet(getUrl(path));
         return this.execute(request);
@@ -121,7 +117,13 @@ public class HttpClient {
         final HttpGet request = new HttpGet(getUrl(path));
         addQueryParameters(request, params);
         return this.execute(request, new HttpClientHelpers.JsonDeserializeResponseHandler<T>(typeToken));
+    }
 
+    //algorithms/:username/:algoname
+    public InputStream getAlgorithm(String userName, String algoUri) throws IOException {
+        final HttpGet request = new HttpGet(getUrl(userName + algoUri));
+        HttpResponse response = this.execute(request);
+        return response.getEntity().getContent();
     }
 
     public <T> Future<T> get(String path, HttpAsyncResponseConsumer<T> consumer) {

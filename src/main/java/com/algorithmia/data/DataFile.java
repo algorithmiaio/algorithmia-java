@@ -3,21 +3,19 @@ package com.algorithmia.data;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 
+import com.algorithmia.algo.APIException;
+import com.algorithmia.client.HttpClient;
+import com.algorithmia.client.HttpClientHelpers;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
-
-import com.algorithmia.APIException;
-import com.algorithmia.client.HttpClient;
-import com.algorithmia.client.HttpClientHelpers;
 
 /**
  * A reference to a file in the data api

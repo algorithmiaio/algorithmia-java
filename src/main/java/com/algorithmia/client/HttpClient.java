@@ -1,7 +1,7 @@
 package com.algorithmia.client;
 
-import com.algorithmia.AlgorithmiaConf;
-import com.algorithmia.APIException;
+import com.algorithmia.algo.AlgorithmiaConf;
+import com.algorithmia.algo.APIException;
 
 import com.google.gson.reflect.TypeToken;
 import org.apache.http.HttpResponse;
@@ -21,10 +21,10 @@ import org.apache.http.nio.IOControl;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.InterruptedException;
 import java.nio.ByteBuffer;
 import java.net.URI;
@@ -105,9 +105,9 @@ public class HttpClient {
         }
     }
 
-    /*
-    * GET requests
-    */
+    /**
+     * GET requests
+     */
     public HttpResponse get(String path) throws APIException {
         final HttpGet request = new HttpGet(getUrl(path));
         return this.execute(request);
@@ -117,13 +117,6 @@ public class HttpClient {
         final HttpGet request = new HttpGet(getUrl(path));
         addQueryParameters(request, params);
         return this.execute(request, new HttpClientHelpers.JsonDeserializeResponseHandler<T>(typeToken));
-    }
-
-    //algorithms/:username/:algoname
-    public InputStream getAlgorithm(String userName, String algoUri) throws IOException {
-        final HttpGet request = new HttpGet(getUrl(userName + algoUri));
-        HttpResponse response = this.execute(request);
-        return response.getEntity().getContent();
     }
 
     public <T> Future<T> get(String path, HttpAsyncResponseConsumer<T> consumer) {
@@ -139,6 +132,11 @@ public class HttpClient {
     /**
      * POST requests
      */
+    public HttpResponse post(String path) throws APIException {
+        final HttpPost request = new HttpPost(getUrl(path));
+        return this.execute(request);
+    }
+
     public HttpResponse post(String path, HttpEntity data) throws APIException {
         final HttpPost request = new HttpPost(getUrl(path));
         request.setEntity(data);

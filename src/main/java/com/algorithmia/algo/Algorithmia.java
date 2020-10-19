@@ -1,8 +1,8 @@
-package com.algorithmia;
+package com.algorithmia.algo;
 
-import com.algorithmia.algo.*;
-import com.algorithmia.client.*;
-import com.algorithmia.data.*;
+import com.algorithmia.client.SimpleAuth;
+import com.algorithmia.data.DataDirectory;
+import com.algorithmia.data.DataFile;
 
 /**
  * Instantiate Algorithmia clients for calling algorithms and accessing data
@@ -95,7 +95,7 @@ public final class Algorithmia {
      * @param algoUri the algorithm's URI, e.g., algo://user/algoname
      * @return an Algorithm client for the specified algorithm
      */
-    public static Algorithm algo(String algoUri) {
+    public static AlgorithmExecutable algo(String algoUri) {
         return getDefaultClient().algo(algoUri);
     }
 

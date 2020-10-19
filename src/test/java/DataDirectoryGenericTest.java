@@ -1,5 +1,8 @@
-import com.algorithmia.Algorithmia;
-import com.algorithmia.data.*;
+import com.algorithmia.algo.Algorithmia;
+import com.algorithmia.data.DataDirectory;
+import com.algorithmia.data.DataFile;
+import com.algorithmia.data.DataFileIterator;
+import com.algorithmia.data.DataObject;
 
 import java.util.HashSet;
 import java.util.Set;

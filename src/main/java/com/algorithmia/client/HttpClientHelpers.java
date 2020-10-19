@@ -3,11 +3,14 @@ package com.algorithmia.client;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.algorithmia.algo.APIException;
 import com.algorithmia.algo.AlgoAsyncResponse;
 import com.algorithmia.algo.AlgoFailure;
 import com.algorithmia.algo.AlgoResponse;
 import com.algorithmia.algo.AlgoSuccess;
+import com.algorithmia.algo.AlgorithmException;
 import com.algorithmia.algo.Metadata;
+import com.algorithmia.algo.AlgorithmExecutable;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.ContentTooLongException;
 import org.apache.http.HttpEntity;
@@ -22,15 +25,11 @@ import org.apache.http.nio.util.SimpleInputBuffer;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.Asserts;
 
-import com.algorithmia.APIException;
-import com.algorithmia.AlgorithmException;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
-
-import static com.algorithmia.algo.Algorithm.AlgorithmOutputType;
 
 /**
  * Various HTTP actions, using our HttpClient class, and automatically adding authorization
@@ -89,13 +88,13 @@ public class HttpClientHelpers {
     }
 
     static public class AlgoResponseHandler extends AbstractBasicResponseConsumer<AlgoResponse> {
-        private AlgorithmOutputType outputType;
-        public AlgoResponseHandler(AlgorithmOutputType outputType) {
+        private AlgorithmExecutable.AlgorithmOutputType outputType;
+        public AlgoResponseHandler(AlgorithmExecutable.AlgorithmOutputType outputType) {
             this.outputType = outputType;
         }
         @Override
         protected AlgoResponse buildResult(HttpContext context) throws APIException {
-            if (outputType.equals(AlgorithmOutputType.RAW)) {
+            if (outputType.equals(AlgorithmExecutable.AlgorithmOutputType.RAW)) {
                 return parseRawOutput(response);
             } else {
                 JsonElement json = parseResponseJson(response);
@@ -116,7 +115,7 @@ public class HttpClientHelpers {
         }
     }
 
-    public static AlgoResponse jsonToAlgoResponse(JsonElement json, AlgorithmOutputType outputType) throws APIException {
+    public static AlgoResponse jsonToAlgoResponse(JsonElement json, AlgorithmExecutable.AlgorithmOutputType outputType) throws APIException {
         if(json != null && json.isJsonObject()) {
             final JsonObject obj = json.getAsJsonObject();
             if(obj.has("error")) {
@@ -127,7 +126,7 @@ public class HttpClientHelpers {
                     stacktrace = error.get("stacktrace").getAsString();
                 }
                 return new AlgoFailure(new AlgorithmException(msg, null, stacktrace));
-            } else if (AlgorithmOutputType.DEFAULT.equals(outputType)) {
+            } else if (AlgorithmExecutable.AlgorithmOutputType.DEFAULT.equals(outputType)) {
                 JsonObject metaJson = obj.getAsJsonObject("metadata");
                 Double duration = metaJson.get("duration").getAsDouble();
                 com.algorithmia.algo.ContentType contentType = com.algorithmia.algo.ContentType.fromString(metaJson.get("content_type").getAsString());
@@ -135,7 +134,7 @@ public class HttpClientHelpers {
                 String stdout = (stdoutJson == null) ? null : stdoutJson.getAsString();
                 Metadata meta = new Metadata(contentType, duration, stdout);
                 return new AlgoSuccess(obj.get("result"), meta, null, null);
-            } else if (AlgorithmOutputType.VOID.equals(outputType)) {
+            } else if (AlgorithmExecutable.AlgorithmOutputType.VOID.equals(outputType)) {
                 AlgoAsyncResponse asyncResponse = new AlgoAsyncResponse(obj.get("async").getAsString(), obj.get("request_id").getAsString());
                 return new AlgoSuccess(null, null, null, asyncResponse);
             } else {

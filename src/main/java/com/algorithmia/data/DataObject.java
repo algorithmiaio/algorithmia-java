@@ -1,8 +1,7 @@
 package com.algorithmia.data;
 
-import com.algorithmia.AlgorithmiaConf;
-import com.algorithmia.APIException;
-import com.algorithmia.client.*;
+import com.algorithmia.algo.APIException;
+import com.algorithmia.client.HttpClient;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;

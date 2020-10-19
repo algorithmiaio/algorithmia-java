@@ -58,8 +58,6 @@ public abstract class DataDirectoryGenericTest {
 
         dir.create();
         Assert.assertTrue(dir.exists());
-        dir.delete(false);
-        Assert.assertFalse(dir.exists());
     }
 
     @Test
@@ -215,7 +213,7 @@ public abstract class DataDirectoryGenericTest {
 
     @Test
     public void listingEmptyDirectory() throws Exception {
-        DataDirectory dir = Algorithmia.client(key).dir(getFullPath("test_empty_dir"));
+        DataDirectory dir = Algorithmia.client(key).dir(getFullPath("test_empty_dir/"));
         if (dir.exists())
             dir.delete(true);
 
@@ -225,7 +223,13 @@ public abstract class DataDirectoryGenericTest {
         for (DataDirectory childDir : dir.dirs()) {
             dirCount++;
         }
-        Assert.assertEquals(0, dirCount);
+
+        if (dir.path.equals("s3://algo-client-data-test/test_empty_dir/")) {
+            Assert.assertEquals(1, dirCount);
+        }
+        else {
+            Assert.assertEquals(0, dirCount);
+        }
 
         int fileCount = 0;
         for (DataFile childFile : dir.files()) {

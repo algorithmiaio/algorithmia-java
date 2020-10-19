@@ -1,4 +1,4 @@
-package com.algorithmia;
+package com.algorithmia.algo;
 
 /**
  * TypeToken used for converting JSON into specific types

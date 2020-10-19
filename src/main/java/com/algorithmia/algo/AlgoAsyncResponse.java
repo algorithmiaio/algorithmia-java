@@ -1,9 +1,5 @@
 package com.algorithmia.algo;
 
-import com.algorithmia.AlgorithmException;
-
-import java.lang.reflect.Type;
-
 /**
  * A result representing success of an asynchronous algo call
  */

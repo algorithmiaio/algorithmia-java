@@ -1,13 +1,10 @@
-import com.algorithmia.APIException;
-import com.algorithmia.Algorithmia;
-import com.algorithmia.data.*;
+import com.algorithmia.algo.APIException;
+import com.algorithmia.algo.Algorithmia;
+import com.algorithmia.data.DataAcl;
+import com.algorithmia.data.DataAclType;
+import com.algorithmia.data.DataDirectory;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.Assume;
 import org.junit.Assert;
 
 public class DataDirectoryTest extends DataDirectoryGenericTest {

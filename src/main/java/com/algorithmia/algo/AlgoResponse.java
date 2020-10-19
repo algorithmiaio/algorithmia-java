@@ -1,8 +1,5 @@
 package com.algorithmia.algo;
 
-import com.algorithmia.AlgorithmException;
-import com.algorithmia.TypeToken;
-
 import java.io.Serializable;
 import java.lang.reflect.Type;
 

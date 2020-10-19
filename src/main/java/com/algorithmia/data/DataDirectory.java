@@ -1,7 +1,8 @@
 package com.algorithmia.data;
 
-import com.algorithmia.APIException;
-import com.algorithmia.client.*;
+import com.algorithmia.algo.APIException;
+import com.algorithmia.client.HttpClient;
+import com.algorithmia.client.HttpClientHelpers;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;

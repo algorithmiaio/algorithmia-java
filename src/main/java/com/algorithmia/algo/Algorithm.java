@@ -1,229 +1,187 @@
 package com.algorithmia.algo;
 
-import com.algorithmia.APIException;
-import com.algorithmia.client.HttpClient;
-import com.algorithmia.client.HttpClientHelpers.AlgoResponseHandler;
+import com.google.gson.annotations.SerializedName;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-
-import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.entity.StringEntity;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-
-/**
- * Represents an Algorithmia algorithm that can be called.
- */
+//Changing build name for builder annotation due to build map
+@Builder(buildMethodName = "buildDTO")
+@NoArgsConstructor
+@AllArgsConstructor
+@Setter
+@Getter
 public final class Algorithm {
-    private final AlgorithmRef algoRef;
-    private final HttpClient client;
-    private final Map<String, String> options;
-    private final AlgorithmOutputType outputType;
-    private static final long DEFAULT_TIMEOUT = 300L;
-    final static Gson gson = new Gson();
+    private String id;
+    private String name;
+    private Details details;
+    private Settings settings;
+    @SerializedName("version_info")
+    private VersionInfo versionInfo;
+    private Source source;
+    private SCM scm;
+    private Oauth oauth;
+    private Urls urls;
+    private Compilation compilation;
+    private Build build = new Build();
+    @SerializedName("self_link")
+    private String selfLink;
+    @SerializedName("resource_type")
+    private String resourceType;
 
-    public Algorithm(HttpClient client, AlgorithmRef algoRef) {
-        this(client, algoRef, new HashMap<String, String>());
+    @Override
+    public String toString() {
+        return "Algorithm{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", details=" + details +
+                ", settings=" + settings +
+                ", versionInfo=" + versionInfo +
+                ", source=" + source +
+                ", scm=" + scm +
+                ", oauth=" + oauth +
+                ", urls=" + urls +
+                ", compilation=" + compilation +
+                ", build=" + build +
+                ", selfLink='" + selfLink + '\'' +
+                ", resourceType='" + resourceType + '\'' +
+                '}';
     }
 
-    public Algorithm(HttpClient client, AlgorithmRef algoRef, Map<String, String> options) {
-        this.client = client;
-        this.algoRef = algoRef;
-        this.options = options;
-        if (options != null && options.containsKey(AlgorithmOptions.OUTPUT.toString())) {
-            this.outputType = AlgorithmOutputType.fromParameter(options.get(AlgorithmOptions.OUTPUT.toString()));
-        } else {
-            this.outputType = AlgorithmOutputType.DEFAULT;
-        }
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static final class Details {
+        private String label;
+        private String summary;
+        private String tagline;
     }
 
-    public Algorithm setOptions(Map<String, String> options) {
-        if (options != null) {
-            return new Algorithm(client, algoRef, new HashMap<String, String>(options));
-        }
-        return new Algorithm(client, algoRef, new HashMap<String, String>());
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static final class Settings {
+        @SerializedName("algorithm_callability")
+        private String algorithmCallability;
+        private String environment;
+        private String language;
+        @SerializedName("licence") // documentation says "license" but server only accepts "licence"!!!!!
+        private String license;
+        @SerializedName("network_access")
+        private String networkAccess;
+        @SerializedName("package_set")
+        private String packageSet;
+        @SerializedName("pipeline_enabled")
+        private Boolean pipelineEnabled;
+        @SerializedName("source_visibility")
+        private String sourceVisibility;
     }
 
-    public Algorithm setOption(String key, String value) {
-        Map<String, String> optionsClone = new HashMap<String, String>(options);
-        optionsClone.put(key, value);
-        return new Algorithm(client, algoRef, optionsClone);
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static final class VersionInfo {
+        @SerializedName("git_hash")
+        private String gitHash;
+        @SerializedName("release_notes")
+        private String releaseNotes;
+        @SerializedName("sample_input")
+        private String sampleInput;
+        @SerializedName("sample_output")
+        private String sampleOutput;
+        @SerializedName("semantic_version")
+        private String semanticVersion;
     }
 
-    public Algorithm setTimeout(Long timeout, TimeUnit unit) {
-        Long time = TimeUnit.SECONDS.convert(timeout, unit);
-        Map<String, String> optionsClone = new HashMap<String, String>(options);
-        optionsClone.put(AlgorithmOptions.TIMEOUT.toString(), time.toString());
-        return new Algorithm(client, algoRef, optionsClone);
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static final class Source {
+        @SerializedName("repository_https_url")
+        private String repositoryHttpsUrl;
+        @SerializedName("repository_name")
+        private String repositoryName;
+        @SerializedName("repository_owner")
+        private String repositoryOwner;
+        @SerializedName("repository_ssh_url")
+        private String repositorySshUrl;
+        private SCM scm;
     }
 
-    public Long getTimeout() {
-        String key = AlgorithmOptions.TIMEOUT.toString();
-        if (options.containsKey(key)) {
-            return Long.parseLong(options.get(key));
-        }
-        return DEFAULT_TIMEOUT;
-
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static final class SCM {
+        @SerializedName("default")
+        private Boolean zDefault;
+        private Boolean enabled;
+        private String id;
+        private Oauth oauth;
+        private String provider;
+        private Urls urls;
     }
 
-    public Algorithm setStdout(boolean showStdout) {
-        Map<String, String> optionsClone = new HashMap<String, String>(options);
-        optionsClone.put(AlgorithmOptions.STDOUT.toString(), Boolean.toString(showStdout));
-        return new Algorithm(client, algoRef, optionsClone);
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static final class Oauth {
+        @SerializedName("client_id")
+        private String clientId;
     }
 
-    public Algorithm setOutputType(AlgorithmOutputType outputType) {
-        Map<String, String> optionsClone = new HashMap<String, String>(options);
-        optionsClone.put(AlgorithmOptions.OUTPUT.toString(), outputType.toString());
-
-        return new Algorithm(client, algoRef, optionsClone);
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static final class Urls {
+        private String api;
+        private String ssh;
+        private String web;
     }
 
-    /**
-     * Calls the Algorithmia API for a given input.
-     * Attempts to automatically serialize the input to JSON.
-     *
-     * @param input algorithm input, will automatically be converted into JSON
-     * @return algorithm result (AlgoSuccess or AlgoFailure)
-     * @throws APIException if there is a problem communication with the Algorithmia API.
-     */
-    public AlgoResponse pipe(Object input) throws APIException {
-        if (input instanceof String) {
-            return pipeRequest((String)input,ContentType.Text);
-        } else if (input instanceof byte[]) {
-            return pipeBinaryRequest((byte[])input);
-        } else {
-            return pipeRequest(gson.toJsonTree(input).toString(),ContentType.Json);
-        }
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static final class Compilation {
+        private String output;
+        private Boolean successful;
     }
 
-   /**
-     * Calls the Algorithmia API asynchronously for a given input.
-     * Attempts to automatically serialize the input to JSON.
-     * The future response will complete when the algorithm has completed or errored
-     *
-     * @param input algorithm input, will automatically be converted into JSON
-     * @return future algorithm result (AlgoSuccess or AlgoFailure)
-     */
-   public FutureAlgoResponse pipeAsync(Object input) {
-       final Gson gson = new Gson();
-       final JsonElement inputJson = gson.toJsonTree(input);
-       return pipeJsonAsync(inputJson.toString());
-   }
-
-
-    /**
-     * Calls the Algorithmia API for given input that will be treated as JSON
-     *
-     * @param inputJson json input value
-     * @return success or failure
-     * @throws APIException if there is a problem communication with the Algorithmia API.
-     */
-    public AlgoResponse pipeJson(String inputJson) throws APIException {
-        return pipeRequest(inputJson,ContentType.Json);
-    }
-
-    /**
-     * Calls the Algorithmia API asynchronously for given input that will be treated as JSON
-     * The future response will complete when the algorithm has completed or errored
-     *
-     * @param inputJson json input value
-     * @return success or failure
-     */
-    public FutureAlgoResponse pipeJsonAsync(String inputJson) {
-        return pipeRequestAsync(inputJson,ContentType.Json);
-    }
-
-    private AlgoResponse pipeRequest(String input, ContentType content_type) throws APIException {
-        try {
-            return pipeRequestAsync(input,content_type).get();
-        } catch(java.util.concurrent.ExecutionException e) {
-            throw new APIException(e.getCause().getMessage());
-        } catch(java.util.concurrent.CancellationException e) {
-            throw new APIException("API connection cancelled: " + algoRef.getUrl() + " (" + e.getMessage() + ")", e);
-        } catch(java.lang.InterruptedException e) {
-            throw new APIException("API connection interrupted: " + algoRef.getUrl() + " (" + e.getMessage() + ")", e);
-        }
-    }
-
-    private FutureAlgoResponse pipeRequestAsync(String input, ContentType content_type) {
-        StringEntity requestEntity = null;
-        if(content_type == ContentType.Text) {
-            requestEntity = new StringEntity(input, "UTF-8");
-        } else if(content_type == ContentType.Json) {
-            requestEntity = new StringEntity(input, org.apache.http.entity.ContentType.APPLICATION_JSON);
-        }
-        Future<AlgoResponse> promise = client.post(
-                algoRef.getUrl(),
-                requestEntity,
-                new AlgoResponseHandler(outputType),
-                options
-        );
-        return new FutureAlgoResponse(promise);
-    }
-
-    private AlgoResponse pipeBinaryRequest(byte[] input) throws APIException {
-        try {
-            return pipeBinaryRequestAsync(input).get();
-        } catch(java.util.concurrent.ExecutionException e) {
-            throw new APIException(e.getCause().getMessage());
-        } catch(java.util.concurrent.CancellationException e) {
-            throw new APIException("API connection cancelled: " + algoRef.getUrl() + " (" + e.getMessage() + ")", e);
-        } catch(java.lang.InterruptedException e) {
-            throw new APIException("API connection interrupted: " + algoRef.getUrl() + " (" + e.getMessage() + ")", e);
-        }
-    }
-
-    private FutureAlgoResponse pipeBinaryRequestAsync(byte[] input) {
-        Future<AlgoResponse> promise = client.post(
-                algoRef.getUrl(),
-                new ByteArrayEntity(input, org.apache.http.entity.ContentType.APPLICATION_OCTET_STREAM),
-                new AlgoResponseHandler(outputType),
-                options
-        );
-        return new FutureAlgoResponse(promise);
-    }
-
-    public static enum AlgorithmOptions {
-        TIMEOUT("timeout"),
-        STDOUT("stdout"),
-        OUTPUT("output");
-        private String parameter;
-
-        AlgorithmOptions(String parameter) {
-            this.parameter = parameter;
-        }
-
-        public String toString() {
-            return this.parameter;
-        }
-    }
-
-    public static enum AlgorithmOutputType {
-        RAW("raw"),
-        VOID("void"),
-        DEFAULT("default"); // not actually an API parameter
-        private String parameter;
-
-        AlgorithmOutputType(String parameter) {
-            this.parameter = parameter;
-        }
-
-        public String toString() {
-            return this.parameter;
-        }
-
-        public static AlgorithmOutputType fromParameter(String parameter) {
-            for (AlgorithmOutputType outputType : values()) {
-                if (outputType.parameter.equals(parameter)) {
-                    return outputType;
-                }
-            }
-            return null;
-        }
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static final class Build {
+        @SerializedName("build_id")
+        private String buildId;
+        @SerializedName("commit_sha")
+        private String commitSha;
+        @SerializedName("finished_at")
+        private String finishedAt;
+        @SerializedName("resource_type")
+        private String resourceType;
+        @SerializedName("started_at")
+        private String startedAt;
+        private String status;
+        @SerializedName("version_info")
+        private VersionInfo versionInfo;
     }
 }

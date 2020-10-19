@@ -1,6 +1,6 @@
 package com.algorithmia.data;
 
-import com.algorithmia.APIException;
+import com.algorithmia.algo.APIException;
 import java.util.ArrayList;
 import java.util.List;
 

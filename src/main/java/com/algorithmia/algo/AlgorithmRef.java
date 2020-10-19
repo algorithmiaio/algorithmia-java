@@ -1,7 +1,5 @@
 package com.algorithmia.algo;
 
-import com.algorithmia.AlgorithmiaConf;
-
 /**
  * A reference to an algorithm and possibly a specific version.
  */

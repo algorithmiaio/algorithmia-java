@@ -15,7 +15,8 @@ libraryDependencies ++= Seq(
   "org.apache.httpcomponents" % "httpasyncclient" % "4.1.4",
   "commons-io" % "commons-io" % "2.8.0",
   "com.novocode" % "junit-interface" % "0.11" % "test->default",
-  "org.junit.jupiter" % "junit-jupiter-api" % "5.7.0" % "test"
+  "org.junit.jupiter" % "junit-jupiter-api" % "5.7.0" % "test",
+  "org.projectlombok" % "lombok" % "1.18.2"
 )
 
 // Disable using the Scala version in published artifacts

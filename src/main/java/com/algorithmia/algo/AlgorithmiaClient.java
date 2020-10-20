@@ -43,7 +43,7 @@ public final class AlgorithmiaClient {
      * Get an Algorithm object from this client
      * @param userName the users algorithmia user name
      * @param algoName the name of the algorithm
-     * @return an Algorithm client for the specified algorithm
+     * @return an Algorithm object for the specified algorithm
      */
     public Algorithm getAlgo(String userName, String algoName) throws IOException {
         String path = "/v1/algorithms/" + userName + "/" + algoName;
@@ -54,14 +54,14 @@ public final class AlgorithmiaClient {
     }
 
     /**
-     * Initialize an Algorithm object from this client
-     * @param userName the users algorithmia user name
+     * List algorithm versions from this client
+     * @param userName the users Algorithmia user name
      * @param algoName the name of the algorithm
      * @param callable whether to return only public or private algorithm versions
      * @param limit items per page
      * @param published whether to return only versions that have been published
-     * @param marker user for pagination
-     * @return an Algorithm client for the specified algorithm
+     * @param marker marker for pagination
+     * @return an AlgorithmVersionsList object for the specified algorithm
      */
     public AlgorithmVersionsList listAlgoVersions(String userName, String algoName, Boolean callable, Integer limit,
                                                   Boolean published, String marker) throws IOException {
@@ -80,16 +80,17 @@ public final class AlgorithmiaClient {
             params.put("marker", marker);
         }
 
-        return this.client.get(path, new TypeToken<AlgorithmVersionsList>(){}, params);
+        return this.client.get(path, new TypeToken<AlgorithmVersionsList>() {
+        }, params);
     }
 
     /**
-     * Initialize an Algorithm object from this client
+     * List algorithm builds from this client
      * @param userName the users algorithmia user name
      * @param algoName the name of the algorithm
      * @param limit items per page
      * @param marker user for pagination
-     * @return an Algorithm client for the specified algorithm
+     * @return an AlgorithmBuildsList object for the specified algorithm
      */
     public AlgorithmBuildsList listAlgoBuilds(String userName, String algoName,
                                               Integer limit, String marker) throws IOException {
@@ -106,14 +107,14 @@ public final class AlgorithmiaClient {
     }
 
     /**
-     * Initialize an Algorithm object from this client
-     * @param userName the users algorithmia user name
+     * Get build logs for an Algorithm object from this client
+     * @param userName the users Algorithmia user name
      * @param algoName the name of the algorithm
-     * @param build_id id of the build to retrieve logs
-     * @return an Algorithm client for the specified algorithm
+     * @param buildId id of the build to retrieve logs
+     * @return a BuildLogs object for the specified algorithm
      */
-    public BuildLogs getAlgoBuildLogs(String userName, String algoName, String build_id) throws IOException {
-        String path = "/v1/algorithms/" + userName + "/" + algoName + "/builds/" + build_id + "/logs";
+    public BuildLogs getAlgoBuildLogs(String userName, String algoName, String buildId) throws IOException {
+        String path = "/v1/algorithms/" + userName + "/" + algoName + "/builds/" + buildId + "/logs";
         HttpResponse response = this.client.get(path);
         String responseString = EntityUtils.toString(response.getEntity());
         Gson gson = new Gson();
@@ -121,10 +122,10 @@ public final class AlgorithmiaClient {
     }
 
     /**
-     * Initialize an Algorithm object from this client
+     * Create a new Algorithm object from this client
      * @param userName the users algorithmia user name
      * @param requestString json payload
-     * @return an Algorithm client for the specified algorithm
+     * @return an Algorithm object for the specified algorithm
      */
     public Algorithm createAlgo(String userName, String requestString) throws IOException {
         String path = "/v1/algorithms/" + userName;
@@ -135,10 +136,10 @@ public final class AlgorithmiaClient {
     }
 
     /**
-     * Get an Algorithm object from this client
+     * Compile an Algorithm from this client
      * @param userName the users algorithmia user name
      * @param algoName the name of the algorithm
-     * @return an Algorithm client for the specified algorithm
+     * @return an Algorithm object for the specified algorithm
      */
     public Algorithm compileAlgo(String userName, String algoName) throws IOException {
         String path = "/v1/algorithms/" + userName + "/" + algoName + "/compile";
@@ -149,11 +150,11 @@ public final class AlgorithmiaClient {
    }
 
     /**
-     * Get an Algorithm object from this client
+     * Update an Algorithm object from this client
      * @param userName the users algorithmia user name
      * @param algoName the name of the algorithm
      * @param requestString json payload
-     * @return an Algorithm client for the specified algorithm
+     * @return an Algorithm object for the specified algorithm
      */
     public Algorithm updateAlgo(String userName, String algoName, String requestString) throws IOException {
         String path = "/v1/algorithms/" + userName + "/" + algoName;
@@ -164,11 +165,11 @@ public final class AlgorithmiaClient {
     }
 
     /**
-     * Get an Algorithm object from this client
-     * @param userName the users algorithmia user name
+     * Publish an Algorithm from this client
+     * @param userName the users Algorithmia user name
      * @param algoName the name of the algorithm
      * @param requestString json payload
-     * @return an Algorithm client for the specified algorithm
+     * @return an Algorithm object for the specified algorithm
      */
     public Algorithm publishAlgo(String userName, String algoName, String requestString) throws IOException {
         String path = "/v1/algorithms/" + userName + "/" + algoName + "/versions";

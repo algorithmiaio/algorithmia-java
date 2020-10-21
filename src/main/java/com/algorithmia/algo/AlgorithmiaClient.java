@@ -54,13 +54,33 @@ public final class AlgorithmiaClient {
     }
 
     /**
+     * Get am Algorithm SCM object from this client
+     * @param scmId id of the scm to retrieve
+     * @return an Algorithm SCM object
+     */
+
+    /**
+     * Get an Algorithm SCM status from this client
+     * @param userName the users Algorithmia user name
+     * @param algoName the name of the algorithm
+     * @return an Algorithm SCM object
+     */
+    public AlgorithmSCMStatus getAlgoScmStatus(String userName, String algoName) throws IOException {
+        String path = "/v1/algorithms/" + userName + "/" + algoName + "/scm/status";
+        HttpResponse response = this.client.get(path);
+        String responseString = EntityUtils.toString(response.getEntity());
+        Gson gson = new Gson();
+        return gson.fromJson(responseString, AlgorithmSCMStatus.class);
+    }
+
+    /**
      * List algorithm versions from this client
      * @param userName the users Algorithmia user name
      * @param algoName the name of the algorithm
      * @param callable whether to return only public or private algorithm versions
      * @param limit items per page
      * @param published whether to return only versions that have been published
-     * @param marker marker for pagination
+     * @param marker used for pagination
      * @return an AlgorithmVersionsList object for the specified algorithm
      */
     public AlgorithmVersionsList listAlgoVersions(String userName, String algoName, Boolean callable, Integer limit,
@@ -85,11 +105,26 @@ public final class AlgorithmiaClient {
     }
 
     /**
+     * Get an Algorithm Build object from this client
+     * @param userName the users Algorithmia user name
+     * @param algoName the name of the algorithm
+     * @param buildId id of the build to retrieve
+     * @return a Algorithm Build object for the specified algorithm
+     */
+    public Algorithm.Build getAlgoBuild(String userName, String algoName, String buildId) throws IOException {
+        String path = "/v1/algorithms/" + userName + "/" + algoName + "/builds/" + buildId;
+        HttpResponse response = this.client.get(path);
+        String responseString = EntityUtils.toString(response.getEntity());
+        Gson gson = new Gson();
+        return gson.fromJson(responseString, Algorithm.Build.class);
+    }
+
+    /**
      * List algorithm builds from this client
      * @param userName the users algorithmia user name
      * @param algoName the name of the algorithm
      * @param limit items per page
-     * @param marker user for pagination
+     * @param marker used for pagination
      * @return an AlgorithmBuildsList object for the specified algorithm
      */
     public AlgorithmBuildsList listAlgoBuilds(String userName, String algoName,
@@ -177,6 +212,17 @@ public final class AlgorithmiaClient {
         String responseString = EntityUtils.toString(response.getEntity());
         Gson gson = new Gson();
         return gson.fromJson(responseString, Algorithm.class);
+    }
+
+    /**
+     * Delete an Algorithm from this client
+     * @param userName the users algorithmia user name
+     * @param algoName the name of the algorithm
+     * @return an empty response
+     */
+    public HttpResponse deleteAlgo(String userName, String algoName) throws IOException {
+        String path = "/v1/algorithms/" + userName + "/" + algoName;
+        return this.client.delete(path);
     }
 
     /**

@@ -166,7 +166,7 @@ public class AlgorithmTest {
         Assert.assertFalse(algorithmSCMsList.getResults().isEmpty());
     }
 
-    /* This will be uncommented after ticket ---
+    /* This will be uncommented during DEV-80
     @Test
     public void algoQuerySCMStatus() throws Exception {
         AlgorithmSCMAuthorizationStatus algorithmSCMAuthorizationStatus = Algorithmia.client(defaultKey).querySCMStatus("github");

@@ -78,7 +78,7 @@ public final class AlgorithmiaClient {
         return gson.fromJson(responseString, AlgorithmSCMsList.class);
     }
 
-    /* This will be uncommented after ticket ---
+    /* This will be uncommented during DEV-80
     /**
      * Query an Algorithm SCM status from this client
      * @param scmId id of the scm to retrieve

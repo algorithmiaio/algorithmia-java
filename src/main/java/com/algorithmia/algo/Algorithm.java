@@ -21,9 +21,6 @@ public final class Algorithm {
     @SerializedName("version_info")
     private VersionInfo versionInfo;
     private Source source;
-    private SCM scm;
-    private Oauth oauth;
-    private Urls urls;
     private Compilation compilation;
     private Build build = new Build();
     @SerializedName("self_link")
@@ -40,9 +37,6 @@ public final class Algorithm {
                 ", settings=" + settings +
                 ", versionInfo=" + versionInfo +
                 ", source=" + source +
-                ", scm=" + scm +
-                ", oauth=" + oauth +
-                ", urls=" + urls +
                 ", compilation=" + compilation +
                 ", build=" + build +
                 ", selfLink='" + selfLink + '\'' +

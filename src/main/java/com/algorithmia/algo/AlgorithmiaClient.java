@@ -58,14 +58,60 @@ public final class AlgorithmiaClient {
      * @param scmId id of the scm to retrieve
      * @return an Algorithm SCM object
      */
+    public Algorithm.SCM getSCM(String scmId) throws IOException {
+        String path = "/v1/scms/" + scmId;
+        HttpResponse response = this.client.get(path);
+        String responseString = EntityUtils.toString(response.getEntity());
+        Gson gson = new Gson();
+        return gson.fromJson(responseString, Algorithm.SCM.class);
+    }
 
     /**
-     * Get an Algorithm SCM status from this client
+     * List Algorithm SCMs from this client
+     * @return an Algorithm SCM object
+     */
+    public AlgorithmSCMsList listSCMs() throws IOException {
+        String path = "/v1/scms";
+        HttpResponse response = this.client.get(path);
+        String responseString = EntityUtils.toString(response.getEntity());
+        Gson gson = new Gson();
+        return gson.fromJson(responseString, AlgorithmSCMsList.class);
+    }
+
+    /* This will be uncommented after ticket ---
+    /**
+     * Query an Algorithm SCM status from this client
+     * @param scmId id of the scm to retrieve
+     * @return an Algorithm SCM authorization object
+     *
+    public AlgorithmSCMAuthorizationStatus querySCMStatus(String scmId) throws IOException {
+        String path = "/v1/scms/" + scmId + "/oauth/status";
+        HttpResponse response = this.client.get(path);
+        String responseString = EntityUtils.toString(response.getEntity());
+        Gson gson = new Gson();
+        return gson.fromJson(responseString, AlgorithmSCMAuthorizationStatus.class);
+    }
+
+    /**
+     * Revoke an Algorithm SCM status from this client
+     * @param scmId id of the scm to retrieve
+     * @return an Algorithm SCM authorization object
+     *
+    public AlgorithmSCMAuthorizationStatus revokeSCMStatus(String scmId) throws IOException {
+        String path = "/v1/scms/" + scmId + "/oauth/revoke";
+        HttpResponse response = this.client.post(path);
+        String responseString = EntityUtils.toString(response.getEntity());
+        Gson gson = new Gson();
+        return gson.fromJson(responseString, AlgorithmSCMAuthorizationStatus.class);
+    }*/
+
+    /**
+     * Get an Algorithm SCM status for from this client
      * @param userName the users Algorithmia user name
      * @param algoName the name of the algorithm
      * @return an Algorithm SCM object
      */
-    public AlgorithmSCMStatus getAlgoScmStatus(String userName, String algoName) throws IOException {
+    public AlgorithmSCMStatus getAlgoSCMStatus(String userName, String algoName) throws IOException {
         String path = "/v1/algorithms/" + userName + "/" + algoName + "/scm/status";
         HttpResponse response = this.client.get(path);
         String responseString = EntityUtils.toString(response.getEntity());
@@ -100,8 +146,7 @@ public final class AlgorithmiaClient {
             params.put("marker", marker);
         }
 
-        return this.client.get(path, new TypeToken<AlgorithmVersionsList>() {
-        }, params);
+        return this.client.get(path, new TypeToken<AlgorithmVersionsList>() {}, params);
     }
 
     /**

@@ -43,7 +43,7 @@ public final class AlgorithmiaClient {
      * Get an Algorithm object from this client
      * @param userName the users algorithmia user name
      * @param algoName the name of the algorithm
-     * @return an Algorithm client for the specified algorithm
+     * @return an Algorithm object for the specified algorithm
      */
     public Algorithm getAlgo(String userName, String algoName) throws IOException {
         String path = "/v1/algorithms/" + userName + "/" + algoName;
@@ -54,14 +54,80 @@ public final class AlgorithmiaClient {
     }
 
     /**
-     * Initialize an Algorithm object from this client
-     * @param userName the users algorithmia user name
+     * Get am Algorithm SCM object from this client
+     * @param scmId id of the scm to retrieve
+     * @return an Algorithm SCM object
+     */
+    public Algorithm.SCM getSCM(String scmId) throws IOException {
+        String path = "/v1/scms/" + scmId;
+        HttpResponse response = this.client.get(path);
+        String responseString = EntityUtils.toString(response.getEntity());
+        Gson gson = new Gson();
+        return gson.fromJson(responseString, Algorithm.SCM.class);
+    }
+
+    /**
+     * List Algorithm SCMs from this client
+     * @return an Algorithm SCM object
+     */
+    public AlgorithmSCMsList listSCMs() throws IOException {
+        String path = "/v1/scms";
+        HttpResponse response = this.client.get(path);
+        String responseString = EntityUtils.toString(response.getEntity());
+        Gson gson = new Gson();
+        return gson.fromJson(responseString, AlgorithmSCMsList.class);
+    }
+
+    /* This will be uncommented during DEV-80
+    /**
+     * Query an Algorithm SCM status from this client
+     * @param scmId id of the scm to retrieve
+     * @return an Algorithm SCM authorization object
+     *
+    public AlgorithmSCMAuthorizationStatus querySCMStatus(String scmId) throws IOException {
+        String path = "/v1/scms/" + scmId + "/oauth/status";
+        HttpResponse response = this.client.get(path);
+        String responseString = EntityUtils.toString(response.getEntity());
+        Gson gson = new Gson();
+        return gson.fromJson(responseString, AlgorithmSCMAuthorizationStatus.class);
+    }
+
+    /**
+     * Revoke an Algorithm SCM status from this client
+     * @param scmId id of the scm to retrieve
+     * @return an Algorithm SCM authorization object
+     *
+    public AlgorithmSCMAuthorizationStatus revokeSCMStatus(String scmId) throws IOException {
+        String path = "/v1/scms/" + scmId + "/oauth/revoke";
+        HttpResponse response = this.client.post(path);
+        String responseString = EntityUtils.toString(response.getEntity());
+        Gson gson = new Gson();
+        return gson.fromJson(responseString, AlgorithmSCMAuthorizationStatus.class);
+    }*/
+
+    /**
+     * Get an Algorithm SCM status for from this client
+     * @param userName the users Algorithmia user name
+     * @param algoName the name of the algorithm
+     * @return an Algorithm SCM object
+     */
+    public AlgorithmSCMStatus getAlgoSCMStatus(String userName, String algoName) throws IOException {
+        String path = "/v1/algorithms/" + userName + "/" + algoName + "/scm/status";
+        HttpResponse response = this.client.get(path);
+        String responseString = EntityUtils.toString(response.getEntity());
+        Gson gson = new Gson();
+        return gson.fromJson(responseString, AlgorithmSCMStatus.class);
+    }
+
+    /**
+     * List algorithm versions from this client
+     * @param userName the users Algorithmia user name
      * @param algoName the name of the algorithm
      * @param callable whether to return only public or private algorithm versions
      * @param limit items per page
      * @param published whether to return only versions that have been published
-     * @param marker user for pagination
-     * @return an Algorithm client for the specified algorithm
+     * @param marker used for pagination
+     * @return an AlgorithmVersionsList object for the specified algorithm
      */
     public AlgorithmVersionsList listAlgoVersions(String userName, String algoName, Boolean callable, Integer limit,
                                                   Boolean published, String marker) throws IOException {
@@ -80,16 +146,31 @@ public final class AlgorithmiaClient {
             params.put("marker", marker);
         }
 
-        return this.client.get(path, new TypeToken<AlgorithmVersionsList>(){}, params);
+        return this.client.get(path, new TypeToken<AlgorithmVersionsList>() {}, params);
     }
 
     /**
-     * Initialize an Algorithm object from this client
+     * Get an Algorithm Build object from this client
+     * @param userName the users Algorithmia user name
+     * @param algoName the name of the algorithm
+     * @param buildId id of the build to retrieve
+     * @return a Algorithm Build object for the specified algorithm
+     */
+    public Algorithm.Build getAlgoBuild(String userName, String algoName, String buildId) throws IOException {
+        String path = "/v1/algorithms/" + userName + "/" + algoName + "/builds/" + buildId;
+        HttpResponse response = this.client.get(path);
+        String responseString = EntityUtils.toString(response.getEntity());
+        Gson gson = new Gson();
+        return gson.fromJson(responseString, Algorithm.Build.class);
+    }
+
+    /**
+     * List algorithm builds from this client
      * @param userName the users algorithmia user name
      * @param algoName the name of the algorithm
      * @param limit items per page
-     * @param marker user for pagination
-     * @return an Algorithm client for the specified algorithm
+     * @param marker used for pagination
+     * @return an AlgorithmBuildsList object for the specified algorithm
      */
     public AlgorithmBuildsList listAlgoBuilds(String userName, String algoName,
                                               Integer limit, String marker) throws IOException {
@@ -106,14 +187,14 @@ public final class AlgorithmiaClient {
     }
 
     /**
-     * Initialize an Algorithm object from this client
-     * @param userName the users algorithmia user name
+     * Get build logs for an Algorithm object from this client
+     * @param userName the users Algorithmia user name
      * @param algoName the name of the algorithm
-     * @param build_id id of the build to retrieve logs
-     * @return an Algorithm client for the specified algorithm
+     * @param buildId id of the build to retrieve logs
+     * @return a BuildLogs object for the specified algorithm
      */
-    public BuildLogs getAlgoBuildLogs(String userName, String algoName, String build_id) throws IOException {
-        String path = "/v1/algorithms/" + userName + "/" + algoName + "/builds/" + build_id + "/logs";
+    public BuildLogs getAlgoBuildLogs(String userName, String algoName, String buildId) throws IOException {
+        String path = "/v1/algorithms/" + userName + "/" + algoName + "/builds/" + buildId + "/logs";
         HttpResponse response = this.client.get(path);
         String responseString = EntityUtils.toString(response.getEntity());
         Gson gson = new Gson();
@@ -121,10 +202,10 @@ public final class AlgorithmiaClient {
     }
 
     /**
-     * Initialize an Algorithm object from this client
+     * Create a new Algorithm object from this client
      * @param userName the users algorithmia user name
      * @param requestString json payload
-     * @return an Algorithm client for the specified algorithm
+     * @return an Algorithm object for the specified algorithm
      */
     public Algorithm createAlgo(String userName, String requestString) throws IOException {
         String path = "/v1/algorithms/" + userName;
@@ -135,10 +216,10 @@ public final class AlgorithmiaClient {
     }
 
     /**
-     * Get an Algorithm object from this client
+     * Compile an Algorithm from this client
      * @param userName the users algorithmia user name
      * @param algoName the name of the algorithm
-     * @return an Algorithm client for the specified algorithm
+     * @return an Algorithm object for the specified algorithm
      */
     public Algorithm compileAlgo(String userName, String algoName) throws IOException {
         String path = "/v1/algorithms/" + userName + "/" + algoName + "/compile";
@@ -149,11 +230,11 @@ public final class AlgorithmiaClient {
    }
 
     /**
-     * Get an Algorithm object from this client
+     * Update an Algorithm object from this client
      * @param userName the users algorithmia user name
      * @param algoName the name of the algorithm
      * @param requestString json payload
-     * @return an Algorithm client for the specified algorithm
+     * @return an Algorithm object for the specified algorithm
      */
     public Algorithm updateAlgo(String userName, String algoName, String requestString) throws IOException {
         String path = "/v1/algorithms/" + userName + "/" + algoName;
@@ -164,11 +245,11 @@ public final class AlgorithmiaClient {
     }
 
     /**
-     * Get an Algorithm object from this client
-     * @param userName the users algorithmia user name
+     * Publish an Algorithm from this client
+     * @param userName the users Algorithmia user name
      * @param algoName the name of the algorithm
      * @param requestString json payload
-     * @return an Algorithm client for the specified algorithm
+     * @return an Algorithm object for the specified algorithm
      */
     public Algorithm publishAlgo(String userName, String algoName, String requestString) throws IOException {
         String path = "/v1/algorithms/" + userName + "/" + algoName + "/versions";
@@ -176,6 +257,17 @@ public final class AlgorithmiaClient {
         String responseString = EntityUtils.toString(response.getEntity());
         Gson gson = new Gson();
         return gson.fromJson(responseString, Algorithm.class);
+    }
+
+    /**
+     * Delete an Algorithm from this client
+     * @param userName the users algorithmia user name
+     * @param algoName the name of the algorithm
+     * @return an empty response
+     */
+    public HttpResponse deleteAlgo(String userName, String algoName) throws IOException {
+        String path = "/v1/algorithms/" + userName + "/" + algoName;
+        return this.client.delete(path);
     }
 
     /**

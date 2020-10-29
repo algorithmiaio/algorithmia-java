@@ -23,11 +23,11 @@ public class AlgorithmTest {
     @Before
     public void setup() {
         defaultKey = System.getenv("ALGORITHMIA_DEFAULT_API_KEY");
-        adminKey = System.getenv("ALGORITHMIA_ADMIN_API_KEY");
-        testAddress = System.getenv("ALGORITHMIA_API_TEST_ADDRESS");
+        //adminKey = System.getenv("ALGORITHMIA_ADMIN_API_KEY");
+        //testAddress = System.getenv("ALGORITHMIA_API_TEST_ADDRESS");
         Assume.assumeNotNull(defaultKey);
-        Assume.assumeNotNull(adminKey);
-        Assume.assumeNotNull(testAddress);
+        //Assume.assumeNotNull(adminKey);
+        //Assume.assumeNotNull(testAddress);
     }
 
     @Test
@@ -37,6 +37,16 @@ public class AlgorithmTest {
         int result = res.as(new TypeToken<Integer>(){});
         Assert.assertEquals(42, result);
         Assert.assertEquals(ContentType.Json, res.getMetadata().getContentType());
+    }
+
+    @Test
+    public void algorithmCAPipeText() throws Exception {
+        AlgoResponse res = Algorithmia.client(defaultKey,null,1,"C:\\Users\\john.bragg\\algorithmia-java\\testCert.pem").algo("demo/Hello").pipe("foo");
+        Assert.assertEquals("\"Hello foo\"", res.as(new TypeToken<JsonElement>(){}).toString());
+        Assert.assertEquals("\"Hello foo\"", res.asJsonString());
+        Assert.assertEquals("Hello foo", res.as(new TypeToken<String>(){}));
+        Assert.assertEquals("Hello foo", res.asString());
+        Assert.assertEquals(ContentType.Text, res.getMetadata().getContentType());
     }
 
     @Test

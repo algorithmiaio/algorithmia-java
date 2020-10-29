@@ -22,19 +22,32 @@ import org.apache.http.protocol.HttpContext;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.nio.file.Files;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.InterruptedException;
 import java.nio.ByteBuffer;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.KeyStore;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.util.Arrays.stream;
 
 public class HttpClient {
 
@@ -46,14 +59,15 @@ public class HttpClient {
     private static List<CloseableHttpAsyncClient> clients = new LinkedList<CloseableHttpAsyncClient>();
 
     static {
-        Runtime.getRuntime().addShutdownHook(new Thread(){
+        Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
-            public void run(){
+            public void run() {
                 synchronized (clients) {
                     for (CloseableHttpAsyncClient client : clients) {
                         try {
                             client.close();
-                        } catch (IOException e) {}
+                        } catch (IOException e) {
+                        }
                     }
                 }
             }
@@ -61,24 +75,70 @@ public class HttpClient {
     }
 
     private final CloseableHttpAsyncClient client;
-    public HttpClient(Auth auth, String apiAddress, int maxConnections) {
+
+    public HttpClient(Auth auth, String apiAddress, int maxConnections,String pemPath) {
         this.auth = auth;
-        if(apiAddress != null) {
+        if (apiAddress != null) {
             this.apiAddress = apiAddress;
         } else {
             this.apiAddress = AlgorithmiaConf.apiAddress();
         }
+        HttpAsyncClientBuilder clientBuilder = HttpAsyncClientBuilder.create();
+        if (pemPath != null) {
+            try {
+                SSLContext context = getSSLContext(pemPath);
+                clientBuilder.setSSLContext(context);
+            } catch (Exception e) {
 
-        client = HttpAsyncClientBuilder.create()
-            .setMaxConnTotal(maxConnections)
-            .setMaxConnPerRoute(maxConnections)
-            .useSystemProperties()
-            .build();
+            }
+        }
+
+        client = clientBuilder
+                .setMaxConnTotal(maxConnections)
+                .setMaxConnPerRoute(maxConnections)
+                .useSystemProperties()
+                .build();
 
         synchronized (clients) {
             clients.add(client);
         }
         client.start();
+    }
+
+
+    /**
+     * Builds SLLContext from supplied .PEM
+     */
+    private SSLContext getSSLContext(String pemPath) throws Exception {
+        SSLContext context = SSLContext.getInstance("TLS");
+
+
+        byte[] certBytes = Files.readAllBytes(new File(pemPath).toPath());
+        CertificateFactory factory = CertificateFactory.getInstance("X.509");
+        X509Certificate cert = (X509Certificate) factory.generateCertificates(new ByteArrayInputStream(certBytes));
+
+        KeyStore keystore = KeyStore.getInstance("JKS");
+        keystore.load(null);
+        keystore.setCertificateEntry("cert-alias", cert);
+
+        //Gets Default Trust Store
+        TrustManagerFactory tmx = TrustManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+        tmx.init((KeyStore) null);
+        //Trust store built from our supplied pem
+        TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
+        tmf.init(keystore);
+
+
+        TrustManager[] tm = tmf.getTrustManagers();
+        TrustManager[] tx = tmx.getTrustManagers();
+        Stream stream1 = stream(tmf.getTrustManagers()).filter(x -> x instanceof TrustManager);
+        Stream stream2 = stream(tmx.getTrustManagers()).filter(x -> x instanceof TrustManager);
+
+        TrustManager[] t = (TrustManager[]) Stream.concat(stream1,stream2).collect(Collectors.toList());
+
+        context.init(null, t, null);
+
+        return context;
     }
 
     /**
@@ -94,7 +154,7 @@ public class HttpClient {
     private void addQueryParameters(HttpRequestBase request, Map<String, String> params) {
         if (params != null) {
             URIBuilder builder = new URIBuilder(request.getURI());
-            for(Map.Entry<String, String> param : params.entrySet()) {
+            for (Map.Entry<String, String> param : params.entrySet()) {
                 builder.addParameter(param.getKey(), param.getValue());
             }
             try {
@@ -240,17 +300,17 @@ public class HttpClient {
     private <T> T execute(HttpUriRequest request, HttpAsyncResponseConsumer<T> consumer) throws APIException {
         try {
             return executeAsync(request, consumer).get();
-        } catch(ExecutionException e) {
+        } catch (ExecutionException e) {
             throw new APIException(e.getCause().getMessage());
-        } catch(CancellationException e) {
+        } catch (CancellationException e) {
             throw new APIException("API connection cancelled: " + request.getURI().toString() + " (" + e.getMessage() + ")", e);
-        } catch(InterruptedException e) {
+        } catch (InterruptedException e) {
             throw new APIException("API connection interrupted: " + request.getURI().toString() + " (" + e.getMessage() + ")", e);
         }
     }
 
     private <T> Future<T> executeAsync(HttpUriRequest request, HttpAsyncResponseConsumer<T> consumer) {
-        if(this.auth != null) {
+        if (this.auth != null) {
             this.auth.authenticateRequest(request);
         }
         request.addHeader("User-Agent", HttpClient.userAgent);
@@ -260,7 +320,7 @@ public class HttpClient {
     }
 
     /**
-     *   A consumer that drops the body of a response. It's useful when you just want the HTTP headers.
+     * A consumer that drops the body of a response. It's useful when you just want the HTTP headers.
      */
     static class HttpResponseConsumer extends AsyncByteConsumer<HttpResponse> {
         private HttpResponse response;
@@ -287,6 +347,7 @@ public class HttpClient {
             clients.remove(client);
         }
     }
+
     public void close() throws IOException {
         this.finalize();
     }

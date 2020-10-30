@@ -4,8 +4,6 @@ import com.algorithmia.client.SimpleAuth;
 import com.algorithmia.data.DataDirectory;
 import com.algorithmia.data.DataFile;
 
-import java.io.IOException;
-
 /**
  * Instantiate Algorithmia clients for calling algorithms and accessing data
  */

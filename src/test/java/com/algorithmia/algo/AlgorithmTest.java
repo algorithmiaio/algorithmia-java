@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.http.HttpResponse;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.Assume;
@@ -117,22 +118,11 @@ public class AlgorithmTest {
 
     @Test
     public void algoCreateAlgo() throws Exception {
-        String name = "CreateAlgoTest" + System.currentTimeMillis();
-        Algorithm.Details details = new Algorithm.Details();
-        details.setLabel("CreateAlgoTest");
-        Algorithm.Settings settings = new Algorithm.Settings();
-        settings.setEnvironment("cpu");
-        settings.setLanguage("java");
-        settings.setLicense("ap1");
-        settings.setNetworkAccess("full");
-        settings.setPipelineEnabled(true);
-        settings.setSourceVisibility("open");
-        Algorithm algorithm = Algorithm.builder().id("90000000").name(name)
-                .details(details).settings(settings).buildDTO();
+        Algorithm testAlgo = createTestAlgo();
         Gson gson = new Gson();
-        String json = gson.toJson(algorithm);
+        String json = gson.toJson(testAlgo);
         Algorithm newAlgorithm = Algorithmia.client(defaultKey).createAlgo("dherring", json);
-        Assert.assertEquals(name, newAlgorithm.getName());
+        Assert.assertEquals(testAlgo.getName(), newAlgorithm.getName());
     }
 
     @Test
@@ -159,6 +149,37 @@ public class AlgorithmTest {
     }
 
     @Test
+    public void algoGetAlgoSCM() throws Exception {
+        Algorithm.SCM scm = Algorithmia.client(defaultKey).getSCM("internal");
+        Assert.assertEquals(scm.getEnabled(), true);
+    }
+
+    @Test
+    public void algoListAlgoSCMs() throws Exception {
+        AlgorithmSCMsList algorithmSCMsList = Algorithmia.client(defaultKey).listSCMs();
+        Assert.assertFalse(algorithmSCMsList.getResults().isEmpty());
+    }
+
+    /* This will be uncommented during DEV-80
+    @Test
+    public void algoQuerySCMStatus() throws Exception {
+        AlgorithmSCMAuthorizationStatus algorithmSCMAuthorizationStatus = Algorithmia.client(defaultKey).querySCMStatus("github");
+        Assert.assertEquals("authorized", algorithmSCMAuthorizationStatus.getAuthorizationStatus());
+    }
+
+    @Test
+    public void algoRevokeSCMStatus() throws Exception {
+        AlgorithmSCMAuthorizationStatus algorithmSCMAuthorizationStatus = Algorithmia.client(defaultKey).revokeSCMStatus("?");
+        Assert.assertEquals("?", algorithmSCMAuthorizationStatus.getAuthorizationStatus());
+    }*/
+
+    @Test
+    public void algoGetAlgoSCMStatus() throws Exception {
+        AlgorithmSCMStatus scmStatus = Algorithmia.client(defaultKey).getAlgoSCMStatus("dherring", "ResultFile");
+        Assert.assertEquals("active", scmStatus.getScmConnectionStatus());
+    }
+
+    @Test
     public void algoListAlgoVersions() throws Exception {
         AlgorithmVersionsList algoList = Algorithmia.client(defaultKey).listAlgoVersions(
                 "dherring",
@@ -168,6 +189,17 @@ public class AlgorithmTest {
                 null,
                 null);
         Assert.assertEquals(10, algoList.getResults().size());
+    }
+
+    @Test
+    public void algoGetAlgoBuild() throws Exception {
+        Algorithm.Build expectedBuild = new Algorithm.Build();
+        expectedBuild.setBuildId("579ff0a8-6b1f-4cf4-83a5-c7cb6999ae24");
+        Algorithm.Build returnedBuild = Algorithmia.client(defaultKey).getAlgoBuild(
+                "dherring",
+                "ResultFile",
+                "579ff0a8-6b1f-4cf4-83a5-c7cb6999ae24");
+        Assert.assertEquals(expectedBuild.getBuildId(), returnedBuild.getBuildId());
     }
 
     @Test
@@ -199,4 +231,27 @@ public class AlgorithmTest {
         Assert.assertNotNull(buildLogs.getLogs());
     }
 
+    @Test
+    public void algoDeleteAlgo() throws Exception {
+        Algorithm testAlgo = createTestAlgo();
+        Gson gson = new Gson();
+        String json = gson.toJson(testAlgo);
+        Algorithm newAlgorithm = Algorithmia.client(defaultKey).createAlgo("dherring", json);
+        HttpResponse response = Algorithmia.client(defaultKey).deleteAlgo("dherring", newAlgorithm.getName());
+        Assert.assertEquals(204, response.getStatusLine().getStatusCode());
+    }
+
+    private Algorithm createTestAlgo() {
+        String name = "CreateAlgoTest" + System.currentTimeMillis();
+        Algorithm.Details details = new Algorithm.Details();
+        details.setLabel("CreateAlgoTest");
+        Algorithm.Settings settings = new Algorithm.Settings();
+        settings.setEnvironment("cpu");
+        settings.setLanguage("java");
+        settings.setLicense("ap1");
+        settings.setNetworkAccess("full");
+        settings.setPipelineEnabled(true);
+        settings.setSourceVisibility("open");
+        return Algorithm.builder().name(name).details(details).settings(settings).buildDTO();
+    }
 }

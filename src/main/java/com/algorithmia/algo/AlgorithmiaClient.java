@@ -31,6 +31,11 @@ public final class AlgorithmiaClient {
         this.client = new HttpClient(auth, apiAddress, maxConnections);
     }
 
+    //For testing
+    public AlgorithmiaClient(HttpClient client) {
+        this.client = client;
+    }
+
     /**
      * Initialize an Algorithm object from this client
      * @param algoUri the algorithm's URI, e.g., algo://user/algoname

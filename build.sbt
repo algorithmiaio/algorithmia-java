@@ -16,7 +16,8 @@ libraryDependencies ++= Seq(
   "commons-io" % "commons-io" % "2.8.0",
   "com.novocode" % "junit-interface" % "0.11" % "test->default",
   "org.junit.jupiter" % "junit-jupiter-api" % "5.7.0" % "test",
-  "org.projectlombok" % "lombok" % "1.18.2"
+  "org.projectlombok" % "lombok" % "1.18.2",
+  "org.mockito" % "mockito-core" % "3.6.0" % Test
 )
 
 // Disable using the Scala version in published artifacts

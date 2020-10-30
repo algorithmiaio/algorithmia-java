@@ -15,17 +15,17 @@ import java.util.concurrent.*;
 
 public class AlgorithmTest {
 
-    private String key;
+    private String defaultKey;
 
     @Before
     public void setup() {
-        key = System.getenv("ALGORITHMIA_API_KEY");
-        Assume.assumeNotNull(key);
+        defaultKey = System.getenv("ALGORITHMIA_DEFAULT_API_KEY");
+        Assume.assumeNotNull(defaultKey);
     }
 
     @Test
     public void algorithmPipeJson() throws Exception {
-        AlgoResponse res = Algorithmia.client(key).algo("docs/JavaAddOne").pipe(41);
+        AlgoResponse res = Algorithmia.client(defaultKey).algo("docs/JavaAddOne").pipe(41);
         Assert.assertEquals("42", res.as(new TypeToken<JsonElement>(){}).toString());
         int result = res.as(new TypeToken<Integer>(){});
         Assert.assertEquals(42, result);
@@ -34,7 +34,7 @@ public class AlgorithmTest {
 
     @Test
     public void algorithmPipeText() throws Exception {
-        AlgoResponse res = Algorithmia.client(key).algo("demo/Hello").pipe("foo");
+        AlgoResponse res = Algorithmia.client(defaultKey).algo("demo/Hello").pipe("foo");
         Assert.assertEquals("\"Hello foo\"", res.as(new TypeToken<JsonElement>(){}).toString());
         Assert.assertEquals("\"Hello foo\"", res.asJsonString());
         Assert.assertEquals("Hello foo", res.as(new TypeToken<String>(){}));
@@ -45,7 +45,7 @@ public class AlgorithmTest {
     @Test
     public void algorithmPipeBinary() throws Exception {
         byte[] input = new byte[10];
-        AlgoResponse res = Algorithmia.client(key).algo("docs/JavaBinaryInAndOut").pipe(input);
+        AlgoResponse res = Algorithmia.client(defaultKey).algo("docs/JavaBinaryInAndOut").pipe(input);
         byte[] output = res.as(new TypeToken<byte[]>(){});
         Assert.assertEquals(Base64.encodeBase64String(input),Base64.encodeBase64String(output));
         Assert.assertEquals(ContentType.Binary, res.getMetadata().getContentType());
@@ -53,7 +53,7 @@ public class AlgorithmTest {
 
     @Test
     public void algorithmRawOutput() throws Exception {
-        AlgoResponse res = Algorithmia.client(key).algo("demo/Hello")
+        AlgoResponse res = Algorithmia.client(defaultKey).algo("demo/Hello")
                 .setOutputType(AlgorithmExecutable.AlgorithmOutputType.RAW).pipe("foo");
         Assert.assertEquals("Hello foo", res.getRawOutput());
         Assert.assertEquals(null, res.getMetadata());
@@ -61,7 +61,7 @@ public class AlgorithmTest {
 
     @Test
     public void algorithmVoidOutput() throws Exception {
-        AlgoAsyncResponse res = Algorithmia.client(key).algo("demo/Hello")
+        AlgoAsyncResponse res = Algorithmia.client(defaultKey).algo("demo/Hello")
                 .setOutputType(AlgorithmExecutable.AlgorithmOutputType.VOID).pipe("foo")
                 .getAsyncResponse();
         Assert.assertEquals("void", res.getAsyncProtocol());
@@ -70,7 +70,7 @@ public class AlgorithmTest {
 
     @Test
     public void algorithmSetOption() throws Exception {
-        AlgoResponse res = Algorithmia.client(key).algo("demo/Hello")
+        AlgoResponse res = Algorithmia.client(defaultKey).algo("demo/Hello")
                 .setOption("output", "raw").pipe("foo");
 
         Assert.assertEquals("Hello foo", res.getRawOutput());
@@ -81,7 +81,7 @@ public class AlgorithmTest {
         Map<String, String> options = new HashMap<String, String>();
         options.put("output", "raw");
 
-        AlgoResponse res = Algorithmia.client(key).algo("demo/Hello")
+        AlgoResponse res = Algorithmia.client(defaultKey).algo("demo/Hello")
                 .setOptions(options).pipe("foo");
 
         Assert.assertEquals("Hello foo", res.getRawOutput());
@@ -89,7 +89,7 @@ public class AlgorithmTest {
 
     @Test
     public void algorithmCheckTimeout() throws Exception {
-        AlgorithmExecutable algo = Algorithmia.client(key).algo("docs/JavaAddOne");
+        AlgorithmExecutable algo = Algorithmia.client(defaultKey).algo("docs/JavaAddOne");
 
         // Check default timeout - just for fun. This doesn't have to be specified at all time
         // but I wanted to make sure this method never throws an exception when the key in the options
@@ -111,7 +111,7 @@ public class AlgorithmTest {
 
     @Test
     public void algoGetAlgo() throws Exception {
-        Algorithm algorithm = Algorithmia.client(key).getAlgo("dherring", "ResultFile");
+        Algorithm algorithm = Algorithmia.client(defaultKey).getAlgo("dherring", "ResultFile");
         Assert.assertEquals(algorithm.getName(), "ResultFile");
     }
 
@@ -131,13 +131,13 @@ public class AlgorithmTest {
                 .details(details).settings(settings).buildDTO();
         Gson gson = new Gson();
         String json = gson.toJson(algorithm);
-        Algorithm newAlgorithm = Algorithmia.client(key).createAlgo("dherring", json);
+        Algorithm newAlgorithm = Algorithmia.client(defaultKey).createAlgo("dherring", json);
         Assert.assertEquals(name, newAlgorithm.getName());
     }
 
     @Test
     public void algoCompileAlgo() throws Exception {
-        Algorithm algorithm = Algorithmia.client(key).compileAlgo("dherring", "ResultFile");
+        Algorithm algorithm = Algorithmia.client(defaultKey).compileAlgo("dherring", "ResultFile");
         Assert.assertEquals(algorithm.getName(), "ResultFile");
     }
 
@@ -153,14 +153,14 @@ public class AlgorithmTest {
         Gson gson = new Gson();
         String json = gson.toJson(algorithm);
         //Must call compile in order to increase version of already published algorithm
-        Algorithmia.client(key).compileAlgo("dherring", "ResultFile");
-        Algorithm newAlgorithm = Algorithmia.client(key).publishAlgo("dherring", "ResultFile", json);
+        Algorithmia.client(defaultKey).compileAlgo("dherring", "ResultFile");
+        Algorithm newAlgorithm = Algorithmia.client(defaultKey).publishAlgo("dherring", "ResultFile", json);
         Assert.assertNotNull(newAlgorithm.getVersionInfo().getSemanticVersion());
     }
 
     @Test
     public void algoListAlgoVersions() throws Exception {
-        AlgorithmVersionsList algoList = Algorithmia.client(key).listAlgoVersions(
+        AlgorithmVersionsList algoList = Algorithmia.client(defaultKey).listAlgoVersions(
                 "dherring",
                 "ResultFile",
                 null,
@@ -172,7 +172,7 @@ public class AlgorithmTest {
 
     @Test
     public void algoListAlgoBuilds() throws Exception {
-        AlgorithmBuildsList algoList = Algorithmia.client(key).listAlgoBuilds(
+        AlgorithmBuildsList algoList = Algorithmia.client(defaultKey).listAlgoBuilds(
                 "dherring",
                 "ResultFile",
                 null,
@@ -182,17 +182,17 @@ public class AlgorithmTest {
 
     @Test
     public void algoUpdateAlgo() throws Exception {
-        Algorithm algorithm = Algorithmia.client(key).getAlgo("dherring", "ResultFile");
+        Algorithm algorithm = Algorithmia.client(defaultKey).getAlgo("dherring", "ResultFile");
         algorithm.getDetails().setLabel("Enough");
         Gson gson = new Gson();
         String json = gson.toJson(algorithm);
-        Algorithm newAlgorithm = Algorithmia.client(key).updateAlgo("dherring", "ResultFile", json);
+        Algorithm newAlgorithm = Algorithmia.client(defaultKey).updateAlgo("dherring", "ResultFile", json);
         Assert.assertEquals(algorithm.getDetails().getLabel(), newAlgorithm.getDetails().getLabel());
     }
 
     @Test
     public void algoGetAlgoBuildLogs() throws Exception {
-        BuildLogs buildLogs = Algorithmia.client(key).getAlgoBuildLogs(
+        BuildLogs buildLogs = Algorithmia.client(defaultKey).getAlgoBuildLogs(
                 "dherring",
                 "ResultFile",
                 "579ff0a8-6b1f-4cf4-83a5-c7cb6999ae24");

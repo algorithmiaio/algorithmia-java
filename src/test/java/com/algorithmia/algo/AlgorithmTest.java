@@ -1,33 +1,46 @@
 package com.algorithmia.algo;
 
+import com.algorithmia.client.HttpClient;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpResponse;
+import org.apache.http.ProtocolVersion;
+import org.apache.http.entity.BasicHttpEntity;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.message.BasicHttpResponse;
+import org.apache.http.message.BasicStatusLine;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.Assume;
 import org.junit.Assert;
+import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
+import java.io.ByteArrayInputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.*;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+
 public class AlgorithmTest {
 
     private String defaultKey;
-    private String adminKey;
-    private String testAddress;
+    @Mock
+    private HttpClient httpClient;
 
     @Before
     public void setup() {
         defaultKey = System.getenv("ALGORITHMIA_DEFAULT_API_KEY");
-        adminKey = System.getenv("ALGORITHMIA_ADMIN_API_KEY");
-        testAddress = System.getenv("ALGORITHMIA_API_TEST_ADDRESS");
         Assume.assumeNotNull(defaultKey);
-        Assume.assumeNotNull(adminKey);
-        Assume.assumeNotNull(testAddress);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
@@ -245,6 +258,30 @@ public class AlgorithmTest {
         Algorithm newAlgorithm = Algorithmia.client(defaultKey).createAlgo("dherring", json);
         HttpResponse response = Algorithmia.client(defaultKey).deleteAlgo("dherring", newAlgorithm.getName());
         Assert.assertEquals(204, response.getStatusLine().getStatusCode());
+    }
+
+    @Test
+    public void algoReportInsights() throws Exception {
+        HttpResponse response = new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion("", 5, 5), 200, ""));
+        BasicHttpEntity httpEntity = new BasicHttpEntity();
+        httpEntity.setContent(new ByteArrayInputStream("{\"response\": \"hello\"}".getBytes()));
+        response.setEntity(httpEntity);
+
+        Mockito.when(httpClient.post(anyString(), any())).thenReturn(response);
+
+        AlgorithmiaClient algorithmiaClient = new AlgorithmiaClient(httpClient);
+
+        AlgorithmiaInsights algorithmiaInsights = algorithmiaClient.reportInsights("{\"cats_in_image\": \"4\", \"dogs_in_image\": \"7\"}");
+
+        ArgumentCaptor<StringEntity> captor = ArgumentCaptor.forClass(StringEntity.class);
+
+        Mockito.verify(httpClient).post(eq("/v1/insights"), captor.capture());
+
+        StringEntity capturedValue = captor.getValue();
+
+        String expectedString = "[{\"insight_key\": \"cats_in_image\", \"insight_value\": \"4\"}, {\"insight_key\": \"dogs_in_image\", \"insight_value\": \"7\"}]";
+        Assert.assertEquals(expectedString, new String(capturedValue.getContent().readAllBytes()));
+        Assert.assertEquals("hello", algorithmiaInsights.getResponse());
     }
 
     private Algorithm createTestAlgo() {

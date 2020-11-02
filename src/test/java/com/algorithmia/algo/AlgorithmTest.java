@@ -16,7 +16,6 @@ import org.junit.Test;
 import org.junit.Assume;
 import org.junit.Assert;
 import org.mockito.ArgumentCaptor;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;

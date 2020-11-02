@@ -91,6 +91,21 @@ public final class Algorithmia {
     }
 
     /**
+     * Builds an Algorithmia client that makes all requests with your API key
+     * If API key is null, the default client is returned, which will
+     * look for ALGORITHMIA_API_KEY environment variable or java property
+     * If no key is found, then requests will be unauthenticated which only works
+     * when making requests from an algorithm running within the Algorithmia cluster
+     * @param simpleKey API Key for simple authentication (prefixed with "sim")
+     * @param maxConnections max number of concurrent connections to hold open to Algorithmia
+     * @param pemPath path to custom certificate in .pem format
+     * @return an Algorithmia client
+     */
+    public static AlgorithmiaClient client(String simpleKey, String apiAddress, int maxConnections, String pemPath) {
+        return new AlgorithmiaClient(new SimpleAuth(simpleKey), apiAddress, maxConnections, pemPath);
+    }
+
+    /**
      * Initialize an Algorithm object using the default client
      * @param algoUri the algorithm's URI, e.g., algo://user/algoname
      * @return an Algorithm client for the specified algorithm

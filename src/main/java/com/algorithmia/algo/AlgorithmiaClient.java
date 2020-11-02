@@ -25,10 +25,14 @@ public final class AlgorithmiaClient {
      * Instantiate Algorithmia client with the given auth and max number of connections
      * @param auth Algorithmia Auth object, a null auth object is valid, though only
      * correct for within the Algorithmia platform
-     * @param maxConnections
+     * @param maxConnections max number of concurrent connections to hold open to Algorithmia
      */
     protected AlgorithmiaClient(Auth auth, String apiAddress, int maxConnections) {
-        this.client = new HttpClient(auth, apiAddress, maxConnections);
+        this.client = new HttpClient(auth, apiAddress, maxConnections,null);
+    }
+
+    protected AlgorithmiaClient(Auth auth, String apiAddress, int maxConnections, String pemPath) {
+        this.client = new HttpClient(auth, apiAddress, maxConnections, pemPath);
     }
 
     //For testing

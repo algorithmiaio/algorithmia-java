@@ -52,6 +52,16 @@ public class AlgorithmTest {
     }
 
     @Test
+    public void algorithmCAPipeText() throws Exception {
+        AlgoResponse res = Algorithmia.client(defaultKey,null,1,"C:\\Users\\john.bragg\\algorithmia-java\\testCert.pem").algo("demo/Hello").pipe("foo");
+        Assert.assertEquals("\"Hello foo\"", res.as(new TypeToken<JsonElement>(){}).toString());
+        Assert.assertEquals("\"Hello foo\"", res.asJsonString());
+        Assert.assertEquals("Hello foo", res.as(new TypeToken<String>(){}));
+        Assert.assertEquals("Hello foo", res.asString());
+        Assert.assertEquals(ContentType.Text, res.getMetadata().getContentType());
+    }
+
+    @Test
     public void algorithmPipeText() throws Exception {
         AlgoResponse res = Algorithmia.client(defaultKey).algo("demo/Hello").pipe("foo");
         Assert.assertEquals("\"Hello foo\"", res.as(new TypeToken<JsonElement>(){}).toString());

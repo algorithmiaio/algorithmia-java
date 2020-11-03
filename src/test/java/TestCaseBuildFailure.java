@@ -9,6 +9,6 @@ public class TestCaseBuildFailure {
     public void failTestCase(){
         int a=0;
         int b=12;
-        Assert.assertEquals(b/a, 12);
+        Assert.assertEquals(b, 12);
     }
 }

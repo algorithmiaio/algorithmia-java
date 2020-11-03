@@ -146,7 +146,7 @@ public class AlgorithmTest {
     @Test
     public void algoGetAlgo() throws Exception {
         Algorithm algorithm = Algorithmia.client(defaultKey).getAlgo("dherring", "ResultFile");
-        Assert.assertEquals(algorithm.getName(), "ResultFile");
+        Assert.assertEquals(algorithm, "ResultFile");
     }
 
     @Test

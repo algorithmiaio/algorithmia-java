@@ -5,14 +5,15 @@ import com.algorithmia.client.HttpClient;
 import com.algorithmia.data.DataDirectory;
 import com.algorithmia.data.DataFile;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import org.apache.http.HttpResponse;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -32,6 +33,11 @@ public final class AlgorithmiaClient {
 
     protected AlgorithmiaClient(Auth auth, String apiAddress, int maxConnections, String pemPath) {
         this.client = new HttpClient(auth, apiAddress, maxConnections, pemPath);
+    }
+
+    //For testing
+    public AlgorithmiaClient(HttpClient client) {
+        this.client = client;
     }
 
     /**
@@ -290,6 +296,19 @@ public final class AlgorithmiaClient {
      */
     public DataFile file(String path) {
         return new DataFile(client, path);
+    }
+
+    public AlgorithmiaInsights reportInsights(String input) throws IOException {
+        Gson gson = new Gson();
+        Map<String, String> map = gson.fromJson(input, new TypeToken<Map<String, String>>().getType());
+        List<String> insightPayload = new ArrayList<>();
+        map.forEach((key, value) -> {
+            String item = String.format("{\"insight_key\": \"%s\", \"insight_value\": \"%s\"}", key, value);
+            insightPayload.add(item);
+        });
+        HttpResponse response =  this.client.post("/v1/insights", new StringEntity(insightPayload.toString(), ContentType.APPLICATION_JSON));
+        String responseString = EntityUtils.toString(response.getEntity());
+        return gson.fromJson(responseString, AlgorithmiaInsights.class);
     }
 
     public void close() throws IOException {

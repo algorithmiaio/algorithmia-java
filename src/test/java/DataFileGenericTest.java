@@ -87,7 +87,7 @@ public abstract class DataFileGenericTest {
         }
 
         // Write expected string to a local temp file
-        String expected = "This is a cloud: ☁"; //Unicode codepoint: U+2601
+        String expected = "This is a cloud: \u2601"; //Unicode codepoint: U+2601
 
         file.put(expected);
         Assert.assertTrue(file.exists());
@@ -107,7 +107,7 @@ public abstract class DataFileGenericTest {
         }
 
         // Write expected string to a local temp file
-        String expected = "This is a cloud: ☁"; //Unicode codepoint: U+2601
+        String expected = "This is a cloud: \u2601"; //Unicode codepoint: U+2601
         File temp = File.createTempFile("tempfile", ".tmp");
         BufferedWriter bw = new BufferedWriter(new FileWriter(temp));
         bw.write(expected);

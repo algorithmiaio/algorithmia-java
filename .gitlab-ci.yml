@@ -13,5 +13,4 @@ test:unit-code-coverage:
   image: algorithmiahq/sbt-builder:11.0.6_1.3.8_2.13.1
   script:
   - sbt compile
-  - sbt doc
   - sbt test

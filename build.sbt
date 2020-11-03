@@ -7,9 +7,6 @@ version := "1.3.8"
 
 autoScalaLibrary := false
 
-// required work-around for faulty scala build tool
-javaHome := Some(file("C:\\Users\\dale.herring\\Java\\jdk-11"))
-
 // More compiler warnings
 scalacOptions ++= Seq("-deprecation", "-unchecked", "-source 11", "-feature", "-Xlint", "-target:jvm-1.11")
 

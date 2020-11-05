@@ -13,5 +13,5 @@ test:unit-code-coverage:
   image: algorithmiahq/sbt-builder:11.0.6_1.3.8_2.13.1
   script:
   - sbt compile
-  - echo $ALGORITHMIA_DEFAULT_API_KEY
+  - if [ -z $ALGORITHMIA_DEFAULT_API_KEY ]; then echo "Algorithmia API key not defined"; exit 1; fi
   - sbt test

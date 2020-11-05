@@ -192,7 +192,7 @@ public abstract class DataFileGenericTest {
         }
         Assert.assertEquals(lines, COUNT);
 
-        Assert.assertTrue(numbersFile.delete());
+        numbersFile.deleteOnExit();
     }
 
     @Test

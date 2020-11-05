@@ -19,7 +19,7 @@ public abstract class DataDirectoryGenericTest {
 
     @Before
     public void setup() {
-        key = System.getenv("ALGORITHMIA_API_KEY");
+        key = System.getenv("ALGORITHMIA_DEFAULT_API_KEY");
         Assume.assumeNotNull(key);
     }
 

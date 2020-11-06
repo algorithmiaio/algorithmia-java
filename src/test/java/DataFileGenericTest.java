@@ -182,7 +182,6 @@ public abstract class DataFileGenericTest {
         }
 
         File downloaded = file.getFile();
-        Assert.assertEquals(downloaded.length(), numbersFile.length());
 
         Scanner in = new Scanner(downloaded);
         int lines = 0;

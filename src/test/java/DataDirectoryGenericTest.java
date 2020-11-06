@@ -9,18 +9,16 @@ import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.Assume;
 import org.junit.Assert;
 
 public abstract class DataDirectoryGenericTest {
     public abstract String getFullPath(String thing);
 
-    protected String key;
+    protected String defaultKey;
 
     @Before
     public void setup() {
-        key = System.getenv("ALGORITHMIA_API_KEY");
-        Assume.assumeNotNull(key);
+        defaultKey = System.getenv("ALGORITHMIA_DEFAULT_API_KEY");
     }
 
     private void fuzzyDirectoryMatch(String one, String two) {
@@ -49,7 +47,7 @@ public abstract class DataDirectoryGenericTest {
 
     @Test
     public void dataDirCreate() throws Exception {
-        DataDirectory dir = Algorithmia.client(key).dir(getFullPath("javaDataDirCreate"));
+        DataDirectory dir = Algorithmia.client(defaultKey).dir(getFullPath("javaDataDirCreate"));
 
         // Make sure test starts in clean state
         if(dir.exists()) {
@@ -63,7 +61,7 @@ public abstract class DataDirectoryGenericTest {
     @Test
     public void dataDirList() throws Exception {
         String parentDir = "javaDataDirList";
-        DataDirectory dir = Algorithmia.client(key).dir(getFullPath(parentDir));
+        DataDirectory dir = Algorithmia.client(defaultKey).dir(getFullPath(parentDir));
 
         if(dir.exists()) {
             dir.delete(true);
@@ -102,7 +100,7 @@ public abstract class DataDirectoryGenericTest {
     }
 
     private void dataDirListIterable(String dirName) throws Exception {
-        DataDirectory dir = Algorithmia.client(key).dir(getFullPath(dirName));
+        DataDirectory dir = Algorithmia.client(defaultKey).dir(getFullPath(dirName));
 
         if(dir.exists()) {
             dir.delete(true);
@@ -137,7 +135,7 @@ public abstract class DataDirectoryGenericTest {
 
     @Test
     public void dataDirListWithPaging() throws Exception {
-        DataDirectory dir = Algorithmia.client(key).dir(getFullPath("javaLargeDataDirList1"));
+        DataDirectory dir = Algorithmia.client(defaultKey).dir(getFullPath("javaLargeDataDirList1"));
         final int NUM_FILES = 1100;
         final String EXTENSION = ".txt";
 
@@ -176,7 +174,7 @@ public abstract class DataDirectoryGenericTest {
 
     @Test
     public void dataDirListWithPagingIterable() throws Exception {
-        DataDirectory dir = Algorithmia.client(key).dir(getFullPath("javaLargeDataDirList2"));
+        DataDirectory dir = Algorithmia.client(defaultKey).dir(getFullPath("javaLargeDataDirList2"));
         final int NUM_FILES = 1100;
         final String EXTENSION = ".txt";
 
@@ -213,7 +211,7 @@ public abstract class DataDirectoryGenericTest {
 
     @Test
     public void listingEmptyDirectory() throws Exception {
-        DataDirectory dir = Algorithmia.client(key).dir(getFullPath("test_empty_dir/"));
+        DataDirectory dir = Algorithmia.client(defaultKey).dir(getFullPath("test_empty_dir/"));
         if (dir.exists())
             dir.delete(true);
 
@@ -242,7 +240,7 @@ public abstract class DataDirectoryGenericTest {
 
     @Test
     public void dataDirType() {
-        DataDirectory dir = Algorithmia.client(key).dir(getFullPath("javaDataFileGet"));
+        DataDirectory dir = Algorithmia.client(defaultKey).dir(getFullPath("javaDataFileGet"));
         Assert.assertTrue(dir.isDirectory());
         Assert.assertFalse(dir.isFile());
         Assert.assertEquals(DataObject.DataObjectType.DIRECTORY, dir.getType());

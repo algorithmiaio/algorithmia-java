@@ -19,8 +19,8 @@ public abstract class DataDirectoryGenericTest {
 
     @Before
     public void setup() {
-        key = System.getenv("ALGORITHMIA_DEFAULT_API_KEY");
-        Assume.assumeNotNull(key);
+        key = System.getenv("ALGORITHMIA_DEFAULT_API_KEY_BAD");
+        //Assume.assumeNotNull(key);
     }
 
     private void fuzzyDirectoryMatch(String one, String two) {
@@ -99,7 +99,7 @@ public abstract class DataDirectoryGenericTest {
             return "data://" + result;
         }
         return result;
-    }
+    }f
 
     private void dataDirListIterable(String dirName) throws Exception {
         DataDirectory dir = Algorithmia.client(key).dir(getFullPath(dirName));

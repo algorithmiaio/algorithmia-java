@@ -99,7 +99,7 @@ public abstract class DataDirectoryGenericTest {
             return "data://" + result;
         }
         return result;
-    }f
+    }
 
     private void dataDirListIterable(String dirName) throws Exception {
         DataDirectory dir = Algorithmia.client(key).dir(getFullPath(dirName));

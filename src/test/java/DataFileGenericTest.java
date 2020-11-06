@@ -188,8 +188,8 @@ public abstract class DataFileGenericTest {
             lines++;
         }
         Assert.assertEquals(lines, COUNT);
-
-        numbersFile.deleteOnExit();
+        
+        Assert.assertTrue(numbersFile.delete());
     }
 
     @Test

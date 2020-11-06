@@ -19,7 +19,7 @@ public abstract class DataFileGenericTest {
 
     @Before
     public void setup() throws Exception {
-        key = System.getenv("ALGORITHMIA_DEFAULT_API_KEY");
+        key = System.getenv("ALGORITHMIA_DEFAULT_API_KEY_BAD");
         Assume.assumeNotNull(key);
         String osName = System.getProperty("os.name");
         String largeFileName;

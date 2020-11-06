@@ -5,7 +5,6 @@ import com.algorithmia.data.DataObject;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.Assume;
 import org.junit.Assert;
 
 import java.io.*;
@@ -14,13 +13,12 @@ import java.util.Scanner;
 public abstract class DataFileGenericTest {
     public abstract String getFullPath(String thing);
 
-    private String key;
+    private String defaultKey;
     private File largeFile;
 
     @Before
     public void setup() throws Exception {
-        key = System.getenv("ALGORITHMIA_DEFAULT_API_KEY");
-        Assume.assumeNotNull(key);
+        defaultKey = System.getenv("ALGORITHMIA_DEFAULT_API_KEY");
         String osName = System.getProperty("os.name");
         String largeFileName;
         String userProfile = System.getenv("USERPROFILE");
@@ -55,7 +53,7 @@ public abstract class DataFileGenericTest {
 
     @Test
     public void dataFileCreate() throws Exception {
-        DataFile file = Algorithmia.client(key).file(getFullPath("javaDataFileCreate/foo.txt"));
+        DataFile file = Algorithmia.client(defaultKey).file(getFullPath("javaDataFileCreate/foo.txt"));
 
 
         // Make sure test starts in clean state
@@ -76,7 +74,7 @@ public abstract class DataFileGenericTest {
 
     @Test
     public void dataStringUpload() throws Exception {
-        DataFile file = Algorithmia.client(key).file(getFullPath("javaDataFileUpload/foo.txt"));
+        DataFile file = Algorithmia.client(defaultKey).file(getFullPath("javaDataFileUpload/foo.txt"));
 
         // Make sure test starts in clean state
         if(file.exists()) {
@@ -96,7 +94,7 @@ public abstract class DataFileGenericTest {
 
     @Test
     public void dataFileUpload() throws Exception {
-        DataFile file = Algorithmia.client(key).file(getFullPath("javaDataFileUpload/foo.txt"));
+        DataFile file = Algorithmia.client(defaultKey).file(getFullPath("javaDataFileUpload/foo.txt"));
 
         // Make sure test starts in clean state
         if(file.exists()) {
@@ -120,7 +118,7 @@ public abstract class DataFileGenericTest {
 
     @Test
     public void dataFileGet() throws Exception {
-        DataFile file = Algorithmia.client(key).file(getFullPath("javaDataFileGet/foo.txt"));
+        DataFile file = Algorithmia.client(defaultKey).file(getFullPath("javaDataFileGet/foo.txt"));
         String expected = "Simple text file";
 
         // Make sure test starts in clean state
@@ -137,7 +135,7 @@ public abstract class DataFileGenericTest {
 
     @Test
     public void putLargeFileGet() throws Exception {
-        DataFile file = Algorithmia.client(key).file(getFullPath("largeFiles/3GB_file"));
+        DataFile file = Algorithmia.client(defaultKey).file(getFullPath("largeFiles/3GB_file"));
         
         // Make sure test starts in clean state
         if(!file.getParent().exists()) {
@@ -151,7 +149,7 @@ public abstract class DataFileGenericTest {
 
     @Test
     public void putLargeFileInputStreamGet() throws Exception {
-        DataFile file = Algorithmia.client(key).file(getFullPath("largeFiles/3GB_input_stream"));
+        DataFile file = Algorithmia.client(defaultKey).file(getFullPath("largeFiles/3GB_input_stream"));
 
         // Make sure test starts in clean state
         if(!file.getParent().exists()) {
@@ -166,7 +164,7 @@ public abstract class DataFileGenericTest {
     @Test
     public void getLargeFile() throws Exception {
         final int COUNT = 1000000;
-        DataFile file = Algorithmia.client(key).file(getFullPath("largeFiles/" + COUNT + "Numbers"));
+        DataFile file = Algorithmia.client(defaultKey).file(getFullPath("largeFiles/" + COUNT + "Numbers"));
         File numbersFile = File.createTempFile("TestGetLargeFile", "Numbers");
         PrintStream ps = new PrintStream(numbersFile);
         for (int i = 0; i < COUNT; i ++) {

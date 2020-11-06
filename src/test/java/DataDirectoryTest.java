@@ -18,7 +18,7 @@ public class DataDirectoryTest extends DataDirectoryGenericTest {
 
     @Test
     public void dataDirGetPermissions() throws APIException {
-        DataDirectory dir = Algorithmia.client(key).dir("data://.my/javaGetPermissions");
+        DataDirectory dir = Algorithmia.client(defaultKey).dir("data://.my/javaGetPermissions");
         if (dir.exists()) {
             dir.delete(true);
         }
@@ -28,7 +28,7 @@ public class DataDirectoryTest extends DataDirectoryGenericTest {
 
     @Test
     public void dataDirCreateWithPermissions() throws APIException {
-        DataDirectory dir = Algorithmia.client(key).dir("data://.my/javaCreateWithPermissions");
+        DataDirectory dir = Algorithmia.client(defaultKey).dir("data://.my/javaCreateWithPermissions");
         if (dir.exists()) {
             dir.delete(true);
         }
@@ -38,7 +38,7 @@ public class DataDirectoryTest extends DataDirectoryGenericTest {
 
     @Test
     public void dataDirUpdatePermissions() throws APIException {
-        DataDirectory dir = Algorithmia.client(key).dir("data://.my/javaUpdatePermissions");
+        DataDirectory dir = Algorithmia.client(defaultKey).dir("data://.my/javaUpdatePermissions");
         if (dir.exists()) {
             dir.delete(true);
         }

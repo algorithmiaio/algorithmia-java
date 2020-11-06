@@ -13,7 +13,6 @@ import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.Assume;
 import org.junit.Assert;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
@@ -38,7 +37,6 @@ public class AlgorithmTest {
     @Before
     public void setup() {
         defaultKey = System.getenv("ALGORITHMIA_DEFAULT_API_KEY");
-        Assume.assumeNotNull(defaultKey);
         MockitoAnnotations.openMocks(this);
     }
 

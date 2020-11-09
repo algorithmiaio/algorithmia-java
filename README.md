@@ -226,3 +226,34 @@ if (fooLimited.getPermissions().getReadPermissions() == DataAclType.PRIVATE) {
 }
 ```
 
+### Java Algo development category API's
+
+| Name  | Parameters | Example |
+| :----- | :---------- | :------- |
+| Create Algorithm | String userName - Your Algorithmia user name.<br>String requestString - JSON payload for the Algorithm you wish to create. | `Algorithm newAlgorithm = Algorithmia.client(key).createAlgo(userName, requestString);` |
+| Get Algorithm | String userName - Your Algorithmia user name.<br>String algoName - The name address of the algorithm. | `Algorithm algorithm = Algorithmia.client(key).getAlgo(userName, algoName);` |
+| Compile Algorithm | String userName - Your Algorithmia user name.<br>String algoName - The name address of the algorithm. | `Algorithm algorithm = Algorithmia.client(key).compileAlgo(userName, algoName);` |
+| Publish Algorithm | String userName - Your Algorithmia user name.<br>String algoName - The name address of the algorithm.<br>String requestString - JSON payload for the Algorithm you wish to publish. | `Algorithm newAlgorithm = Algorithmia.client(key).publishAlgo(userName, algoName, requestString);` |
+| List Algorithm Versions | String userName - Your Algorithmia user name.<br>String algoName - The name address of the algorithm.<br>Boolean callable - Whether to return only public or private algorithm versions.<br>Integer limit - Items per page.<br>Boolean published - Whether to return only versions that have been published.<br>String marker - Marker for pagination. | `AlgorithmVersionsList algoList = Algorithmia.client(key).listAlgoVersions(userName, algoName, callable, limit, published, marker)` |
+| Update Algorithm | String userName - Your Algorithmia user name.<br>String algoName - The name address of the algorithm.<br>String requestString - JSON payload for the Algorithm you wish to create. | `Algorithm newAlgorithm = Algorithmia.client(key).updateAlgo(userName, algoName, requestString);` |
+| Execute Algorithm | String algoName - The name address of the algorithm. | `Algorithm algo = client.algo("algo://demo/Hello/0.1.1");`<br>`AlgoResponse result = algo.pipe("HAL 9000");` |
+| Get Algorithm Build Logs | String userName - Your Algorithmia user name.<br>String algoName - The name address of the algorithm.<br>String buildId - The id of the build to retrieve logs. | `BuildLogs buildLogs = Algorithmia.client(key).getAlgoBuildLogs(userName, algoName, buildId)` |
+| Create Directory | String path - Path to a data directory. | `DataDirectory robots = client.dir("data://.my/robots");`<br>`robots.create();` |
+| List Directory Contents | String path - Path to a data directory. | `DataDirectory myRoot = client.dir("data://.my");`<br>`for(DataDirectory dir : myRoot.dirs()) { System.out.println("Directory " + dir + " at URL " + dir.url()); }` |
+| Update Directory | File file - A file to put into this data directory. | `DataDirectory robots = client.dir("data://.my/robots");`<br>`robots.putFile(new File("/path/to/Optimus_Prime.png"));` |
+| Delete Directory | boolean forceDelete  - Forces deletion of the directory if it contains files. | `client.dir("data://.my/robots").delete(false);` |
+| Upload File | File file - file the file to upload data from. | `robots.putFile(new File("/path/to/Optimus_Prime.png"));` |
+| Verify File Existence | - | `if(file.exists()) { file.delete(); } ` |
+| Download File | - | `File t800File = robots.file("T-800.png").getFile();` |
+| Report Insights | String input - JSON payload key-value pairs | `AlgorithmiaInsights insightsResponse = Algorithmia.client(defaultKey).reportInsights(input);` |
+
+### Java CICD Automation and Admin Automation category API's
+
+| Name  | Parameters | Example |
+| :----- | :---------- | :------- |
+| List Algorithm Builds | String userName - Your Algorithmia user name.<br>String algoName - The name address of the algorithm.<br>Integer limit - Items per page.<br>String marker - Marker for pagination. | `AlgorithmBuildsList algoList = Algorithmia.client(defaultKey).listAlgoBuilds(userName, algoName, ?, ?);` |
+| Get Algorithm Build | String userName - Your Algorithmia user name.<br>String algoName - The name address of the algorithm.<br>String buildId - The id of the build to retrieve. | `Algorithm.Build returnedBuild = Algorithmia.client(defaultKey).getAlgoBuild(userName, algoName, buildId);` |
+| Delete Algorithm | String userName - Your Algorithmia user name.<br>String algoName - The name address of the algorithm. | `HttpResponse response = Algorithmia.client(defaultKey).deleteAlgo(userName, algoName);` |
+| Get Algorithm SCM status | String userName - Your Algorithmia user name.<br>String algoName - The name address of the algorithm. | `AlgorithmSCMStatus scmStatus = Algorithmia.client(defaultKey).getAlgoSCMStatus(userName, algoName);` |
+| Get SCM | String scmId - The id of scm to retrive | `Algorithm.SCM scm = Algorithmia.client(defaultKey).getSCM(scmId);` |
+| List Cluster SCM’s | - | `AlgorithmSCMsList algorithmSCMsList = Algorithmia.client(defaultKey).listSCMs();` |

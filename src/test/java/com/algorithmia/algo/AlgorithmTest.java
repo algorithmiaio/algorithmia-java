@@ -4,6 +4,7 @@ import com.algorithmia.client.HttpClient;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 
+import com.google.gson.JsonObject;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolVersion;
@@ -31,12 +32,16 @@ import static org.mockito.ArgumentMatchers.eq;
 public class AlgorithmTest {
 
     private String defaultKey;
+    private String adminKey;
+    private String testAddress;
     @Mock
     private HttpClient httpClient;
 
     @Before
     public void setup() {
         defaultKey = System.getenv("ALGORITHMIA_DEFAULT_API_KEY");
+        adminKey =  System.getenv("ALGORITHMIA_ADMIN_API_KEY");
+        testAddress = System.getenv("ALGORITHMIA_TEST_ADDRESS");
         MockitoAnnotations.openMocks(this);
     }
 
@@ -268,6 +273,34 @@ public class AlgorithmTest {
     }
 
     @Test
+    public void algoCreateUser() throws Exception {
+        JsonObject testUserPayload = createTestUserPayload();
+        Gson gson = new Gson();
+        String json = gson.toJson(testUserPayload);
+        User newUser = Algorithmia.client(adminKey, testAddress).createUser(json);
+        Assert.assertEquals(testUserPayload.get("username").getAsString(), newUser.getUserName());
+    }
+
+    @Test
+    public void algoCreateOrganization() throws Exception {
+        JsonObject testOrganizationPayload = createTestOrganizationPayload();
+        Gson gson = new Gson();
+        String json = gson.toJson(testOrganizationPayload);
+        Organization newOrganization = Algorithmia.client(adminKey, testAddress).createOrganization(json);
+        Assert.assertEquals(testOrganizationPayload.get("org_email").getAsString(), newOrganization.getOrgEmail());
+    }
+
+    @Test
+    public void algoAddOrganizationMember() throws Exception {
+        JsonObject testUserPayload = createTestUserPayload();
+        Gson gson = new Gson();
+        String json = gson.toJson(testUserPayload);
+        User newUser = Algorithmia.client(adminKey, testAddress).createUser(json);
+        HttpResponse response = Algorithmia.client(adminKey, testAddress).addOrganizationMember("MyOrg1606329175792", newUser.getUserName());
+        Assert.assertEquals(201, response.getStatusLine().getStatusCode());
+    }
+
+    @Test
     public void algoReportInsights() throws Exception {
         HttpResponse response = new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion("", 5, 5), 200, ""));
         BasicHttpEntity httpEntity = new BasicHttpEntity();
@@ -303,5 +336,23 @@ public class AlgorithmTest {
         settings.setPipelineEnabled(true);
         settings.setSourceVisibility("open");
         return Algorithm.builder().name(name).details(details).settings(settings).buildDTO();
+    }
+
+    private JsonObject createTestUserPayload() {
+        JsonObject testUserPayload = new JsonObject();
+        testUserPayload.addProperty("username", "sherring" + System.currentTimeMillis());
+        testUserPayload.addProperty("email", System.currentTimeMillis() + "@algo.com");
+        testUserPayload.addProperty("passwordHash", "");
+        testUserPayload.addProperty("shouldCreateHello", false);
+        return testUserPayload;
+    }
+
+    private JsonObject createTestOrganizationPayload() {
+        JsonObject testOrganizationPayload = new JsonObject();
+        testOrganizationPayload.addProperty("org_name", "MyOrg" + System.currentTimeMillis());
+        testOrganizationPayload.addProperty("org_label", "myLabel");
+        testOrganizationPayload.addProperty("org_contact_name", "some owner");
+        testOrganizationPayload.addProperty("org_email", System.currentTimeMillis() + "@algo.com");
+        return testOrganizationPayload;
     }
 }

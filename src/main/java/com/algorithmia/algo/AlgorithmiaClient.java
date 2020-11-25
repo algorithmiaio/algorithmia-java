@@ -281,6 +281,43 @@ public final class AlgorithmiaClient {
     }
 
     /**
+     * Create a user from this client
+     * @param requestString json payload
+     * @return a user object
+     */
+    public User createUser(String requestString) throws IOException {
+        String path = "/v1/users";
+        HttpResponse response = this.client.post(path, new StringEntity(requestString, ContentType.APPLICATION_JSON));
+        String responseString = EntityUtils.toString(response.getEntity());
+        Gson gson = new Gson();
+        return gson.fromJson(responseString, User.class);
+    }
+
+    /**
+     * Create an organization from this client
+     * @param requestString json payload
+     * @return an organization object
+     */
+    public Organization createOrganization(String requestString) throws IOException {
+        String path = "/v1/organizations";
+        HttpResponse response = this.client.post(path, new StringEntity(requestString, ContentType.APPLICATION_JSON));
+        String responseString = EntityUtils.toString(response.getEntity());
+        Gson gson = new Gson();
+        return gson.fromJson(responseString, Organization.class);
+    }
+
+    /**
+     * Create a member to an organization
+     * @param orgName the organization name
+     * @param userName the users algorithmia user name
+     * @return an organization object
+     */
+    public HttpResponse addOrganizationMember(String orgName, String userName) throws IOException {
+        String path = "/v1/organizations/" + orgName + "/members/" + userName;
+        return this.client.put(path);
+    }
+
+    /**
      * Initialize a DataDirectory object from this client
      * @param path to a data directory, e.g., data://.my/foo
      * @return a DataDirectory client for the specified directory

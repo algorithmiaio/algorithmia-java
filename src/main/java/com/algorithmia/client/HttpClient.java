@@ -217,6 +217,11 @@ public class HttpClient {
     /**
      * PUT requests
      */
+    public HttpResponse put(String path) throws APIException {
+        final HttpPut request = new HttpPut(getUrl(path));
+        return this.execute(request);
+    }
+
     public HttpResponse put(String path, HttpEntity data) throws APIException {
         final HttpPut request = new HttpPut(getUrl(path));
         request.setEntity(data);

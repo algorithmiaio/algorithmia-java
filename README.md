@@ -257,3 +257,6 @@ if (fooLimited.getPermissions().getReadPermissions() == DataAclType.PRIVATE) {
 | Get Algorithm SCM status | String userName - Your Algorithmia user name.<br>String algoName - The name address of the algorithm. | `AlgorithmSCMStatus scmStatus = Algorithmia.client(defaultKey).getAlgoSCMStatus(userName, algoName);` |
 | Get SCM | String scmId - The id of scm to retrive | `Algorithm.SCM scm = Algorithmia.client(defaultKey).getSCM(scmId);` |
 | List Cluster SCM’s | - | `AlgorithmSCMsList algorithmSCMsList = Algorithmia.client(defaultKey).listSCMs();` |
+| Create User | String requestString - JSON payload for the user to be created. | `User newUser = Algorithmia.client(adminKey, testAddress).createUser(json);` |
+| Create Organization | String requestString - JSON payload for the organization to be created. | `Organization newOrganization = Algorithmia.client(adminKey, testAddress).createOrganization(json);` |
+| Add Organization Member | String orgName - The organization name.<br>String userName - the users algorithmia user name. | `HttpResponse response = Algorithmia.client(adminKey, testAddress).addOrganizationMember(orgName, userName);`

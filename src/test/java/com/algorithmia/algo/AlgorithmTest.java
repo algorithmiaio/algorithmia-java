@@ -34,6 +34,7 @@ public class AlgorithmTest {
     private String defaultKey;
     private String adminKey;
     private String testAddress;
+    private String testDefaultKey;
     @Mock
     private HttpClient httpClient;
 
@@ -42,6 +43,7 @@ public class AlgorithmTest {
         defaultKey = System.getenv("ALGORITHMIA_DEFAULT_API_KEY");
         adminKey =  System.getenv("ALGORITHMIA_ADMIN_API_KEY");
         testAddress = System.getenv("ALGORITHMIA_TEST_ADDRESS");
+        testDefaultKey = System.getenv("ALGORITHMIA_TEST_DEFAULT_KEY");
         MockitoAnnotations.openMocks(this);
     }
 
@@ -191,17 +193,16 @@ public class AlgorithmTest {
         Assert.assertFalse(algorithmSCMsList.getResults().isEmpty());
     }
 
-    /* This will be uncommented during DEV-80
     @Test
     public void algoQuerySCMStatus() throws Exception {
         AlgorithmSCMAuthorizationStatus algorithmSCMAuthorizationStatus = Algorithmia.client(defaultKey).querySCMStatus("github");
         Assert.assertEquals("authorized", algorithmSCMAuthorizationStatus.getAuthorizationStatus());
     }
 
-    @Test
+    /*@Test
     public void algoRevokeSCMStatus() throws Exception {
-        AlgorithmSCMAuthorizationStatus algorithmSCMAuthorizationStatus = Algorithmia.client(defaultKey).revokeSCMStatus("?");
-        Assert.assertEquals("?", algorithmSCMAuthorizationStatus.getAuthorizationStatus());
+        HttpResponse response = Algorithmia.client(testDefaultKey, testAddress).revokeSCMStatus("fa359f8a-5a37-4726-9174-1475b41939ef");
+        Assert.assertEquals(204, response.getStatusLine().getStatusCode());
     }*/
 
     @Test
@@ -327,7 +328,7 @@ public class AlgorithmTest {
     private Algorithm createTestAlgo() {
         String name = "CreateAlgoTest" + System.currentTimeMillis();
         Algorithm.Details details = new Algorithm.Details();
-        details.setLabel("CreateAlgoTest");
+        details.setLabel("CreateAlgoTest" + System.currentTimeMillis());
         Algorithm.Settings settings = new Algorithm.Settings();
         settings.setEnvironment("cpu");
         settings.setLanguage("java");

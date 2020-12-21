@@ -7,6 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.LinkedList;
+import java.util.List;
+
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,7 +21,7 @@ public final class AlgorithmSCMAuthorizationStatus {
     @SerializedName("scm_username")
     private String scmUserName;
     @SerializedName("scm_organizations")
-    private SCMOrganizations scmOrganizations;
+    private List<SCMOrganizations> scmOrganizations = new LinkedList<>();
 
     @Builder
     @NoArgsConstructor

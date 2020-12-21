@@ -5,6 +5,7 @@ import com.algorithmia.client.HttpClient;
 import com.algorithmia.data.DataDirectory;
 import com.algorithmia.data.DataFile;
 import com.google.gson.Gson;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -88,12 +89,11 @@ public final class AlgorithmiaClient {
         return gson.fromJson(responseString, AlgorithmSCMsList.class);
     }
 
-    /* This will be uncommented during DEV-80
     /**
      * Query an Algorithm SCM status from this client
      * @param scmId id of the scm to retrieve
      * @return an Algorithm SCM authorization object
-     *
+     */
     public AlgorithmSCMAuthorizationStatus querySCMStatus(String scmId) throws IOException {
         String path = "/v1/scms/" + scmId + "/oauth/status";
         HttpResponse response = this.client.get(path);
@@ -106,13 +106,10 @@ public final class AlgorithmiaClient {
      * Revoke an Algorithm SCM status from this client
      * @param scmId id of the scm to retrieve
      * @return an Algorithm SCM authorization object
-     *
-    public AlgorithmSCMAuthorizationStatus revokeSCMStatus(String scmId) throws IOException {
+     */
+    /*public HttpResponse revokeSCMStatus(String scmId) throws IOException {
         String path = "/v1/scms/" + scmId + "/oauth/revoke";
-        HttpResponse response = this.client.post(path);
-        String responseString = EntityUtils.toString(response.getEntity());
-        Gson gson = new Gson();
-        return gson.fromJson(responseString, AlgorithmSCMAuthorizationStatus.class);
+        return this.client.post(path);
     }*/
 
     /**

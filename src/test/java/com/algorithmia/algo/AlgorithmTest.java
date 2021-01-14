@@ -292,6 +292,21 @@ public class AlgorithmTest {
     }
 
     @Test
+    public void algoGetOrganization() throws Exception {
+        Organization organization = Algorithmia.client(adminKey, testAddress).getOrganization("a_myOrg15");
+        Assert.assertEquals(organization.getOrgEmail(), "a_myOrg15@algo.com");
+    }
+
+    @Test
+    public void algoEditOrganization() throws Exception {
+        JsonObject editOrganizationPayload = editTestOrganizationPayload();
+        Gson gson = new Gson();
+        String json = gson.toJson(editOrganizationPayload);
+        HttpResponse response = Algorithmia.client(adminKey, testAddress).editOrganization("MyOrg1606332498213", json);
+        Assert.assertEquals(204, response.getStatusLine().getStatusCode());
+    }
+
+    @Test
     public void algoAddOrganizationMember() throws Exception {
         JsonObject testUserPayload = createTestUserPayload();
         Gson gson = new Gson();
@@ -354,6 +369,17 @@ public class AlgorithmTest {
         testOrganizationPayload.addProperty("org_label", "myLabel");
         testOrganizationPayload.addProperty("org_contact_name", "some owner");
         testOrganizationPayload.addProperty("org_email", System.currentTimeMillis() + "@algo.com");
+        return testOrganizationPayload;
+    }
+
+    private JsonObject editTestOrganizationPayload() {
+        JsonObject testOrganizationPayload = new JsonObject();
+        testOrganizationPayload.addProperty("org_label", "myLabel");
+        testOrganizationPayload.addProperty("org_contact_name", "some owner");
+        testOrganizationPayload.addProperty("org_email", System.currentTimeMillis() + "@algo.com");
+        testOrganizationPayload.addProperty("type_id", "3d40e3b0-d82a-11ea-9a3c-0ee5e2d35097");
+        testOrganizationPayload.addProperty("resource_type", "organization");
+        testOrganizationPayload.addProperty("id", "3d9a9f41-d82a-11ea-9a3c-0ee5e2d35097");
         return testOrganizationPayload;
     }
 }

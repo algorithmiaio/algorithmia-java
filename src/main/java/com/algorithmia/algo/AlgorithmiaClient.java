@@ -12,6 +12,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -301,6 +302,30 @@ public final class AlgorithmiaClient {
         String responseString = EntityUtils.toString(response.getEntity());
         Gson gson = new Gson();
         return gson.fromJson(responseString, Organization.class);
+    }
+
+    /**
+     * Get an organization from this client
+     * @param orgName the organization name
+     * @return an organization object
+     */
+    public Organization getOrganization(String orgName) throws IOException {
+        String path = "/v1/organizations/" + orgName;
+        HttpResponse response = this.client.get(path);
+        String responseString = EntityUtils.toString(response.getEntity());
+        Gson gson = new Gson();
+        return gson.fromJson(responseString, Organization.class);
+    }
+
+    /**
+     * Edit an organization from this client
+     * @param orgName the organization name
+     * @param requestString json payload
+     * @return an empty response
+     */
+    public HttpResponse editOrganization(String orgName, String requestString) throws IOException {
+        String path = "/v1/organizations/" + orgName;
+        return this.client.put(path, new StringEntity(requestString, ContentType.APPLICATION_JSON));
     }
 
     /**

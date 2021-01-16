@@ -23,6 +23,12 @@ public class Organization {
     private String orgName;
     @SerializedName("org_url")
     private String orgUrl;
+    @SerializedName("external_id")
+    private String externalId;
+    @SerializedName("external_admin_group_id")
+    private String externalAdminGroupId;
+    @SerializedName("external_member_group_id")
+    private String externalMemberGroupId;
     @SerializedName("resource_type")
     private String resourceType;
     @SerializedName("self_link")

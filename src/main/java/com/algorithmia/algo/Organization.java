@@ -29,6 +29,8 @@ public class Organization {
     private String externalAdminGroupId;
     @SerializedName("external_member_group_id")
     private String externalMemberGroupId;
+    @SerializedName("type_id")
+    private String typeId;
     @SerializedName("resource_type")
     private String resourceType;
     @SerializedName("self_link")

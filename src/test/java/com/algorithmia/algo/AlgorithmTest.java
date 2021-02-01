@@ -369,6 +369,7 @@ public class AlgorithmTest {
         testOrganizationPayload.addProperty("org_label", "myLabel");
         testOrganizationPayload.addProperty("org_contact_name", "some owner");
         testOrganizationPayload.addProperty("org_email", System.currentTimeMillis() + "@algo.com");
+        testOrganizationPayload.addProperty("type_id", "basic");
         return testOrganizationPayload;
     }
 
@@ -377,7 +378,7 @@ public class AlgorithmTest {
         testOrganizationPayload.addProperty("org_label", "myLabel");
         testOrganizationPayload.addProperty("org_contact_name", "some owner");
         testOrganizationPayload.addProperty("org_email", System.currentTimeMillis() + "@algo.com");
-        testOrganizationPayload.addProperty("type_id", "3d40e3b0-d82a-11ea-9a3c-0ee5e2d35097");
+        testOrganizationPayload.addProperty("type_id", "legacy");
         testOrganizationPayload.addProperty("resource_type", "organization");
         testOrganizationPayload.addProperty("id", "3d9a9f41-d82a-11ea-9a3c-0ee5e2d35097");
         return testOrganizationPayload;

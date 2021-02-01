@@ -5,14 +5,13 @@ import com.algorithmia.client.HttpClient;
 import com.algorithmia.data.DataDirectory;
 import com.algorithmia.data.DataFile;
 import com.google.gson.Gson;
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
-import java.nio.Buffer;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,14 +22,16 @@ import java.util.Map;
  */
 public final class AlgorithmiaClient {
     private HttpClient client;
+
     /**
      * Instantiate Algorithmia client with the given auth and max number of connections
+     *
      * @param auth Algorithmia Auth object, a null auth object is valid, though only
-     * correct for within the Algorithmia platform
+                   correct for within the Algorithmia platform
      * @param maxConnections max number of concurrent connections to hold open to Algorithmia
      */
     protected AlgorithmiaClient(Auth auth, String apiAddress, int maxConnections) {
-        this.client = new HttpClient(auth, apiAddress, maxConnections,null);
+        this.client = new HttpClient(auth, apiAddress, maxConnections, null);
     }
 
     protected AlgorithmiaClient(Auth auth, String apiAddress, int maxConnections, String pemPath) {
@@ -129,6 +130,7 @@ public final class AlgorithmiaClient {
 
     /**
      * List algorithm versions from this client
+     *
      * @param userName the users Algorithmia user name
      * @param algoName the name of the algorithm
      * @param callable whether to return only public or private algorithm versions
@@ -154,7 +156,8 @@ public final class AlgorithmiaClient {
             params.put("marker", marker);
         }
 
-        return this.client.get(path, new TypeToken<AlgorithmVersionsList>() {}, params);
+        return this.client.get(path, new TypeToken<AlgorithmVersionsList>() {
+        }, params);
     }
 
     /**
@@ -174,6 +177,7 @@ public final class AlgorithmiaClient {
 
     /**
      * List algorithm builds from this client
+     *
      * @param userName the users algorithmia user name
      * @param algoName the name of the algorithm
      * @param limit items per page
@@ -191,14 +195,15 @@ public final class AlgorithmiaClient {
             params.put("marker", marker);
         }
 
-        return this.client.get(path, new TypeToken<AlgorithmBuildsList>(){}, params);
+        return this.client.get(path, new TypeToken<AlgorithmBuildsList>() {
+        }, params);
     }
 
     /**
      * Get build logs for an Algorithm object from this client
      * @param userName the users Algorithmia user name
      * @param algoName the name of the algorithm
-     * @param buildId id of the build to retrieve logs
+     * @param buildId  id of the build to retrieve logs
      * @return a BuildLogs object for the specified algorithm
      */
     public BuildLogs getAlgoBuildLogs(String userName, String algoName, String buildId) throws IOException {
@@ -235,7 +240,7 @@ public final class AlgorithmiaClient {
         String responseString = EntityUtils.toString(response.getEntity());
         Gson gson = new Gson();
         return gson.fromJson(responseString, Algorithm.class);
-   }
+    }
 
     /**
      * Update an Algorithm object from this client
@@ -298,9 +303,10 @@ public final class AlgorithmiaClient {
      */
     public Organization createOrganization(String requestString) throws IOException {
         String path = "/v1/organizations";
-        HttpResponse response = this.client.post(path, new StringEntity(requestString, ContentType.APPLICATION_JSON));
-        String responseString = EntityUtils.toString(response.getEntity());
         Gson gson = new Gson();
+        HttpResponse response = this.client.post(path, new StringEntity(organizationTypeIdChanger(gson.fromJson
+                (requestString, Organization.class)), ContentType.APPLICATION_JSON));
+        String responseString = EntityUtils.toString(response.getEntity());
         return gson.fromJson(responseString, Organization.class);
     }
 
@@ -325,12 +331,44 @@ public final class AlgorithmiaClient {
      */
     public HttpResponse editOrganization(String orgName, String requestString) throws IOException {
         String path = "/v1/organizations/" + orgName;
-        return this.client.put(path, new StringEntity(requestString, ContentType.APPLICATION_JSON));
+        Gson gson = new Gson();
+        return this.client.put(path, new StringEntity(organizationTypeIdChanger(gson.fromJson
+                (requestString, Organization.class)), ContentType.APPLICATION_JSON));
+    }
+
+    /**
+     * Helper for swapping out the type_id value
+     */
+    public String organizationTypeIdChanger(Organization editedOrganization) throws IOException {
+        Boolean isSet = false;
+        Gson gson = new Gson();
+        HttpResponse typesResponse = getOrgTypes();
+        String typesResponseString = EntityUtils.toString(typesResponse.getEntity());
+        List<Map<String, String>> typesMapList = gson.fromJson(typesResponseString, new TypeToken<List<Map<String, String>>>().getType());
+        for (Map<String, String> type : typesMapList) {
+            if(type.get("name").equals(editedOrganization.getTypeId())) {
+                editedOrganization.setTypeId(type.get("id"));
+                isSet = true;
+                break;
+            }
+        }
+        if(!isSet) {
+            throw new IllegalArgumentException("No matching value found");
+        }
+        return gson.toJson(editedOrganization);
+    }
+
+    /**
+     * Get types uuid endpoint
+     */
+    public HttpResponse getOrgTypes() throws IOException {
+        String path = "/v1/organization/types";
+        return this.client.get(path);
     }
 
     /**
      * Create a member to an organization
-     * @param orgName the organization name
+     * @param orgName  the organization name
      * @param userName the users algorithmia user name
      * @return an organization object
      */
@@ -365,7 +403,7 @@ public final class AlgorithmiaClient {
             String item = String.format("{\"insight_key\": \"%s\", \"insight_value\": \"%s\"}", key, value);
             insightPayload.add(item);
         });
-        HttpResponse response =  this.client.post("/v1/insights", new StringEntity(insightPayload.toString(), ContentType.APPLICATION_JSON));
+        HttpResponse response = this.client.post("/v1/insights", new StringEntity(insightPayload.toString(), ContentType.APPLICATION_JSON));
         String responseString = EntityUtils.toString(response.getEntity());
         return gson.fromJson(responseString, AlgorithmiaInsights.class);
     }

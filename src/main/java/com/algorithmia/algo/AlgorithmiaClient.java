@@ -25,8 +25,8 @@ public final class AlgorithmiaClient {
     /**
      * Instantiate Algorithmia client with the given auth and max number of connections
      *
-     * @param auth Algorithmia Auth object, a null auth object is valid, though only
-                   correct for within the Algorithmia platform
+     * @param auth           Algorithmia Auth object, a null auth object is valid, though only
+     *                       correct for within the Algorithmia platform
      * @param maxConnections max number of concurrent connections to hold open to Algorithmia
      */
     protected AlgorithmiaClient(Auth auth, String apiAddress, int maxConnections) {
@@ -44,6 +44,7 @@ public final class AlgorithmiaClient {
 
     /**
      * Initialize an Algorithm object from this client
+     *
      * @param algoUri the algorithm's URI, e.g., algo://user/algoname
      * @return an Algorithm client for the specified algorithm
      */
@@ -53,6 +54,7 @@ public final class AlgorithmiaClient {
 
     /**
      * Get an Algorithm object from this client
+     *
      * @param userName the users algorithmia user name
      * @param algoName the name of the algorithm
      * @return an Algorithm object for the specified algorithm
@@ -67,6 +69,7 @@ public final class AlgorithmiaClient {
 
     /**
      * Get am Algorithm SCM object from this client
+     *
      * @param scmId id of the scm to retrieve
      * @return an Algorithm SCM object
      */
@@ -80,6 +83,7 @@ public final class AlgorithmiaClient {
 
     /**
      * List Algorithm SCMs from this client
+     *
      * @return an Algorithm SCM object
      */
     public AlgorithmSCMsList listSCMs() throws IOException {
@@ -92,6 +96,7 @@ public final class AlgorithmiaClient {
 
     /**
      * Query an Algorithm SCM status from this client
+     *
      * @param scmId id of the scm to retrieve
      * @return an Algorithm SCM authorization object
      */
@@ -115,6 +120,7 @@ public final class AlgorithmiaClient {
 
     /**
      * Get an Algorithm SCM status for from this client
+     *
      * @param userName the users Algorithmia user name
      * @param algoName the name of the algorithm
      * @return an Algorithm SCM object
@@ -130,12 +136,12 @@ public final class AlgorithmiaClient {
     /**
      * List algorithm versions from this client
      *
-     * @param userName the users Algorithmia user name
-     * @param algoName the name of the algorithm
-     * @param callable whether to return only public or private algorithm versions
-     * @param limit items per page
+     * @param userName  the users Algorithmia user name
+     * @param algoName  the name of the algorithm
+     * @param callable  whether to return only public or private algorithm versions
+     * @param limit     items per page
      * @param published whether to return only versions that have been published
-     * @param marker used for pagination
+     * @param marker    used for pagination
      * @return an AlgorithmVersionsList object for the specified algorithm
      */
     public AlgorithmVersionsList listAlgoVersions(String userName, String algoName, Boolean callable, Integer limit,
@@ -161,9 +167,10 @@ public final class AlgorithmiaClient {
 
     /**
      * Get an Algorithm Build object from this client
+     *
      * @param userName the users Algorithmia user name
      * @param algoName the name of the algorithm
-     * @param buildId id of the build to retrieve
+     * @param buildId  id of the build to retrieve
      * @return a Algorithm Build object for the specified algorithm
      */
     public Algorithm.Build getAlgoBuild(String userName, String algoName, String buildId) throws IOException {
@@ -179,8 +186,8 @@ public final class AlgorithmiaClient {
      *
      * @param userName the users algorithmia user name
      * @param algoName the name of the algorithm
-     * @param limit items per page
-     * @param marker used for pagination
+     * @param limit    items per page
+     * @param marker   used for pagination
      * @return an AlgorithmBuildsList object for the specified algorithm
      */
     public AlgorithmBuildsList listAlgoBuilds(String userName, String algoName,
@@ -200,6 +207,7 @@ public final class AlgorithmiaClient {
 
     /**
      * Get build logs for an Algorithm object from this client
+     *
      * @param userName the users Algorithmia user name
      * @param algoName the name of the algorithm
      * @param buildId  id of the build to retrieve logs
@@ -215,7 +223,8 @@ public final class AlgorithmiaClient {
 
     /**
      * Create a new Algorithm object from this client
-     * @param userName the users algorithmia user name
+     *
+     * @param userName      the users algorithmia user name
      * @param requestString json payload
      * @return an Algorithm object for the specified algorithm
      */
@@ -229,6 +238,7 @@ public final class AlgorithmiaClient {
 
     /**
      * Compile an Algorithm from this client
+     *
      * @param userName the users algorithmia user name
      * @param algoName the name of the algorithm
      * @return an Algorithm object for the specified algorithm
@@ -243,8 +253,9 @@ public final class AlgorithmiaClient {
 
     /**
      * Update an Algorithm object from this client
-     * @param userName the users algorithmia user name
-     * @param algoName the name of the algorithm
+     *
+     * @param userName      the users algorithmia user name
+     * @param algoName      the name of the algorithm
      * @param requestString json payload
      * @return an Algorithm object for the specified algorithm
      */
@@ -258,8 +269,9 @@ public final class AlgorithmiaClient {
 
     /**
      * Publish an Algorithm from this client
-     * @param userName the users Algorithmia user name
-     * @param algoName the name of the algorithm
+     *
+     * @param userName      the users Algorithmia user name
+     * @param algoName      the name of the algorithm
      * @param requestString json payload
      * @return an Algorithm object for the specified algorithm
      */
@@ -273,6 +285,7 @@ public final class AlgorithmiaClient {
 
     /**
      * Delete an Algorithm from this client
+     *
      * @param userName the users algorithmia user name
      * @param algoName the name of the algorithm
      * @return an empty response
@@ -284,6 +297,7 @@ public final class AlgorithmiaClient {
 
     /**
      * Create a user from this client
+     *
      * @param requestString json payload
      * @return a user object
      */
@@ -297,6 +311,7 @@ public final class AlgorithmiaClient {
 
     /**
      * Create an organization from this client
+     *
      * @param requestString json payload
      * @return an organization object
      */
@@ -311,6 +326,7 @@ public final class AlgorithmiaClient {
 
     /**
      * Get an organization from this client
+     *
      * @param orgName the organization name
      * @return an organization object
      */
@@ -324,7 +340,8 @@ public final class AlgorithmiaClient {
 
     /**
      * Edit an organization from this client
-     * @param orgName the organization name
+     *
+     * @param orgName       the organization name
      * @param requestString json payload
      * @return an empty response
      */
@@ -338,20 +355,20 @@ public final class AlgorithmiaClient {
     /**
      * Helper for swapping out the type_id value
      */
-    public String organizationTypeIdChanger(Organization editedOrganization) throws IOException {
+    private String organizationTypeIdChanger(Organization editedOrganization) throws IOException {
         Boolean isSet = false;
         Gson gson = new Gson();
         HttpResponse typesResponse = getOrgTypes();
         String typesResponseString = EntityUtils.toString(typesResponse.getEntity());
         List<Map<String, String>> typesMapList = gson.fromJson(typesResponseString, new TypeToken<List<Map<String, String>>>().getType());
         for (Map<String, String> type : typesMapList) {
-            if(type.get("name").equals(editedOrganization.getTypeId())) {
+            if (type.get("name").equals(editedOrganization.getTypeId())) {
                 editedOrganization.setTypeId(type.get("id"));
                 isSet = true;
                 break;
             }
         }
-        if(!isSet) {
+        if (!isSet) {
             throw new IllegalArgumentException("No matching value found");
         }
         return gson.toJson(editedOrganization);
@@ -367,6 +384,7 @@ public final class AlgorithmiaClient {
 
     /**
      * Create a member to an organization
+     *
      * @param orgName  the organization name
      * @param userName the users algorithmia user name
      * @return an organization object
@@ -378,6 +396,7 @@ public final class AlgorithmiaClient {
 
     /**
      * Initialize a DataDirectory object from this client
+     *
      * @param path to a data directory, e.g., data://.my/foo
      * @return a DataDirectory client for the specified directory
      */
@@ -387,6 +406,7 @@ public final class AlgorithmiaClient {
 
     /**
      * Initialize an DataFile object from this client
+     *
      * @param path to a data file, e.g., data://.my/foo/bar.txt
      * @return a DataFile client for the specified file
      */

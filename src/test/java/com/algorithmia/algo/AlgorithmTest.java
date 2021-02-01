@@ -41,7 +41,7 @@ public class AlgorithmTest {
     @Before
     public void setup() {
         defaultKey = System.getenv("ALGORITHMIA_DEFAULT_API_KEY");
-        adminKey =  System.getenv("ALGORITHMIA_ADMIN_API_KEY");
+        adminKey = System.getenv("ALGORITHMIA_ADMIN_API_KEY");
         testAddress = System.getenv("ALGORITHMIA_TEST_ADDRESS");
         testDefaultKey = System.getenv("ALGORITHMIA_TEST_DEFAULT_KEY");
         MockitoAnnotations.openMocks(this);
@@ -50,18 +50,22 @@ public class AlgorithmTest {
     @Test
     public void algorithmPipeJson() throws Exception {
         AlgoResponse res = Algorithmia.client(defaultKey).algo("docs/JavaAddOne").pipe(41);
-        Assert.assertEquals("42", res.as(new TypeToken<JsonElement>(){}).toString());
-        int result = res.as(new TypeToken<Integer>(){});
+        Assert.assertEquals("42", res.as(new TypeToken<JsonElement>() {
+        }).toString());
+        int result = res.as(new TypeToken<Integer>() {
+        });
         Assert.assertEquals(42, result);
         Assert.assertEquals(ContentType.Json, res.getMetadata().getContentType());
     }
 
     @Test
     public void algorithmCAPipeText() throws Exception {
-        AlgoResponse res = Algorithmia.client(defaultKey,null,1,"C:\\Users\\john.bragg\\algorithmia-java\\testCert.pem").algo("demo/Hello").pipe("foo");
-        Assert.assertEquals("\"Hello foo\"", res.as(new TypeToken<JsonElement>(){}).toString());
+        AlgoResponse res = Algorithmia.client(defaultKey, null, 1, "C:\\Users\\john.bragg\\algorithmia-java\\testCert.pem").algo("demo/Hello").pipe("foo");
+        Assert.assertEquals("\"Hello foo\"", res.as(new TypeToken<JsonElement>() {
+        }).toString());
         Assert.assertEquals("\"Hello foo\"", res.asJsonString());
-        Assert.assertEquals("Hello foo", res.as(new TypeToken<String>(){}));
+        Assert.assertEquals("Hello foo", res.as(new TypeToken<String>() {
+        }));
         Assert.assertEquals("Hello foo", res.asString());
         Assert.assertEquals(ContentType.Text, res.getMetadata().getContentType());
     }
@@ -69,9 +73,11 @@ public class AlgorithmTest {
     @Test
     public void algorithmPipeText() throws Exception {
         AlgoResponse res = Algorithmia.client(defaultKey).algo("demo/Hello").pipe("foo");
-        Assert.assertEquals("\"Hello foo\"", res.as(new TypeToken<JsonElement>(){}).toString());
+        Assert.assertEquals("\"Hello foo\"", res.as(new TypeToken<JsonElement>() {
+        }).toString());
         Assert.assertEquals("\"Hello foo\"", res.asJsonString());
-        Assert.assertEquals("Hello foo", res.as(new TypeToken<String>(){}));
+        Assert.assertEquals("Hello foo", res.as(new TypeToken<String>() {
+        }));
         Assert.assertEquals("Hello foo", res.asString());
         Assert.assertEquals(ContentType.Text, res.getMetadata().getContentType());
     }
@@ -80,8 +86,9 @@ public class AlgorithmTest {
     public void algorithmPipeBinary() throws Exception {
         byte[] input = new byte[10];
         AlgoResponse res = Algorithmia.client(defaultKey).algo("docs/JavaBinaryInAndOut").pipe(input);
-        byte[] output = res.as(new TypeToken<byte[]>(){});
-        Assert.assertEquals(Base64.encodeBase64String(input),Base64.encodeBase64String(output));
+        byte[] output = res.as(new TypeToken<byte[]>() {
+        });
+        Assert.assertEquals(Base64.encodeBase64String(input), Base64.encodeBase64String(output));
         Assert.assertEquals(ContentType.Binary, res.getMetadata().getContentType());
     }
 
@@ -128,19 +135,19 @@ public class AlgorithmTest {
         // Check default timeout - just for fun. This doesn't have to be specified at all time
         // but I wanted to make sure this method never throws an exception when the key in the options
         // is null.
-        Assert.assertEquals((long)300, (long)algo.getTimeout());
+        Assert.assertEquals((long) 300, (long) algo.getTimeout());
 
         // Check Minute conversion
         algo = algo.setTimeout(20L, TimeUnit.MINUTES);
-        Assert.assertEquals((long)20 * 60, (long)algo.getTimeout());
+        Assert.assertEquals((long) 20 * 60, (long) algo.getTimeout());
 
         // And seconds just in case
         algo = algo.setTimeout(30L, TimeUnit.SECONDS);
-        Assert.assertEquals((long)30, (long)algo.getTimeout());
+        Assert.assertEquals((long) 30, (long) algo.getTimeout());
 
         // And milliseconds
         algo = algo.setTimeout(5000L, TimeUnit.MILLISECONDS);
-        Assert.assertEquals((long)5, (long)algo.getTimeout());
+        Assert.assertEquals((long) 5, (long) algo.getTimeout());
     }
 
     @Test

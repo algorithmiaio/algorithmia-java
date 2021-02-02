@@ -167,8 +167,8 @@ public class AlgorithmTest {
 
     @Test
     public void algoCompileAlgo() throws Exception {
-        Algorithm algorithm = Algorithmia.client(defaultKey).compileAlgo("dherring", "ResultFile");
-        Assert.assertEquals(algorithm.getName(), "ResultFile");
+        Algorithm algorithm = Algorithmia.client(testDefaultKey, testAddress).compileAlgo("dherring", "Hello");
+        Assert.assertEquals(algorithm.getName(), "Hello");
     }
 
     @Test
@@ -183,8 +183,8 @@ public class AlgorithmTest {
         Gson gson = new Gson();
         String json = gson.toJson(algorithm);
         //Must call compile in order to increase version of already published algorithm
-        Algorithmia.client(defaultKey).compileAlgo("dherring", "ResultFile");
-        Algorithm newAlgorithm = Algorithmia.client(defaultKey).publishAlgo("dherring", "ResultFile", json);
+        Algorithmia.client(testDefaultKey, testAddress).compileAlgo("dherring", "Hello");
+        Algorithm newAlgorithm = Algorithmia.client(testDefaultKey, testAddress).publishAlgo("dherring", "Hello", json);
         Assert.assertNotNull(newAlgorithm.getVersionInfo().getSemanticVersion());
     }
 

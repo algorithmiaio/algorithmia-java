@@ -271,6 +271,24 @@ public class AlgorithmTest {
     }
 
     @Test
+    public void algoGetUserErrorLogs() throws Exception {
+        ErrorLogs errorlogs[] = Algorithmia.client(defaultKey).getUserErrors("J_Bragg2");
+        Assert.assertNotNull(errorlogs[0].getCreatedAt());
+    }
+
+    @Test
+    public void algoGetAlgorithmErrorLogs() throws Exception {
+        ErrorLogs errorlogs[] = Algorithmia.client(defaultKey).getAlgorithmErrors("J_Bragg2/Echo");
+        Assert.assertNotNull(errorlogs[0].getCreatedAt());
+    }
+
+    @Test
+    public void algoGetOrgErrorLogs() throws Exception {
+        ErrorLogs errorlogs[] = Algorithmia.client(defaultKey).getOrganizationErrors("J_Bragg2");
+        Assert.assertNotNull(errorlogs[0].getCreatedAt());
+    }
+
+    @Test
     public void algoDeleteAlgo() throws Exception {
         Algorithm testAlgo = createTestAlgo();
         Gson gson = new Gson();

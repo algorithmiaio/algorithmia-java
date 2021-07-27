@@ -227,7 +227,13 @@ public final class AlgorithmiaClient {
         HttpResponse response = this.client.get(path);
         String responseString = EntityUtils.toString(response.getEntity());
         Gson gson = new Gson();
-        ErrorLogs[] logs = gson.fromJson(responseString,ErrorLogs[].class);
+        ErrorLogs[] logs = new ErrorLogs[0];
+        try{
+            if(response.getStatusLine().getStatusCode() != 200){ throw new AlgorithmException(response.getStatusLine().toString());}
+            logs = gson.fromJson(responseString,ErrorLogs[].class);
+        }catch (AlgorithmException e){
+            System.out.println(e);
+        }
         return logs;
     }
 
@@ -236,7 +242,13 @@ public final class AlgorithmiaClient {
         HttpResponse response = this.client.get(path);
         String responseString = EntityUtils.toString(response.getEntity());
         Gson gson = new Gson();
-        ErrorLogs[] logs = gson.fromJson(responseString,ErrorLogs[].class);
+        ErrorLogs[] logs = new ErrorLogs[0];
+        try{
+            if(response.getStatusLine().getStatusCode() != 200){ throw new AlgorithmException(response.getStatusLine().toString());}
+            logs = gson.fromJson(responseString,ErrorLogs[].class);
+        }catch (AlgorithmException e){
+            System.out.println(e);
+        }
         return logs;
     }
 
@@ -245,7 +257,13 @@ public final class AlgorithmiaClient {
         HttpResponse response = this.client.get(path);
         String responseString = EntityUtils.toString(response.getEntity());
         Gson gson = new Gson();
-        ErrorLogs[] logs = gson.fromJson(responseString,ErrorLogs[].class);
+        ErrorLogs[] logs = new ErrorLogs[0];
+        try{
+            if(response.getStatusLine().getStatusCode() != 200){ throw new AlgorithmException(response.getStatusLine().toString());}
+            logs = gson.fromJson(responseString,ErrorLogs[].class);
+        }catch (AlgorithmException e){
+            System.out.println(e);
+        }
         return logs;
     }
 

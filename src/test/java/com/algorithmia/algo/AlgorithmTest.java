@@ -272,19 +272,19 @@ public class AlgorithmTest {
 
     @Test
     public void algoGetUserErrorLogs() throws Exception {
-        ErrorLogs errorlogs[] = Algorithmia.client(defaultKey).getUserErrors("J_Bragg2");
+        ErrorLogs errorlogs[] = Algorithmia.client(testDefaultKey,testAddress).getUserErrors("J_Bragg2");
         Assert.assertNotNull(errorlogs[0].getCreatedAt());
     }
 
     @Test
     public void algoGetAlgorithmErrorLogs() throws Exception {
-        ErrorLogs errorlogs[] = Algorithmia.client(defaultKey).getAlgorithmErrors("J_Bragg2/Echo");
+        ErrorLogs errorlogs[] = Algorithmia.client(testDefaultKey,testAddress).getAlgorithmErrors("J_Bragg2/Echo");
         Assert.assertNotNull(errorlogs[0].getCreatedAt());
     }
 
     @Test
     public void algoGetOrgErrorLogs() throws Exception {
-        ErrorLogs errorlogs[] = Algorithmia.client(defaultKey).getOrganizationErrors("J_Bragg2");
+        ErrorLogs errorlogs[] = Algorithmia.client(adminKey,testAddress).getOrganizationErrors("b_myorg1");
         Assert.assertNotNull(errorlogs[0].getCreatedAt());
     }
 

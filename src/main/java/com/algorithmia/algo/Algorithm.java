@@ -32,8 +32,8 @@ public final class Algorithm {
     public String toString() {
         return "Algorithm{" +
                 "id='" + id + '\'' +
-                ", name='" + name + '\'' +
                 ", details=" + details +
+                ", name='" + name + '\'' +
                 ", settings=" + settings +
                 ", versionInfo=" + versionInfo +
                 ", source=" + source +
@@ -64,8 +64,10 @@ public final class Algorithm {
         @SerializedName("algorithm_callability")
         private String algorithmCallability;
         private String environment;
+        @SerializedName("algorithm_environment")
+        private String algorithmEnvironment;
         private String language;
-        @SerializedName("licence") // documentation says "license" but server only accepts "licence"!!!!!
+        @SerializedName("license") // documentation says "license" but server only accepts "licence"!!!!!
         private String license;
         @SerializedName("network_access")
         private String networkAccess;
@@ -93,6 +95,8 @@ public final class Algorithm {
         private String sampleOutput;
         @SerializedName("semantic_version")
         private String semanticVersion;
+        @SerializedName("version_type")
+        private String versionType;
     }
 
     @Builder

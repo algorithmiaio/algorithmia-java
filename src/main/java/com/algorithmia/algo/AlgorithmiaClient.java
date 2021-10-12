@@ -276,7 +276,8 @@ public final class AlgorithmiaClient {
      */
     public Algorithm createAlgo(String userName, String requestString) throws IOException {
         String path = "/v1/algorithms/" + userName;
-        HttpResponse response = this.client.post(path, new StringEntity(requestString, ContentType.APPLICATION_JSON));
+        StringEntity s = new StringEntity(requestString, ContentType.APPLICATION_JSON);
+        HttpResponse response = this.client.post(path, s);
         String responseString = EntityUtils.toString(response.getEntity());
         Gson gson = new Gson();
         return gson.fromJson(responseString, Algorithm.class);
@@ -322,7 +323,7 @@ public final class AlgorithmiaClient {
      * @return an Algorithm object for the specified algorithm
      */
     public Algorithm publishAlgo(String userName, String algoName, String requestString) throws IOException {
-        String path = "/v1/algorithms/" + userName + "/" + algoName + "/versions";
+        String path = "/v1/algorithms/" + userName + "/" + algoName + "/version";
         HttpResponse response = this.client.post(path, new StringEntity(requestString, ContentType.APPLICATION_JSON));
         String responseString = EntityUtils.toString(response.getEntity());
         Gson gson = new Gson();

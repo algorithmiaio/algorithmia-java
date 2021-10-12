@@ -9,6 +9,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
+import org.json.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -322,6 +323,16 @@ public final class AlgorithmiaClient {
                 (requestString, Organization.class)), ContentType.APPLICATION_JSON));
         String responseString = EntityUtils.toString(response.getEntity());
         return gson.fromJson(responseString, Organization.class);
+    }
+
+    public Environment[] getEnvironment(String language) throws IOException {
+        String path = "/v1/algorithm-environments/edge/languages/"+language+"/environments";
+        HttpResponse response = this.client.get(path);
+        String responseString = EntityUtils.toString(response.getEntity());
+        JSONObject jsonObject = new JSONObject(responseString);
+        JSONArray jsonArray = jsonObject.getJSONArray("environments");
+        Gson gson = new Gson();
+        return gson.fromJson(String.valueOf(jsonArray), Environment[].class);
     }
 
     /**

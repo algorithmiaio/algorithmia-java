@@ -375,10 +375,17 @@ public final class AlgorithmiaClient {
         String path = "/v1/algorithm-environments/edge/languages/"+language+"/environments";
         HttpResponse response = this.client.get(path);
         String responseString = EntityUtils.toString(response.getEntity());
-        JSONObject jsonObject = new JSONObject(responseString);
-        JSONArray jsonArray = jsonObject.getJSONArray("environments");
-        Gson gson = new Gson();
-        return gson.fromJson(String.valueOf(jsonArray), Environment[].class);
+        JSONObject jsonObject = null;
+        try {
+            jsonObject = new JSONObject(responseString);
+            JSONArray jsonArray = jsonObject.getJSONArray("environments");
+            Gson gson = new Gson();
+            return gson.fromJson(String.valueOf(jsonArray), Environment[].class);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return new Environment[]{};
     }
 
     /**

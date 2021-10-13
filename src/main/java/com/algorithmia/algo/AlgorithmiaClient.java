@@ -5,6 +5,7 @@ import com.algorithmia.client.HttpClient;
 import com.algorithmia.data.DataDirectory;
 import com.algorithmia.data.DataFile;
 import com.google.gson.Gson;
+import org.apache.commons.io.IOExceptionList;
 import org.apache.http.HttpResponse;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -220,6 +221,51 @@ public final class AlgorithmiaClient {
         String responseString = EntityUtils.toString(response.getEntity());
         Gson gson = new Gson();
         return gson.fromJson(responseString, BuildLogs.class);
+    }
+
+    public ErrorLogs[] getUserErrors(String userName) throws IOException {
+        String path = "/v1/users/"+ userName +"/errors";
+        HttpResponse response = this.client.get(path);
+        String responseString = EntityUtils.toString(response.getEntity());
+        Gson gson = new Gson();
+        ErrorLogs[] logs = new ErrorLogs[0];
+        try{
+            if(response.getStatusLine().getStatusCode() != 200){ throw new AlgorithmException(response.getStatusLine().toString());}
+            logs = gson.fromJson(responseString,ErrorLogs[].class);
+        }catch (AlgorithmException e){
+            System.out.println(e);
+        }
+        return logs;
+    }
+
+    public ErrorLogs[] getAlgorithmErrors(String algoName) throws IOException {
+        String path = "/v1/algorithms/"+algoName+"/errors";
+        HttpResponse response = this.client.get(path);
+        String responseString = EntityUtils.toString(response.getEntity());
+        Gson gson = new Gson();
+        ErrorLogs[] logs = new ErrorLogs[0];
+        try{
+            if(response.getStatusLine().getStatusCode() != 200){ throw new AlgorithmException(response.getStatusLine().toString());}
+            logs = gson.fromJson(responseString,ErrorLogs[].class);
+        }catch (AlgorithmException e){
+            System.out.println(e);
+        }
+        return logs;
+    }
+
+    public ErrorLogs[] getOrganizationErrors(String orgName) throws IOException {
+        String path = "/v1/organizations/"+orgName+"/errors";
+        HttpResponse response = this.client.get(path);
+        String responseString = EntityUtils.toString(response.getEntity());
+        Gson gson = new Gson();
+        ErrorLogs[] logs = new ErrorLogs[0];
+        try{
+            if(response.getStatusLine().getStatusCode() != 200){ throw new AlgorithmException(response.getStatusLine().toString());}
+            logs = gson.fromJson(responseString,ErrorLogs[].class);
+        }catch (AlgorithmException e){
+            System.out.println(e);
+        }
+        return logs;
     }
 
     /**

@@ -259,6 +259,12 @@ public class AlgorithmTest {
     }
 
     @Test
+    public void algoGetEnvironments() throws Exception {
+        Environment[] environments = Algorithmia.client(defaultKey,testAddress).getEnvironment("python3");
+        Assert.assertTrue(environments.length > 0);
+    }
+
+    @Test
     public void algoGetAlgoBuild() throws Exception {
         Algorithm.Build expectedBuild = new Algorithm.Build();
         expectedBuild.setBuildId(testAlgoBuildId);

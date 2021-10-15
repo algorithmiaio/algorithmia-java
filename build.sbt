@@ -15,6 +15,7 @@ libraryDependencies ++= Seq(
   "org.apache.httpcomponents" % "httpasyncclient" % "4.1.4",
   "commons-io" % "commons-io" % "2.8.0",
   "com.novocode" % "junit-interface" % "0.11" % "test->default",
+  "org.json" % "json" % "20090211",
   "org.junit.jupiter" % "junit-jupiter-api" % "5.7.0" % "test",
   "junit" % "junit" % "4.12" % Test,
   "org.projectlombok" % "lombok" % "1.18.2",

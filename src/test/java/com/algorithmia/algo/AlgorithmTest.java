@@ -8,11 +8,9 @@ import com.google.gson.JsonObject;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.*;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicHeader;
@@ -38,7 +36,7 @@ import static org.mockito.ArgumentMatchers.eq;
 public class AlgorithmTest {
 
     private String user;
-    private String env_id = "d8f3110a-ad46-4008-a099-a33824522d09";
+    private String envId;
     private Algorithm testAlgo;
     private Organization testOrg;
     private String testAlgoBuildId;
@@ -62,6 +60,7 @@ public class AlgorithmTest {
         testAddress = System.getenv("ALGORITHMIA_TEST_ADDRESS");
         testDefaultKey = System.getenv("ALGORITHMIA_TEST_DEFAULT_KEY");
         user = System.getenv("ALGORITHMIA_USER_NAME");
+        envId = Algorithmia.client(testDefaultKey,testAddress).getEnvironment("python3")[0].getId();
 
         testOrg = createTestOrganization();
         testAlgo = createAlgo(user,testDefaultKey,testAddress);
@@ -291,7 +290,7 @@ public class AlgorithmTest {
         Algorithm.Details details = new Algorithm.Details();
         details.setLabel("Enough");
         Algorithm.Settings settings = new Algorithm.Settings();
-        settings.setAlgorithmEnvironment(env_id);
+        settings.setAlgorithmEnvironment(envId);
         settings.setLicense("apl");
         settings.setNetworkAccess("full");
         settings.setPipelineEnabled(true);
@@ -453,57 +452,6 @@ public class AlgorithmTest {
         publishTestAlgo(algoTarget,userTarget);
     }
 
-    private void causeAlgorithmErrorXSRF(String algoTarget,String userTarget,String key){
-
-        CloseableHttpClient signInClient = null;
-        CloseableHttpClient client = null;
-        BasicCookieStore cookieStore = new BasicCookieStore();
-
-        HttpClientBuilder signInBuilder = HttpClientBuilder.create().setDefaultCookieStore(cookieStore);
-        Collection<Header> signInHeaders = Arrays.asList(new BasicHeader(HttpHeaders.AUTHORIZATION,key));
-        signInBuilder.setDefaultHeaders(signInHeaders);
-        signInClient = signInBuilder.build();
-
-        HttpClientBuilder builder = HttpClientBuilder.create().setDefaultCookieStore(cookieStore);
-        Collection<Header> headers = Arrays.asList(new BasicHeader(HttpHeaders.AUTHORIZATION,key));
-        builder.setDefaultHeaders(headers);
-        client = builder.build();
-
-        HttpResponse response;
-        HttpPost request;
-
-
-        String brokenString = "import Algorithmia\n"
-                +"\n"
-                +"def apply(input):\n"
-                +"    return \"Hello hello, {}\".forma(input)";
-
-        try {
-
-
-            HttpGet signInRequest = new HttpGet("https://api.test.algorithmia.com/v1/algorithm-environments/edge/environments/current");
-            HttpResponse r = signInClient.execute(signInRequest);
-            String val = r.getHeaders("set-cookie")[0].getValue();
-
-            request = new HttpPost(testAddress+"/source/"+userTarget+"/"+algoTarget+"/src/"+algoTarget+".py");
-            String[] a = val.split("=");
-            String[] value = a[1].split(";");
-            //cookieStore.addCookie(new BasicClientCookie(a[0],a[1]));
-            request.addHeader("X-XSRF-TOKEN",value[0]);
-            request.addHeader(HttpHeaders.CONTENT_TYPE,"text/plain");
-            request.setEntity(new StringEntity(brokenString));
-
-            response = client.execute(request);
-
-        } catch (ClientProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        publishTestAlgo(algoTarget,userTarget);
-    }
-
     private Algorithm publishTestAlgo(String algoTarget,String userTarget){
         Algorithm.VersionInfo versionInfo = new Algorithm.VersionInfo();
         versionInfo.setVersionType("major");
@@ -552,7 +500,7 @@ public class AlgorithmTest {
         Algorithm.Details details = new Algorithm.Details();
         details.setLabel(name);
         Algorithm.Settings settings = new Algorithm.Settings();
-        settings.setAlgorithmEnvironment(env_id);
+        settings.setAlgorithmEnvironment(envId);
         settings.setLicense("apl");
         settings.setNetworkAccess("full");
         settings.setPipelineEnabled(true);
@@ -588,7 +536,7 @@ public class AlgorithmTest {
         testOrganizationPayload.addProperty("org_email", System.currentTimeMillis() + "@testAlgo.com");
         testOrganizationPayload.addProperty("type_id", "legacy");
         testOrganizationPayload.addProperty("resource_type", "organization");
-        testOrganizationPayload.addProperty("id", "3d9a9f41-d82a-11ea-9a3c-0ee5e2d35097");
+        testOrganizationPayload.addProperty("id", envId);
         testOrganizationPayload.addProperty("org_url", "https://algorithmia.com");
         return testOrganizationPayload;
     }

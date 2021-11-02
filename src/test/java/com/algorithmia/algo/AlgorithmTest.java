@@ -123,7 +123,7 @@ public class AlgorithmTest {
     @Test
     public void algorithmPipeBinary() throws Exception {
         byte[] input = new byte[10];
-        AlgoResponse res = Algorithmia.client(defaultKey).algo("docs/JavaBinaryInAndOut").pipe(input);
+        AlgoResponse res = Algorithmia.client(defaultKey).algo("docs/JavaBinaryInAndOutADK").pipe(input);
         byte[] output = res.as(new TypeToken<byte[]>() {
         });
         Assert.assertEquals(Base64.encodeBase64String(input), Base64.encodeBase64String(output));
@@ -132,7 +132,7 @@ public class AlgorithmTest {
 
     @Test
     public void algorithmRawOutput() throws Exception {
-        AlgoResponse res = Algorithmia.client(defaultKey).algo("demo/Hello")
+        AlgoResponse res = Algorithmia.client(defaultKey).algo("demo/hello_java_adk")
                 .setOutputType(AlgorithmExecutable.AlgorithmOutputType.RAW).pipe("foo");
         Assert.assertEquals("Hello foo", res.getRawOutput());
         Assert.assertEquals(null, res.getMetadata());

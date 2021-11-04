@@ -6,23 +6,27 @@ import com.google.gson.JsonElement;
 
 import com.google.gson.JsonObject;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.http.HttpResponse;
-import org.apache.http.ProtocolVersion;
+import org.apache.http.*;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.Assert;
+import org.junit.*;
+import org.junit.rules.TemporaryFolder;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import java.io.File;
+import java.io.IOException;
 
 import java.io.ByteArrayInputStream;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.*;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -30,6 +34,17 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 
 public class AlgorithmTest {
+
+    private String user;
+    private String envId;
+    private Algorithm testAlgo;
+    private Organization testOrg;
+    private String testAlgoBuildId;
+
+
+    @Rule
+    public TemporaryFolder tmpFolder = new TemporaryFolder();
+    private File testfile;
 
     private String defaultKey;
     private String adminKey;
@@ -39,12 +54,35 @@ public class AlgorithmTest {
     private HttpClient httpClient;
 
     @Before
-    public void setup() {
+    public void setup() throws IOException {
         defaultKey = System.getenv("ALGORITHMIA_DEFAULT_API_KEY");
         adminKey = System.getenv("ALGORITHMIA_ADMIN_API_KEY");
         testAddress = System.getenv("ALGORITHMIA_TEST_ADDRESS");
         testDefaultKey = System.getenv("ALGORITHMIA_TEST_DEFAULT_KEY");
+        user = System.getenv("ALGORITHMIA_USER_NAME");
+        envId = Algorithmia.client(testDefaultKey,testAddress).getEnvironment("python3")[0].getId();
+
+        testOrg = createTestOrganization();
+        testAlgo = createAlgo(user,testDefaultKey,testAddress);
+        publishTestAlgo(testAlgo.getName(),user);
+        AlgorithmBuildsList algoList = Algorithmia.client(testDefaultKey,testAddress).listAlgoBuilds(
+                user,
+                testAlgo.getName(),
+                null,
+                null);
+        List<Algorithm.Build> result = algoList.getResults();
+        testAlgoBuildId = result.get(0).getBuildId();
+
+
+        testfile = tmpFolder.newFile("cert.pem");
+
         MockitoAnnotations.openMocks(this);
+    }
+
+
+    @After
+    public void cleanup() throws IOException {
+        Algorithmia.client(testDefaultKey,testAddress).deleteAlgo(user, testAlgo.getName());
     }
 
     @Test
@@ -60,7 +98,7 @@ public class AlgorithmTest {
 
     @Test
     public void algorithmCAPipeText() throws Exception {
-        AlgoResponse res = Algorithmia.client(defaultKey, null, 1, "C:\\Users\\john.bragg\\algorithmia-java\\testCert.pem").algo("demo/Hello").pipe("foo");
+        AlgoResponse res = Algorithmia.client(defaultKey, null, 1, testfile.getPath()).algo("demo/Hello").pipe("foo");
         Assert.assertEquals("\"Hello foo\"", res.as(new TypeToken<JsonElement>() {
         }).toString());
         Assert.assertEquals("\"Hello foo\"", res.asJsonString());
@@ -85,7 +123,7 @@ public class AlgorithmTest {
     @Test
     public void algorithmPipeBinary() throws Exception {
         byte[] input = new byte[10];
-        AlgoResponse res = Algorithmia.client(defaultKey).algo("docs/JavaBinaryInAndOut").pipe(input);
+        AlgoResponse res = Algorithmia.client(defaultKey).algo("docs/JavaBinaryInAndOutADK").pipe(input);
         byte[] output = res.as(new TypeToken<byte[]>() {
         });
         Assert.assertEquals(Base64.encodeBase64String(input), Base64.encodeBase64String(output));
@@ -94,7 +132,7 @@ public class AlgorithmTest {
 
     @Test
     public void algorithmRawOutput() throws Exception {
-        AlgoResponse res = Algorithmia.client(defaultKey).algo("demo/Hello")
+        AlgoResponse res = Algorithmia.client(defaultKey).algo("demo/hello_java_adk")
                 .setOutputType(AlgorithmExecutable.AlgorithmOutputType.RAW).pipe("foo");
         Assert.assertEquals("Hello foo", res.getRawOutput());
         Assert.assertEquals(null, res.getMetadata());
@@ -152,39 +190,28 @@ public class AlgorithmTest {
 
     @Test
     public void algoGetAlgo() throws Exception {
-        Algorithm algorithm = Algorithmia.client(defaultKey).getAlgo("dherring", "ResultFile");
-        Assert.assertEquals(algorithm.getName(), "ResultFile");
+        Algorithm algorithm = Algorithmia.client(testDefaultKey,testAddress).getAlgo(user, testAlgo.getName());
+        Assert.assertEquals(algorithm.getName(), testAlgo.getName());
     }
 
     @Test
     public void algoCreateAlgo() throws Exception {
-        Algorithm testAlgo = createTestAlgo();
+        Algorithm algo = createTestAlgo();
         Gson gson = new Gson();
-        String json = gson.toJson(testAlgo);
-        Algorithm newAlgorithm = Algorithmia.client(defaultKey).createAlgo("dherring", json);
-        Assert.assertEquals(testAlgo.getName(), newAlgorithm.getName());
+        String json = gson.toJson(algo);
+        Algorithm newAlgorithm = Algorithmia.client(testDefaultKey,testAddress).createAlgo(user, json);
+        Assert.assertEquals(algo.getName(), newAlgorithm.getName());
     }
 
     @Test
     public void algoCompileAlgo() throws Exception {
-        Algorithm algorithm = Algorithmia.client(testDefaultKey, testAddress).compileAlgo("dherring", "Hello");
-        Assert.assertEquals(algorithm.getName(), "Hello");
+        Algorithm algorithm = Algorithmia.client(testDefaultKey, testAddress).compileAlgo(user, testAlgo.getName());
+        Assert.assertEquals(algorithm.getName(), testAlgo.getName());
     }
 
     @Test
     public void algoPublishAlgo() throws Exception {
-        Algorithm.VersionInfo versionInfo = new Algorithm.VersionInfo(
-                "git_hash",
-                "release_notes",
-                "sample_input",
-                "sample_output",
-                "patch");
-        Algorithm algorithm = Algorithm.builder().versionInfo(versionInfo).buildDTO();
-        Gson gson = new Gson();
-        String json = gson.toJson(algorithm);
-        //Must call compile in order to increase version of already published algorithm
-        Algorithmia.client(testDefaultKey, testAddress).compileAlgo("dherring", "Hello");
-        Algorithm newAlgorithm = Algorithmia.client(testDefaultKey, testAddress).publishAlgo("dherring", "Hello", json);
+        Algorithm newAlgorithm = publishTestAlgo(testAlgo.getName(),user);
         Assert.assertNotNull(newAlgorithm.getVersionInfo().getSemanticVersion());
     }
 
@@ -214,20 +241,20 @@ public class AlgorithmTest {
 
     @Test
     public void algoGetAlgoSCMStatus() throws Exception {
-        AlgorithmSCMStatus scmStatus = Algorithmia.client(defaultKey).getAlgoSCMStatus("dherring", "ResultFile");
+        AlgorithmSCMStatus scmStatus = Algorithmia.client(testDefaultKey,testAddress).getAlgoSCMStatus(user, testAlgo.getName());
         Assert.assertEquals("active", scmStatus.getScmConnectionStatus());
     }
 
     @Test
     public void algoListAlgoVersions() throws Exception {
-        AlgorithmVersionsList algoList = Algorithmia.client(defaultKey).listAlgoVersions(
-                "dherring",
-                "ResultFile",
+        AlgorithmVersionsList algoList = Algorithmia.client(testDefaultKey, testAddress).listAlgoVersions(
+                user,
+                testAlgo.getName(),
                 null,
                 null,
                 null,
                 null);
-        Assert.assertEquals(10, algoList.getResults().size());
+        Assert.assertTrue(algoList.getResults().size() > 0);
     }
 
     @Test
@@ -239,59 +266,80 @@ public class AlgorithmTest {
     @Test
     public void algoGetAlgoBuild() throws Exception {
         Algorithm.Build expectedBuild = new Algorithm.Build();
-        expectedBuild.setBuildId("579ff0a8-6b1f-4cf4-83a5-c7cb6999ae24");
-        Algorithm.Build returnedBuild = Algorithmia.client(defaultKey).getAlgoBuild(
-                "dherring",
-                "ResultFile",
-                "579ff0a8-6b1f-4cf4-83a5-c7cb6999ae24");
+        expectedBuild.setBuildId(testAlgoBuildId);
+        Algorithm.Build returnedBuild = Algorithmia.client(testDefaultKey,testAddress).getAlgoBuild(
+                user,
+                testAlgo.getName(),
+                testAlgoBuildId);
         Assert.assertEquals(expectedBuild.getBuildId(), returnedBuild.getBuildId());
     }
 
     @Test
     public void algoListAlgoBuilds() throws Exception {
-        AlgorithmBuildsList algoList = Algorithmia.client(defaultKey).listAlgoBuilds(
-                "dherring",
-                "ResultFile",
+        AlgorithmBuildsList algoList = Algorithmia.client(testDefaultKey,testAddress).listAlgoBuilds(
+                user,
+                testAlgo.getName(),
                 null,
                 null);
-        Assert.assertEquals(10, algoList.getResults().size());
+        Assert.assertTrue( algoList.getResults().size() > 0);
     }
 
     @Test
     public void algoUpdateAlgo() throws Exception {
-        Algorithm algorithm = Algorithmia.client(defaultKey).getAlgo("dherring", "ResultFile");
-        algorithm.getDetails().setLabel("Enough");
+
+        Algorithm.Details details = new Algorithm.Details();
+        details.setLabel("Enough");
+        Algorithm.Settings settings = new Algorithm.Settings();
+        settings.setAlgorithmEnvironment(envId);
+        settings.setLicense("apl");
+        settings.setNetworkAccess("full");
+        settings.setPipelineEnabled(true);
+        settings.setSourceVisibility("open");
+
+        Algorithm algorithm = Algorithm.builder().details(details).settings(settings).buildDTO();
+
         Gson gson = new Gson();
         String json = gson.toJson(algorithm);
-        Algorithm newAlgorithm = Algorithmia.client(defaultKey).updateAlgo("dherring", "ResultFile", json);
-        Assert.assertEquals(algorithm.getDetails().getLabel(), newAlgorithm.getDetails().getLabel());
+        Algorithm newAlgorithm = Algorithmia.client(testDefaultKey,testAddress).updateAlgo(user, testAlgo.getName(), json);
+         Assert.assertEquals(algorithm.getDetails().getLabel(), newAlgorithm.getDetails().getLabel());
     }
 
     @Test
     public void algoGetAlgoBuildLogs() throws Exception {
-        BuildLogs buildLogs = Algorithmia.client(defaultKey).getAlgoBuildLogs(
-                "dherring",
-                "ResultFile",
-                "579ff0a8-6b1f-4cf4-83a5-c7cb6999ae24");
+        BuildLogs buildLogs = Algorithmia.client(testDefaultKey,testAddress).getAlgoBuildLogs(
+                user,
+                testAlgo.getName(),
+                testAlgoBuildId);
         Assert.assertNotNull(buildLogs.getLogs());
     }
 
     @Test
     public void algoGetUserErrorLogs() throws Exception {
-        ErrorLogs errorlogs[] = Algorithmia.client(testDefaultKey,testAddress).getUserErrors("J_Bragg2");
+        Algorithm brokenAlgo = createAlgo(user,testDefaultKey,testAddress);
+        causeAlgorithmError(brokenAlgo.getName(),user,adminKey);
+        ErrorLogs errorlogs[] = Algorithmia.client(testDefaultKey,testAddress).getUserErrors(user);
         Assert.assertNotNull(errorlogs[0].getCreatedAt());
+        Algorithmia.client(testDefaultKey,testAddress).deleteAlgo(user, brokenAlgo.getName());
+
     }
 
     @Test
     public void algoGetAlgorithmErrorLogs() throws Exception {
-        ErrorLogs errorlogs[] = Algorithmia.client(testDefaultKey,testAddress).getAlgorithmErrors("J_Bragg2/Echo");
+        Algorithm brokenAlgo = createAlgo(user,testDefaultKey,testAddress);
+        causeAlgorithmError(brokenAlgo.getName(),user,adminKey);
+        AlgoResponse res = Algorithmia.client(testDefaultKey,testAddress).algo(user+"/"+brokenAlgo.getName()+"/1.0.0").pipe("name");
+        ErrorLogs errorlogs[] = Algorithmia.client(testDefaultKey,testAddress).getAlgorithmErrors(user+"/"+brokenAlgo.getName());
         Assert.assertNotNull(errorlogs[0].getCreatedAt());
+        Algorithmia.client(testDefaultKey,testAddress).deleteAlgo(user, brokenAlgo.getName());
     }
 
     @Test
     public void algoGetOrgErrorLogs() throws Exception {
-        ErrorLogs errorlogs[] = Algorithmia.client(adminKey,testAddress).getOrganizationErrors("b_myorg1");
+        Algorithm brokenAlgo = createAlgo(testOrg.getOrgName(),testDefaultKey,testAddress);
+        causeAlgorithmError(brokenAlgo.getName(),testOrg.getOrgName(),adminKey);
+        ErrorLogs errorlogs[] = Algorithmia.client(adminKey,testAddress).getOrganizationErrors(testOrg.getOrgName());
         Assert.assertNotNull(errorlogs[0].getCreatedAt());
+        Algorithmia.client(testDefaultKey,testAddress).deleteAlgo(testOrg.getOrgName(), brokenAlgo.getName());
     }
 
     @Test
@@ -299,8 +347,8 @@ public class AlgorithmTest {
         Algorithm testAlgo = createTestAlgo();
         Gson gson = new Gson();
         String json = gson.toJson(testAlgo);
-        Algorithm newAlgorithm = Algorithmia.client(defaultKey).createAlgo("dherring", json);
-        HttpResponse response = Algorithmia.client(defaultKey).deleteAlgo("dherring", newAlgorithm.getName());
+        Algorithm newAlgorithm = Algorithmia.client(testDefaultKey,testAddress).createAlgo(user, json);
+        HttpResponse response = Algorithmia.client(testDefaultKey,testAddress).deleteAlgo(user, newAlgorithm.getName());
         Assert.assertEquals(204, response.getStatusLine().getStatusCode());
     }
 
@@ -324,8 +372,8 @@ public class AlgorithmTest {
 
     @Test
     public void algoGetOrganization() throws Exception {
-        Organization organization = Algorithmia.client(adminKey, testAddress).getOrganization("a_myOrg15");
-        Assert.assertEquals(organization.getOrgEmail(), "a_myOrg15@algo.com");
+        Organization organization = Algorithmia.client(adminKey, testAddress).getOrganization(testOrg.getOrgName());
+        Assert.assertEquals(organization.getOrgEmail(), "test@testAlgo.com");
     }
 
     @Test
@@ -333,7 +381,7 @@ public class AlgorithmTest {
         JsonObject editOrganizationPayload = editTestOrganizationPayload();
         Gson gson = new Gson();
         String json = gson.toJson(editOrganizationPayload);
-        HttpResponse response = Algorithmia.client(adminKey, testAddress).editOrganization("MyOrg1606332498213", json);
+        HttpResponse response = Algorithmia.client(adminKey, testAddress).editOrganization(testOrg.getOrgName(), json);
         Assert.assertEquals(204, response.getStatusLine().getStatusCode());
     }
 
@@ -343,7 +391,7 @@ public class AlgorithmTest {
         Gson gson = new Gson();
         String json = gson.toJson(testUserPayload);
         User newUser = Algorithmia.client(adminKey, testAddress).createUser(json);
-        HttpResponse response = Algorithmia.client(adminKey, testAddress).addOrganizationMember("MyOrg1606329175792", newUser.getUserName());
+        HttpResponse response = Algorithmia.client(adminKey, testAddress).addOrganizationMember(testOrg.getOrgName(), newUser.getUserName());
         Assert.assertEquals(201, response.getStatusLine().getStatusCode());
     }
 
@@ -371,24 +419,100 @@ public class AlgorithmTest {
         Assert.assertEquals("hello", algorithmiaInsights.getResponse());
     }
 
+    private void causeAlgorithmError(String algoTarget,String userTarget,String key){
+
+        CloseableHttpClient client = null;
+
+        HttpClientBuilder builder = HttpClientBuilder.create();
+        Collection<Header> headers = Arrays.asList(new BasicHeader(HttpHeaders.AUTHORIZATION,key));
+        builder.setDefaultHeaders(headers);
+        client = builder.build();
+
+        HttpResponse response;
+        HttpPost request;
+
+        String brokenString = "import Algorithmia\n"
+                +"\n"
+                +"def apply(input):\n"
+                +"    return \"Hello hello, {}\".forma(input)";
+
+        try {
+            request = new HttpPost(testAddress+"/source/"+userTarget+"/"+algoTarget+"/src/"+algoTarget+".py");
+            request.addHeader(HttpHeaders.CONTENT_TYPE,"text/plain");
+            request.setEntity(new StringEntity(brokenString));
+
+            response = client.execute(request);
+
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        publishTestAlgo(algoTarget,userTarget);
+    }
+
+    private Algorithm publishTestAlgo(String algoTarget,String userTarget){
+        Algorithm.VersionInfo versionInfo = new Algorithm.VersionInfo();
+        versionInfo.setVersionType("major");
+        Algorithm algorithm = Algorithm.builder().versionInfo(versionInfo).buildDTO();
+        Gson gson = new Gson();
+        String json = gson.toJson(algorithm);
+        //Must call compile in order to increase version of already published algorithm
+        try {
+            Algorithmia.client(testDefaultKey, testAddress).compileAlgo(userTarget, algoTarget);
+            return Algorithmia.client(testDefaultKey, testAddress).publishAlgo(userTarget, algoTarget, json);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return algorithm;
+    }
+
+    private Algorithm createAlgo(String targetUser, String apiKey, String address) {
+        Algorithm testAlgo = createTestAlgo();
+        Gson gson = new Gson();
+        String json = gson.toJson(testAlgo);
+        Algorithm newAlgo = null;
+        try {
+            newAlgo = Algorithmia.client(apiKey, address).createAlgo(targetUser, json);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return newAlgo;
+    }
+
+    private Organization createTestOrganization(){
+        JsonObject testOrganizationPayload = createTestOrganizationPayload();
+        Gson gson = new Gson();
+        String json = gson.toJson(testOrganizationPayload);
+        Organization newOrganization = null;
+        try {
+            newOrganization = Algorithmia.client(adminKey, testAddress).createOrganization(json);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return newOrganization;
+    }
+
     private Algorithm createTestAlgo() {
         String name = "CreateAlgoTest" + System.currentTimeMillis();
         Algorithm.Details details = new Algorithm.Details();
-        details.setLabel("CreateAlgoTest" + System.currentTimeMillis());
+        details.setLabel(name);
         Algorithm.Settings settings = new Algorithm.Settings();
-        settings.setEnvironment("cpu");
-        settings.setLanguage("java");
-        settings.setLicense("ap1");
+        settings.setAlgorithmEnvironment(envId);
+        settings.setLicense("apl");
         settings.setNetworkAccess("full");
         settings.setPipelineEnabled(true);
         settings.setSourceVisibility("open");
-        return Algorithm.builder().name(name).details(details).settings(settings).buildDTO();
+
+        return Algorithm.builder().details(details).name(name).settings(settings).buildDTO();
     }
 
     private JsonObject createTestUserPayload() {
         JsonObject testUserPayload = new JsonObject();
         testUserPayload.addProperty("username", "sherring" + System.currentTimeMillis());
-        testUserPayload.addProperty("email", System.currentTimeMillis() + "@algo.com");
+        testUserPayload.addProperty("email", System.currentTimeMillis() + "@testAlgo.com");
         testUserPayload.addProperty("passwordHash", "");
         testUserPayload.addProperty("shouldCreateHello", false);
         return testUserPayload;
@@ -399,7 +523,7 @@ public class AlgorithmTest {
         testOrganizationPayload.addProperty("org_name", "MyOrg" + System.currentTimeMillis());
         testOrganizationPayload.addProperty("org_label", "myLabel");
         testOrganizationPayload.addProperty("org_contact_name", "some owner");
-        testOrganizationPayload.addProperty("org_email", System.currentTimeMillis() + "@algo.com");
+        testOrganizationPayload.addProperty("org_email", "test@testAlgo.com");
         testOrganizationPayload.addProperty("type_id", "basic");
         testOrganizationPayload.addProperty("org_url", "https://algorithmia.com");
         return testOrganizationPayload;
@@ -409,10 +533,10 @@ public class AlgorithmTest {
         JsonObject testOrganizationPayload = new JsonObject();
         testOrganizationPayload.addProperty("org_label", "myLabel");
         testOrganizationPayload.addProperty("org_contact_name", "some owner");
-        testOrganizationPayload.addProperty("org_email", System.currentTimeMillis() + "@algo.com");
+        testOrganizationPayload.addProperty("org_email", System.currentTimeMillis() + "@testAlgo.com");
         testOrganizationPayload.addProperty("type_id", "legacy");
         testOrganizationPayload.addProperty("resource_type", "organization");
-        testOrganizationPayload.addProperty("id", "3d9a9f41-d82a-11ea-9a3c-0ee5e2d35097");
+        testOrganizationPayload.addProperty("id", envId);
         testOrganizationPayload.addProperty("org_url", "https://algorithmia.com");
         return testOrganizationPayload;
     }
